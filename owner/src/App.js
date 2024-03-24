@@ -5,7 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Orders from './pages/orders';
 import Transaction from './pages/Transaction'; 
 import Inventory from './pages/Inventory';
+import Login from './pages/Login';
 import Productlist from './Components/productlist';
+import LowStock from './pages/LowStock';
 
 function App() {
   return (
@@ -14,9 +16,11 @@ function App() {
       <Routes>
         
         <Route path="/orders" element={<Orders />} />
-        <Route path="/" element={<Transaction />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/transaction" element={<Transaction />} />
         <Route path="/inventory" element={<Inventory/>} />
         <Route path="/productlist" element={<Productlist/>} />
+        <Route path="/lowstock" element={<LowStock/>} />
         
       </Routes>
     </BrowserRouter>

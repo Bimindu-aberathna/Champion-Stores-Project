@@ -1,5 +1,4 @@
 import React from "react";
-import AdminNavbar from "../Components/adminNavbar";
 import SideNavbar from "../Components/SideNavbar";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { useState, useRef, useEffect } from "react";
@@ -254,19 +253,17 @@ function Transaction() {
             </button>
           ))}
 
-          <Form inline style={{ marginLeft: "0.5rem", marginBottom: "0" }}>
-            <Row className="align-items-center">
+          <Form inline>
+            <Row>
               <Col xs="auto">
                 <Form.Control
                   type="text"
                   placeholder="Search"
-                  className="mr-sm-2"
+                  className=" mr-sm-2"
                 />
               </Col>
               <Col xs="auto">
-                <Button type="submit" style={{ backgroundColor: "#5B5B5B" }}>
-                  <i className="pi pi-search" style={{ fontSize: "1rem" }}></i>
-                </Button>
+                <Button type="submit">Submit</Button>
               </Col>
             </Row>
           </Form>
@@ -333,13 +330,18 @@ function Transaction() {
             overflowY: "auto",
           }}
         >
-          <Button
-            fullWidth
-            style={{ backgroundColor: "grey", margin: "1rem" }}
-            onClick={clearList}
-          >
-            New Transaction
-          </Button>
+          
+          <div className="d-grid gap-2">
+            <Button
+              variant="secondary"
+              size="lg"
+              style={{ backgroundColor: "grey", margin: "1rem" }}
+              onClick={clearList}
+            >
+              New Transaction
+            </Button>
+          </div>
+
           <div ref={listRef}>
             <Boot_Card className="w-95">
               <ul
@@ -409,6 +411,7 @@ function Transaction() {
             zIndex: 1000,
             maxWidth: "32%",
             marginLeft: "auto",
+            backgroundColor: "white",
           }}
         >
           <Boot_Card style={{ width: "100%" }}>

@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiChevronsRight } from "react-icons/fi";
 import { BsFillCaretRightFill } from "react-icons/bs";
 import { BsCardText } from "react-icons/bs";
 
 function SideNavbar() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  
 
   return (
     <div className="d-flex" style={{ position: "fixed", top: 0, right: 0, height: '100%' }}>
-      <div className={`w-${open ? '65' : '22'} duration-300 h-screen bg-black position-relative`} style={{display:'flex'}} >
+      <div className={`h-screen bg-black position-relative`} style={{display:'flex',transition: "width 0.5s"}} >
+      {/* <div
+        className={`h-screen bg-black position-relative`}
+        style={{
+          height: "100%",
+          width: open ? "60%" : "30%",
+          transition: "width 0.5s",
+        }}
+      > */}
         <FiChevronsRight
           className={`position-absolute cursor-pointer rounded-circle start-0  border-2 border-dark ${!open && "rotate-180"}`}
           style={{ color: 'white', fontSize: '30px', backgroundColor: 'black',top:'5rem' }}

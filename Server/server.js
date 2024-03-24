@@ -13,7 +13,15 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'champions stores'
+    database: 'champions_stores'
+});
+
+app.get('/listProducts', (req, res) => {
+    const sql = 'SELECT * FROM product';
+    db.query(sql, (err, result) => {
+        if (err) res.json({ message: 'Server error occurred' });
+        res.json(result);
+    });
 });
 
 app.listen(port, () => {

@@ -3,143 +3,22 @@ import InventoryNavBar from "../Components/InventoryNavBar";
 import SideNavbar from "../Components/SideNavbar";
 import "../Components/productlist.css";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
-
-const productData = [
-  {
-    id: 1,
-    image: require("../assets/9-5.jpg"),
-    name: "Nature's Secret Face Wash 100ml",
-    price: 100,
-  },
-  {
-    id: 2,
-    image: require("../assets/boque.jpg"),
-    name: "Product 2",
-    price: 100,
-  },
-  {
-    id: 3,
-    image: require("../assets/flower.jpg"),
-    name: "Product 3",
-    price: 100,
-  },
-  {
-    id: 4,
-    image: require("../assets/girl.jpg"),
-    name: "Product 4",
-    price: 100,
-  },
-  {
-    id: 5,
-    image: require("../assets/flower.jpg"),
-    name: "Product 5",
-    price: 100,
-  },
-  {
-    id: 6,
-    image: require("../assets/boque.jpg"),
-    name: "Product 6",
-    price: 100,
-  },
-  {
-    id: 7,
-    image: require("../assets/9-5.jpg"),
-    name: "Product 7",
-    price: 100,
-  },
-  {
-    id: 8,
-    image: require("../assets/girl.jpg"),
-    name: "Product 8",
-    price: 100,
-  },
-  {
-    id: 9,
-    image: require("../assets/boque.jpg"),
-    name: "Product 9",
-    price: 100,
-  },
-  {
-    id: 10,
-    image: require("../assets/logo.png"),
-    name: "Product 10",
-    price: 100,
-  },
-  {
-    id: 11,
-    image: require("../assets/9-5.jpg"),
-    name: "Product 11",
-    price: 100,
-  },
-  {
-    id: 12,
-    image: require("../assets/flower.jpg"),
-    name: "Product 12",
-    price: 100,
-  },
-  {
-    id: 3,
-    image: require("../assets/flower.jpg"),
-    name: "Product 3",
-    price: 100,
-  },
-  {
-    id: 4,
-    image: require("../assets/girl.jpg"),
-    name: "Product 4",
-    price: 100,
-  },
-  {
-    id: 5,
-    image: require("../assets/flower.jpg"),
-    name: "Product 5",
-    price: 100,
-  },
-  {
-    id: 6,
-    image: require("../assets/boque.jpg"),
-    name: "Product 6",
-    price: 100,
-  },
-  {
-    id: 7,
-    image: require("../assets/9-5.jpg"),
-    name: "Product 7",
-    price: 100,
-  },
-  {
-    id: 8,
-    image: require("../assets/girl.jpg"),
-    name: "Product 8",
-    price: 100,
-  },
-  {
-    id: 9,
-    image: require("../assets/boque.jpg"),
-    name: "Product 9",
-    price: 100,
-  },
-  {
-    id: 10,
-    image: require("../assets/logo.png"),
-    name: "Product 10",
-    price: 100,
-  },
-  {
-    id: 11,
-    image: require("../assets/9-5.jpg"),
-    name: "Product 11",
-    price: 100,
-  },
-  {
-    id: 12,
-    image: require("../assets/flower.jpg"),
-    name: "Product 12",
-    price: 100,
-  },
-];
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 function Inventory() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/listProducts")
+    .then((res) => {
+      setItems(res.data);
+      console.log(res.data);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
   const handleMouseOver = (event) => {
     // Add blur effect to the tile when mouse is over
     event.target.closest(".box").style.filter = "blur(0px)";
@@ -177,19 +56,17 @@ function Inventory() {
             </button>
           ))}
 
-          <Form inline style={{ marginLeft: "0.5rem", marginBottom: "0" }}>
-            <Row className="align-items-center">
+          <Form inline>
+            <Row>
               <Col xs="auto">
                 <Form.Control
                   type="text"
                   placeholder="Search"
-                  className="mr-sm-2"
+                  className=" mr-sm-2"
                 />
               </Col>
               <Col xs="auto">
-                <Button type="submit" style={{ backgroundColor: "#5B5B5B" }}>
-                  <i className="pi pi-search" style={{ fontSize: "1rem" }}></i>
-                </Button>
+                <Button type="submit">Submit</Button>
               </Col>
             </Row>
           </Form>
@@ -197,24 +74,25 @@ function Inventory() {
       </div>
 
       <div className="container">
-        {productData.map((product, index) => {
+        {items.map((product, index) => {
           return (
             <div
               className="box"
               key={index}
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
+              style={{zIndex: "888",}}
             >
               <div className="contant">
                 <div className="img-box">
-                  <img className="img" src={product.image} alt="product" />
+                  <img className="img" src={product.image1} alt="product" />
                 </div>
                 <div className="detail">
                   <div className="info">
                     <p>
-                      <b>{product.name}</b>
+                      <b>{product.productName}</b>
                     </p>
-                    <p>Rs. {product.price}</p>
+                    <p>Rs. {product.unitPrice}</p>
                   </div>
                 </div>
               </div>
@@ -232,7 +110,7 @@ function Inventory() {
                   zIndex: "999",
                 }}
               >
-                {product.name}
+                {product.productName}
               </div>
             </div>
           );

@@ -1,10 +1,10 @@
 import React from 'react'
-import OwnerLogin from '../pages/OwnerLogin'
+import LowStock from '../pages/LowStock'
 
 function productlist() {
   return (
     <div>
-      <OwnerLogin />
+      <LowStock />
     </div>
   )
 }
