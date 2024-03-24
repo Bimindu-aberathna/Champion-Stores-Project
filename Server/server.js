@@ -24,6 +24,14 @@ app.get('/listProducts', (req, res) => {
     });
 });
 
+app.get('/listLowStockProducts', (req, res) => {
+    const sql = 'SELECT * from product WHERE preorderLevel>=currentStock;';
+    db.query(sql, (err, result) => {
+        if (err) res.json({ message: 'Server error occurred' });
+        res.json(result);
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });

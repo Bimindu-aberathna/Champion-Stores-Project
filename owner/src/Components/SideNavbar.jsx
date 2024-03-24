@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowDroprightCircle } from "react-icons/io";
+import { useNavigate } from 'react-router-dom';
 
 function SideNavbar() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate('/');
+  };
 
   return (
     <div
@@ -117,7 +123,7 @@ function SideNavbar() {
             {open && <span>Product Returns</span>}
           </li>
 
-          <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-5">
+          <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-5" onClick={handleLogout}>
             <img
               src={require("../assets/logout.png")}
               alt="profile"

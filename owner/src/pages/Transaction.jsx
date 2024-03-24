@@ -7,13 +7,26 @@ import Boot_Button from "react-bootstrap/Button";
 import Boot_Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import "./TransactionProductList.css";
+import axios from "axios";
 
 function Transaction() {
+  
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const listRef = useRef(null);
   const [listHeight, setListHeight] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [productData, setProductData] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/listProducts")
+      .then((res) => {
+        const mappedData = mapProductData(res.data);
+        setProductData(mappedData);
+      }).catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     // Calculate total whenever items change
@@ -100,140 +113,6 @@ function Transaction() {
     }
   };
 
-  const productData = [
-    {
-      id: 1,
-      image: require("../assets/9-5.jpg"),
-      name: "Nature's Secret Face Wash 100ml",
-      price: 100,
-    },
-    {
-      id: 2,
-      image: require("../assets/boque.jpg"),
-      name: "Product 2",
-      price: 100,
-    },
-    {
-      id: 3,
-      image: require("../assets/flower.jpg"),
-      name: "Product 3",
-      price: 100,
-    },
-    {
-      id: 4,
-      image: require("../assets/girl.jpg"),
-      name: "Product 4",
-      price: 100,
-    },
-    {
-      id: 5,
-      image: require("../assets/flower.jpg"),
-      name: "Product 5",
-      price: 100,
-    },
-    {
-      id: 6,
-      image: require("../assets/boque.jpg"),
-      name: "Product 6",
-      price: 100,
-    },
-    {
-      id: 7,
-      image: require("../assets/9-5.jpg"),
-      name: "Product 7",
-      price: 100,
-    },
-    {
-      id: 8,
-      image: require("../assets/girl.jpg"),
-      name: "Product 8",
-      price: 100,
-    },
-    {
-      id: 9,
-      image: require("../assets/boque.jpg"),
-      name: "Product 9",
-      price: 100,
-    },
-    {
-      id: 10,
-      image: require("../assets/logo.png"),
-      name: "Product 10",
-      price: 100,
-    },
-    {
-      id: 11,
-      image: require("../assets/9-5.jpg"),
-      name: "Product 11",
-      price: 100,
-    },
-    {
-      id: 12,
-      image: require("../assets/flower.jpg"),
-      name: "Product 12",
-      price: 100,
-    },
-    {
-      id: 3,
-      image: require("../assets/flower.jpg"),
-      name: "Product 3",
-      price: 100,
-    },
-    {
-      id: 4,
-      image: require("../assets/girl.jpg"),
-      name: "Product 4",
-      price: 100,
-    },
-    {
-      id: 5,
-      image: require("../assets/flower.jpg"),
-      name: "Product 5",
-      price: 100,
-    },
-    {
-      id: 6,
-      image: require("../assets/boque.jpg"),
-      name: "Product 6",
-      price: 100,
-    },
-    {
-      id: 7,
-      image: require("../assets/9-5.jpg"),
-      name: "Product 7",
-      price: 100,
-    },
-    {
-      id: 8,
-      image: require("../assets/girl.jpg"),
-      name: "Product 8",
-      price: 100,
-    },
-    {
-      id: 9,
-      image: require("../assets/boque.jpg"),
-      name: "Product 9",
-      price: 100,
-    },
-    {
-      id: 10,
-      image: require("../assets/logo.png"),
-      name: "Product 10",
-      price: 100,
-    },
-    {
-      id: 11,
-      image: require("../assets/9-5.jpg"),
-      name: "Product 11",
-      price: 100,
-    },
-    {
-      id: 12,
-      image: require("../assets/flower.jpg"),
-      name: "Product 12",
-      price: 100,
-    },
-  ];
   const quicksearch = ["Soap", "Face Cream", "Face Wash", "Lipstick", "Toys"];
 
   return (
@@ -247,7 +126,7 @@ function Transaction() {
               type="button"
               className="inline-block rounded-full border-2 border-gray-800 px-6 pb-[6px] pt-2 text-xs font-medium uppercase leading-normal text-gray-800 transition duration-150 ease-in-out hover:border-gray-800 hover:bg-gray-800 hover:text-white focus:border-gray-800 focus:bg-gray-800 focus:text-white focus:outline-none focus:ring-0 active:border-gray-900 active:text-gray-900 motion-reduce:transition-none dark:text-gray-600 dark:hover:bg-gray-900 dark:focus:bg-gray-900"
               data-twe-ripple-init
-              style={{ marginLeft: "0.2rem" }}
+              style={{ marginLeft: "0.2rem",zIndex: "777",}}
             >
               {item}
             </button>
@@ -279,6 +158,7 @@ function Transaction() {
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
               onClick={() => addItem(product)}
+              style={{zIndex: "888",}}
             >
               <div className="contant">
                 <div className="img-box">
@@ -491,3 +371,15 @@ function Transaction() {
 }
 
 export default Transaction;
+
+function mapProductData(apiData) {
+  // Map the incoming data to the desired format
+  const mappedData = apiData.map((item) => ({
+    id: item.productID,
+    name: item.productName,
+    image: item.image1,
+    price: item.unitPrice,
+  }));
+
+  return mappedData;
+}
