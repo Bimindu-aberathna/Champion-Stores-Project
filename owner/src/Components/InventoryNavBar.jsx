@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FiChevronsRight } from "react-icons/fi";
 import { BsFillCaretRightFill } from "react-icons/bs";
-import { BsCardText } from "react-icons/bs";
+import { BiSolidCategoryAlt } from "react-icons/bi";
+import { IoIosAddCircle } from "react-icons/io";
 
 function SideNavbar() {
   const [open, setOpen] = useState(false);
@@ -26,11 +27,11 @@ function SideNavbar() {
         <br />
         <ul className="pt-6 d-flex flex-column justify-content-center">
           <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white" style={{ paddingTop: '1rem', cursor:'pointer' }}>
-            <BsFillCaretRightFill className="w-12 h-12" />&nbsp;&nbsp;
+            <BiSolidCategoryAlt className="w-12 h-12" style={{fontSize:'36px'}}/>&nbsp;&nbsp;
             {open && <span>Alter<br />Category</span>}
           </li>
           <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white" style={{ paddingTop: '1rem' ,cursor:'pointer'}}>
-            <BsCardText className="w-12 h-12" />&nbsp;&nbsp;
+            <IoIosAddCircle className="w-12 h-12" style={{fontSize:'36px'}}/>&nbsp;&nbsp;
             {open && <span>New<br />Product</span>}
           </li>
         </ul>

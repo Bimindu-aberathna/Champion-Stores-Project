@@ -38,7 +38,7 @@ function OwnerLogin() {
                     <input className="form-check-input" type="checkbox" value="" id="form1Example3" checked />
                     <label className="form-check-label" htmlFor="form1Example3"> Remember me </label>
                   </div>
-                  <a href="#!">Forgot password?</a>
+                  <a href="#">Forgot password?</a>
                 </div>
 
                 <Container className="d-flex justify-content-center align-items-center mt-4 mb-3">

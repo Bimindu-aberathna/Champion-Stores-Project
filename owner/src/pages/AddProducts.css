@@ -1,0 +1,8 @@
+/* Custom CSS to change carousel arrow color to red */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.397); /* Change arrow color to red */
+}
+.carousel-indicators [data-bs-target]{
+    background-color: rgb(17, 17, 17); /* Change indicator color to red */
+}
