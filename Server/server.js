@@ -41,6 +41,15 @@ app.get('/getCategories', (req, res) => {
         res.json(result);
     });
 });
+
+app.get('/getSuppliers', (req, res) => {
+    const sql = 'SELECT * FROM category;';
+    db.query(sql, (err, result) => {
+        if (err) res.json({ message: 'Server error occurred' });
+        res.json(result);
+    });
+});
+
 app.get('/getSubCategories/:categoryID', (req, res) => {
     const categoryID = req.params.categoryID;
   
@@ -78,10 +87,28 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/addProduct', upload.none(), (req, res) => {
-    const { productName, brandName, category, subCategory, openingStock, reorderLevel, unitPrice, productDetails } = req.body;
-    const sql = 'INSERT INTO product (subCategoryID, productName, brandName, details, unitPrice, preorderLevel, currentStock) VALUES (?, ?, ?, ?, ?, ?, ?);';
+    const { productName, brandName, category, subCategory, openingStock, reorderLevel, unitPrice, productDetails ,img1,img2,img3} = req.body;
     
-    db.query(sql, [subCategory, productName, brandName, productDetails, unitPrice, reorderLevel, openingStock], (err, result) => {
+    const sql = 'INSERT INTO product (subCategoryID, productName, brandName, details, unitPrice, preorderLevel, currentStock,';
+    
+    // Create placeholders for images based on the number of images being passed
+    const placeholders = ['image1', 'image2', 'image3'].slice(0, [img1, img2, img3].filter(Boolean).length).map((img, index) => ` ${img}`);
+    
+    // Concatenate placeholders to the SQL query
+    const placeholdersString = placeholders.join(',');
+    
+    // Complete the SQL query
+    const finalSql = `${sql}${placeholdersString}) VALUES (?, ?, ?, ?, ?, ?, ?,${placeholders.fill('?').join(',')} );`;
+
+    // Create an array to hold the values for the SQL query
+    const values = [subCategory, productName, brandName, productDetails, unitPrice, reorderLevel, openingStock];
+
+    // Add image values to the values array
+    [img1, img2, img3].forEach(img => {
+        if (img) values.push(img);
+    });
+
+    db.query(finalSql, values, (err, result) => {
         if (err) {
             console.error('Error adding product', err);
             res.status(500).json({ message: 'Server error occurred' });
@@ -91,6 +118,7 @@ app.post('/addProduct', upload.none(), (req, res) => {
         }
     });
 });
+
 
 
 

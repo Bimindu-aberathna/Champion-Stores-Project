@@ -121,18 +121,13 @@ function Transaction() {
       <div style={{ paddingTop: "1rem", paddingLeft: "13rem" }}>
         <div style={{ display: "flex", alignItems: "center", width: "90%" }}>
           {quicksearch.map((item) => (
-            <button
-              key={item}
-              type="button"
-              className="inline-block rounded-full border-2 border-gray-800 px-6 pb-[6px] pt-2 text-xs font-medium uppercase leading-normal text-gray-800 transition duration-150 ease-in-out hover:border-gray-800 hover:bg-gray-800 hover:text-white focus:border-gray-800 focus:bg-gray-800 focus:text-white focus:outline-none focus:ring-0 active:border-gray-900 active:text-gray-900 motion-reduce:transition-none dark:text-gray-600 dark:hover:bg-gray-900 dark:focus:bg-gray-900"
-              data-twe-ripple-init
-              style={{ marginLeft: "0.2rem",zIndex: "777",}}
-            >
+            
+            <Button key={item} variant="outline-dark" size="sm" style={{ marginLeft: "0.3rem",zIndex: "777",}}>
               {item}
-            </button>
+            </Button>
           ))}
 
-          <Form inline>
+          <Form inline style={{ marginLeft: "0.3rem",zIndex: "777",}}>
             <Row>
               <Col xs="auto">
                 <Form.Control

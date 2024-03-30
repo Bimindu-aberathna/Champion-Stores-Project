@@ -3,14 +3,10 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "./AddProducts.css";
-import { imgDB } from "../firebase";
-import {
-  ref,
-  getDownloadURL,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { v4 as uuidv4 } from "uuid";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import Spinner from "react-bootstrap/Spinner";
+// import { imgDB } from "../firebase";
+import { imgStorage } from "../config";
 
 import {
   MDBBtn,
@@ -30,15 +26,26 @@ const regex = /^(0|[1-9]\d*)$/;
 
 function AddProduct() {
   const [image1, setImage1] = useState(null);
+  const [uploadIMG1, setUploadIMG1] = useState("");
   const [image2, setImage2] = useState(null);
+  const [uploadIMG2, setUploadIMG2] = useState("");
   const [image3, setImage3] = useState(null);
+  const [uploadIMG3, setUploadIMG3] = useState("");
   const [index, setIndex] = useState(0);
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [selectedCategoryID, setSelectedCategoryID] = useState("");
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
-
+  const [img1URL, setImg1URL] = useState("");
+  const [img2URL, setImg2URL] = useState("");
+  const [img3URL, setImg3URL] = useState("");
+  const [imgUploadError, setImgUploadError] = useState(false);
+  const [dataSending, setDataSending] = useState(false);
+  const url1='';
+  const url2='';
+  const url3=''
+  
   useEffect(() => {
     axios
       .get("http://localhost:5000/getCategories")
@@ -81,21 +88,24 @@ function AddProduct() {
     console.log(e.target.files);
     if (image === 1) {
       setImage1(URL.createObjectURL(e.target.files[0]));
+      setUploadIMG1(e.target.files[0]);
     } else if (image === 2) {
       setImage2(URL.createObjectURL(e.target.files[0]));
+      setUploadIMG2(e.target.files[0]);
     } else if (image === 3) {
       setImage3(URL.createObjectURL(e.target.files[0]));
+      setUploadIMG3(e.target.files[0]);
     } else {
       alert("Invalid image");
     }
   }
-  
+
   const handleCloseConfirmation = () => {
     setShowConfirmation(false);
   };
 
-
   function validateForm(event) {
+    setDataSending(true);
     event.preventDefault();
     const productName = document.getElementById("inputProductName").value;
     const brandName = document.getElementById("inputBrandName").value;
@@ -124,28 +134,10 @@ function AddProduct() {
         alert("Opening stock and reorder level should be integers");
       } else {
         //Create FormData object to send files along with form data
-        const formData = new FormData();
-        formData.append("productName", productName);
-        formData.append("brandName", brandName);
-        formData.append("category", category);
-        formData.append("subCategory", subCategory);
-        formData.append("openingStock", openingStock);
-        formData.append("reorderLevel", reorderLevel);
-        formData.append("unitPrice", unitPrice);
-        formData.append("productDetails", productDetails);
 
-        // Send POST request using Axios
-        axios
-          .post("http://localhost:5000/addProduct", formData)
-          .then((res) => {
-            // Handle success response
-            console.log("Product added successfully", res.data);
-            setShowConfirmation(true);
-          })
-          .catch((err) => {
-            // Handle error response
-            console.error("Error adding product", err);
-          });
+        imageUpload();
+
+        //Send POST request using Axios
       }
     }
   }
@@ -157,15 +149,82 @@ function AddProduct() {
       return false;
     }
   }
-  
 
-  function validateIntegers(number) {
-    if (regex.test(number)) {
-      return true;
-    } else {
-      return false;
+  const imageUpload = async () => {
+    const formData = new FormData();
+    if (uploadIMG1 !== "") {
+      const storageRef = ref(imgStorage, uploadIMG1.name);
+      await uploadBytesResumable(storageRef, uploadIMG1).then(async (snapshot) => {
+        const url1 = await getDownloadURL(snapshot.ref);
+        formData.append("img1", url1);
+        console.log("formdata", url1);
+
+        console.log("File available at", url1);
+        setImg1URL(url1);
+      }).catch((error) => {
+        console.error("Error uploading image 1", error);
+        setImgUploadError(true);
+      });
     }
-  }
+      if (uploadIMG2 !== "") {
+        const storageRef = ref(imgStorage, uploadIMG2.name);
+        await uploadBytesResumable(storageRef, uploadIMG2).then(async (snapshot) => {
+          const url2 = await getDownloadURL(snapshot.ref);
+          formData.append("img2", url2);
+          console.log("File available at", url2);
+          setImg2URL(url2);
+        }).catch((error) => {
+          console.error("Error uploading image 2", error);
+          setImgUploadError(true);
+        });
+      }
+      if (uploadIMG3 !== "") {
+        const storageRef = ref(imgStorage, uploadIMG3.name);
+        await uploadBytesResumable(storageRef, uploadIMG3).then(async (snapshot) => {
+          const url3 = await getDownloadURL(snapshot.ref);
+          formData.append("img2", url3);
+          console.log("File available at", url3);
+          setImg2URL(url3);
+        }).catch((error) => {
+          console.error("Error uploading image 3", error);
+          setImgUploadError(true);
+        });
+      }
+    // setTimeout(DatabaseCall, 3000); // Delay DatabaseCall() by 3 seconds
+    const productName = document.getElementById("inputProductName").value;
+    const brandName = document.getElementById("inputBrandName").value;
+    const category = document.getElementById("categorySelect").value;
+    const subCategory = selectedCategoryID;
+    const unitPrice = document.getElementById("inputUnitPrice").value;
+    const openingStock = document.getElementById("inputOpeningStock").value;
+    const reorderLevel = document.getElementById("inputReorderLevel").value;
+    const productDetails = document.getElementById("inputProductDetails").value;
+    const supplier = document.getElementById("inputSupplier").value;
+    formData.append("productName", productName);
+    formData.append("brandName", brandName);
+    formData.append("category", category);
+    formData.append("subCategory", subCategory);
+    formData.append("openingStock", openingStock);
+    formData.append("reorderLevel", reorderLevel);
+    formData.append("unitPrice", unitPrice);
+    formData.append("productDetails", productDetails);
+    console.log("Calling database");
+    axios
+      .post("http://localhost:5000/addProduct", formData)
+      .then((res) => {
+        // Handle success response
+
+        setShowConfirmation(true);
+      })
+      .catch((err) => {
+        // Handle error response
+        console.error("Error adding product", err);
+      });
+
+    setDataSending(false);
+  };
+
+  
 
   return (
     <>
@@ -415,27 +474,16 @@ function AddProduct() {
           </MDBRow>
         </MDBContainer>
       </Form>
-      <Modal show={showConfirmation} onHide={handleCloseConfirmation}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmation</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-          <h5>Congratulations!! Your new product has been successfully added.</h5>
-            
-            
-          </Modal.Body>
-          <Modal.Footer>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <Button
-                variant="dark"
-                
-                onClick={handleCloseConfirmation}
-              >
-                Ok
-              </Button>
-            </div>
-          </Modal.Footer>
-        </Modal>
+
+      <div
+        className="cover"
+        style={{ display: dataSending ? "block" : "none" }}
+      >
+        <div className="innerCover">
+          <Spinner animation="grow" variant="light" />;
+          <h4 style={{ color: "snow" }}>Database Updating</h4>
+        </div>
+      </div>
     </>
   );
 }
