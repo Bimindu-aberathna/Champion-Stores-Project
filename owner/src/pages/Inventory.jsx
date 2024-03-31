@@ -5,6 +5,7 @@ import "../Components/productlist.css";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Inventory() {
   const [items, setItems] = useState([]);
@@ -77,13 +78,14 @@ function Inventory() {
       <div className="container">
         {items.map((product, index) => {
           return (
+            //<Link to={`/edit-product/${product.productId}`} key={product.productId}>
             <div
               className="box"
               key={index}
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
               style={{ zIndex: "888" }}
-            >
+            ><Link to={`/editproduct/${product.productID}`} key={product.productID}>
               <div className="contant">
                 <div className="img-box">
                   <img className="img" src={product.image1} alt="product" />
@@ -97,6 +99,7 @@ function Inventory() {
                   </div>
                 </div>
               </div>
+              </Link>
               {/* Popup banner */}
               <div
                 className="popup"
