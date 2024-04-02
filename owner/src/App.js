@@ -10,6 +10,8 @@ import Productlist from './Components/productlist';
 import LowStock from './pages/LowStock';
 import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
+import AddSupplier from './pages/addSupplier';
+import ListSuppliers from './pages/ListSuppliers';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/lowstock" element={<LowStock/>} />
         <Route path="/addproduct" element={<AddProduct/>} />
         <Route path="/editproduct/:productId" element={<EditProduct/>} />
+        <Route path="/addsupplier" element={<AddSupplier/>} />
+        <Route path="/listsuppliers" element={<ListSuppliers/>} />
         
       </Routes>
     </BrowserRouter>

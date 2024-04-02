@@ -483,7 +483,7 @@ handleCloseDeleteModal();
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Opening stock</Form.Label>
+                          <Form.Label>Current stock</Form.Label>
                           <Form.Control
                             id="inputOpeningStock"
                             type="text"

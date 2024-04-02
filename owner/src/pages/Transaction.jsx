@@ -3,6 +3,7 @@ import SideNavbar from "../Components/SideNavbar";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { useState, useRef, useEffect } from "react";
 import { FaRegTrashAlt, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import { LuPackageX } from "react-icons/lu";
 import Boot_Button from "react-bootstrap/Button";
 import Boot_Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
@@ -44,6 +45,7 @@ function Transaction() {
   }, [items]);
 
   const changeQuantity = (itemId, change) => {
+    
     setItems((prevItems) => {
       return prevItems.map((item) => {
         if (item.id === itemId) {
@@ -90,6 +92,8 @@ function Transaction() {
     event.target.closest(".box").style.filter = "none";
     event.target.closest(".box").querySelector(".popup").style.display = "none";
   };
+
+  
 
   const addItem = (product) => {
     const existingItem = items.find((item) => item.name === product.name);
@@ -197,7 +201,7 @@ function Transaction() {
                     <p>
                       <b>{product.name}</b>
                     </p>
-                    <p>Rs. {product.price}</p>
+                    <p>Rs. {product.price} &nbsp;{product.quantity<=0 && <LuPackageX style={{color:"red"}}/>}</p>
                   </div>
                 </div>
               </div>
@@ -232,7 +236,7 @@ function Transaction() {
             left: 0,
             right: 0,
             bottom: "20%",
-            backgroundColor: "snow",
+            backgroundColor: "white",
             maxWidth: "32%",
             marginLeft: "auto",
             overflowY: "auto",
@@ -419,6 +423,7 @@ function mapProductData(apiData) {
     name: item.productName,
     image: item.image1,
     price: item.unitPrice,
+    quantity: item.currentStock,
   }));
 
   return mappedData;

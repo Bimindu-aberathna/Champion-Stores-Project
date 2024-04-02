@@ -15,6 +15,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.json());
 const port = 5000;
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -223,6 +225,7 @@ app.delete("/deleteProduct/:productId", (req, res) => {
   res.status(200).json({ message: "Product deleted successfully" });
 });
 
+
 app.post("/transaction", (req, res) => {
     const { total, discount, subtotal, items } = req.body;
     const transactionItems = items;
@@ -268,6 +271,18 @@ app.post("/transaction", (req, res) => {
                   // Handle success properly
                 }
               });
+              const sql3 = "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?";
+              const values3 = [item.quantity, item.id];
+              db.query(sql3, values3, (err, result) => {
+                if (err) {
+                  console.error("Error updating product", err);
+                  // Handle error properly
+                } else {
+                  console.log("Product stock updated successfully");
+                  // Handle success properly
+                }
+              }); 
+
             });
             res.status(200).json({ message: "Transaction added successfully" });
           }
@@ -276,6 +291,36 @@ app.post("/transaction", (req, res) => {
     });
 });
 
+app.post('/addSupplier', (req, res) => {
+  // Retrieve data from request body
+  const supplierDetails = req.body.supplierDetails;
+  const supplierName = req.body.supplierName;
+  const supplierEmail = req.body.supplierEmail;
+  const phone1 = req.body.phone1;
+  const phone2 = req.body.phone2;
+
+  // Example: Saving to a database or performing some other operation
+  // Here, we're just logging the received data
+  console.log('Received Supplier Details:');
+  console.log('Supplier Details:', supplierDetails);
+  console.log('Supplier Name:', supplierName);
+  console.log('Supplier Email:', supplierEmail);
+  console.log('Phone 1:', phone1);
+  console.log('Phone 2:', phone2);
+
+  const sql = 'INSERT INTO supplier (name, email, phone1, phone2, details) VALUES (?, ?, ?, ?, ?)';
+  const values = [supplierName, supplierEmail, phone1, phone2, supplierDetails];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error adding supplier', err);
+      return res.status(500).json({ message: 'Server error occurred' });
+    }
+
+    console.log('Supplier added successfully');
+    res.status(200).json({ message: 'Supplier added successfully' });
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
