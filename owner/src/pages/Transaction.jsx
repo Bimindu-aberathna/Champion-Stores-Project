@@ -3,6 +3,7 @@ import SideNavbar from "../Components/SideNavbar";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { useState, useRef, useEffect } from "react";
 import { FaRegTrashAlt, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import { LuPackageX } from "react-icons/lu";
 import Boot_Button from "react-bootstrap/Button";
 import Boot_Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
@@ -10,20 +11,22 @@ import "./TransactionProductList.css";
 import axios from "axios";
 
 function Transaction() {
-  
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const listRef = useRef(null);
   const [listHeight, setListHeight] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [productData, setProductData] = useState([]);
+  const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/listProducts")
+    axios
+      .get("http://localhost:5000/listProducts")
       .then((res) => {
         const mappedData = mapProductData(res.data);
         setProductData(mappedData);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -42,6 +45,7 @@ function Transaction() {
   }, [items]);
 
   const changeQuantity = (itemId, change) => {
+    
     setItems((prevItems) => {
       return prevItems.map((item) => {
         if (item.id === itemId) {
@@ -89,6 +93,8 @@ function Transaction() {
     event.target.closest(".box").querySelector(".popup").style.display = "none";
   };
 
+  
+
   const addItem = (product) => {
     const existingItem = items.find((item) => item.name === product.name);
     if (existingItem) {
@@ -115,19 +121,50 @@ function Transaction() {
 
   const quicksearch = ["Soap", "Face Cream", "Face Wash", "Lipstick", "Toys"];
 
+  const proceedTransaction = () => {
+    console.log("proceeding transaction");
+    console.log("Total: ", total);
+    console.log("Discount: ", discount);
+    console.log("Subtotal: ", total - discount);
+    console.log("Items: ", items);
+
+    // Prepare the data to be sent to the backend
+  const transactionData = {
+    total: total,
+    discount: discount,
+    items: items
+  };
+
+  // Make an HTTP POST request to your backend API
+  axios.post('http://localhost:5000/transaction', transactionData)
+    .then(response => {
+      console.log('Transaction successful:', response.data);
+      setShowConfirmation(false);
+      clearList();
+    })
+    .catch(error => {
+      console.error('Error occurred during transaction:', error);
+      // Optionally, you can handle error response here
+    });
+  };
+
   return (
     <>
       <SideNavbar />
       <div style={{ paddingTop: "1rem", paddingLeft: "13rem" }}>
         <div style={{ display: "flex", alignItems: "center", width: "90%" }}>
           {quicksearch.map((item) => (
-            
-            <Button key={item} variant="outline-dark" size="sm" style={{ marginLeft: "0.3rem",zIndex: "777",}}>
+            <Button
+              key={item}
+              variant="outline-dark"
+              size="sm"
+              style={{ marginLeft: "0.3rem", zIndex: "777" }}
+            >
               {item}
             </Button>
           ))}
 
-          <Form inline style={{ marginLeft: "0.3rem",zIndex: "777",}}>
+          <Form inline style={{ marginLeft: "0.3rem", zIndex: "777" }}>
             <Row>
               <Col xs="auto">
                 <Form.Control
@@ -153,7 +190,7 @@ function Transaction() {
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
               onClick={() => addItem(product)}
-              style={{zIndex: "888",}}
+              style={{ zIndex: "888" }}
             >
               <div className="contant">
                 <div className="img-box">
@@ -164,7 +201,7 @@ function Transaction() {
                     <p>
                       <b>{product.name}</b>
                     </p>
-                    <p>Rs. {product.price}</p>
+                    <p>Rs. {product.price} &nbsp;{product.quantity<=0 && <LuPackageX style={{color:"red"}}/>}</p>
                   </div>
                 </div>
               </div>
@@ -199,13 +236,12 @@ function Transaction() {
             left: 0,
             right: 0,
             bottom: "20%",
-            backgroundColor: "snow",
+            backgroundColor: "white",
             maxWidth: "32%",
             marginLeft: "auto",
             overflowY: "auto",
           }}
         >
-          
           <div className="d-grid gap-2">
             <Button
               variant="secondary"
@@ -333,17 +369,29 @@ function Transaction() {
             <Modal.Title>Confirmation</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Total:&nbsp;&nbsp; <b>Rs. 1000</b>
+            Total:&nbsp;&nbsp; <b>Rs. {total}</b>
             <br />
             <InputGroup className="mb-3">
               <InputGroup.Text>add discount</InputGroup.Text>
               <InputGroup.Text>Rs.</InputGroup.Text>
-              <Form.Control aria-label="Amount (to the nearest dollar)" />
+              <Form.Control
+                type="number"
+                min="0"
+                placeholder="Amount (to the nearest dollar)"
+                aria-label="Amount (to the nearest dollar)"
+                onChange={(e) => {
+                  setDiscount(e.target.value);
+                }}
+              />
             </InputGroup>
+            <p style={{display:'flex'}}>Sub-Total:&nbsp;&nbsp; <h4>Rs. {total-discount}</h4></p>
+            
             Are you sure you want to proceed?
           </Modal.Body>
           <Modal.Footer>
+            
             <div style={{ display: "flex", justifyContent: "center" }}>
+              
               <Boot_Button
                 variant="outline-dark"
                 style={{ width: "45%", margin: "0.5rem" }}
@@ -354,6 +402,7 @@ function Transaction() {
               <Boot_Button
                 variant="dark"
                 style={{ width: "45%", margin: "0.5rem" }}
+                onClick={proceedTransaction}
               >
                 Finish
               </Boot_Button>
@@ -374,6 +423,7 @@ function mapProductData(apiData) {
     name: item.productName,
     image: item.image1,
     price: item.unitPrice,
+    quantity: item.currentStock,
   }));
 
   return mappedData;

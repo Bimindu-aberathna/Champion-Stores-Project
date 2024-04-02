@@ -1,4 +1,6 @@
 import Button from 'react-bootstrap/Button';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 // import bcrypt from 'bcryptjs';
 import { useRef } from 'react';
@@ -8,6 +10,14 @@ import { Link } from "react-router-dom";
 function Login() {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
+  const location = useLocation();
+
+  useEffect(() => {
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener('popstate', function(event) {
+      window.history.pushState(null, document.title, window.location.href);
+    });
+  }, [location]);
 
   function handleLoginForm(event) {
     event.preventDefault(); // Prevent the default form submission behavior

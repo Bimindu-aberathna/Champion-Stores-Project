@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import SideNavbar from "../Components/SideNavbar";
 import { Button, Table } from "react-bootstrap";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
 
 function LowStock() {
   const [items, setItems] = useState([]);
@@ -58,7 +58,9 @@ function LowStock() {
                   <td>{product.currentStock}</td>
                   <td>{product.preorderLevel}</td>
                   <td>
+                  <Link to={`/editproduct/${product.productID}`} key={product.productID}>
                     <Button variant="dark" size="sm" style={{ backgroundColor: 'black' }}>Add Product</Button>
+                  </Link>  
                   </td>
                 </tr>
               ))}

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "./AddProducts.css";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
-// import { imgDB } from "../firebase";
+import { useNavigate } from 'react-router-dom';
 import { imgStorage } from "../config";
-
 import {
   MDBBtn,
   MDBContainer,
@@ -20,30 +22,82 @@ import {
   MDBRadio,
 } from "mdb-react-ui-kit";
 import Carousel from "react-bootstrap/Carousel";
-import axios from "axios";
 
 const regex = /^(0|[1-9]\d*)$/;
 
-function AddProduct() {
-  const [image1, setImage1] = useState(null);
-  const [uploadIMG1, setUploadIMG1] = useState("");
-  const [image2, setImage2] = useState(null);
-  const [uploadIMG2, setUploadIMG2] = useState("");
-  const [image3, setImage3] = useState(null);
-  const [uploadIMG3, setUploadIMG3] = useState("");
-  const [index, setIndex] = useState(0);
+function EditProduct() {
+  const navigate = useNavigate();
+  const { productId } = useParams(); // Change 'productName' to 'productId'
+  const [productName, setProductName] = useState("");
+  const [brand, setBrand] = useState("");
   const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
   const [selectedCategoryID, setSelectedCategoryID] = useState("");
+  const [subCategories, setSubCategories] = useState([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState("");
+  const [index, setIndex] = useState(0);
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplierID, setSelectedSupplierID] = useState("");
-  const [selectedSubcategory, setSelectedSubcategory] = useState("");
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [img1URL, setImg1URL] = useState("");
-  const [img2URL, setImg2URL] = useState("");
-  const [img3URL, setImg3URL] = useState("");
-  const [imgUploadError, setImgUploadError] = useState(false);
+  const [supplier, setSupplier] = useState("");
+  const [openingStock, setOpeningStock] = useState("");
+  const [reorderLevel, setReorderLevel] = useState("");
+  const [unitPrice, setUnitPrice] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [img1, setImg1] = useState("");
+  const [img2, setImg2] = useState("");
+  const [img3, setImg3] = useState("");
+  const [uploadIMG1, setUploadIMG1] = useState(null);
+  const [uploadIMG2, setUploadIMG2] = useState(null);
+  const [uploadIMG3, setUploadIMG3] = useState(null);
+  const [image1, setImage1] = useState("");
+  const [image2, setImage2] = useState("");
+  const [image3, setImage3] = useState("");
   const [dataSending, setDataSending] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  useEffect(() => {
+    // Fetch product data from backend using product ID
+    axios
+      .get(`http://localhost:5000/getProductData/${productId}`)
+      .then((res) => {
+        setProductName(res.data[0].productName);
+        setBrand(res.data[0].brandName);
+
+        setSupplier(res.data[0].supplierName);
+        setOpeningStock(res.data[0].currentStock);
+        setReorderLevel(res.data[0].preorderLevel);
+        setUnitPrice(res.data[0].unitPrice);
+        setProductDescription(res.data[0].details);
+        setSelectedSupplierID(res.data[0].supplierID);
+        setImg1(res.data[0].image1);
+        setImg2(res.data[0].image2);
+        setImg3(res.data[0].image3);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [productId]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/getSuppliers")
+      .then((res) => {
+        setSelectedSupplierID(res.data[0].supplierID);
+        setSuppliers(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const handleCategoryChange = (event) => {
+    setSelectedCategoryID(event.target.value);
+    console.log(selectedCategoryID);
+  };
+
+  const handleSupplierChange = (event) => {
+    setSelectedSupplierID(event.target.value);
+    console.log(selectedSupplierID);
+  };
 
   useEffect(() => {
     axios
@@ -60,32 +114,9 @@ function AddProduct() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getSuppliers")
-      .then((res) => {
-        setSelectedSupplierID(res.data[0].supplierID);
-        setSuppliers(res.data);
-        
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  const handleCategoryChange = (event) => {
-    setSelectedCategoryID(event.target.value);
-    console.log(selectedCategoryID);
-  };
-
-  const handleSupplierChange = (event) => {
-    setSelectedSupplierID(event.target.value);
-    console.log(selectedSupplierID);
-  }; 
-
-  useEffect(() => {
-    axios
       .get(`http://localhost:5000/getSubCategories/${selectedCategoryID}`)
       .then((res) => {
-        setSubcategories(res.data);
+        setSubCategories(res.data);
       })
 
       .catch((err) => {
@@ -102,6 +133,7 @@ function AddProduct() {
   const handleSelect = (selectedIndex) => {
     setIndex(selectedIndex);
   };
+
   function handleChange(e, image) {
     console.log(e.target.files);
     if (image === 1) {
@@ -117,10 +149,6 @@ function AddProduct() {
       alert("Invalid image");
     }
   }
-
-  const handleCloseConfirmation = () => {
-    setShowConfirmation(false);
-  };
 
   function validateForm(event) {
     setDataSending(true);
@@ -170,7 +198,7 @@ function AddProduct() {
 
   const imageUpload = async () => {
     const formData = new FormData();
-    if (uploadIMG1 !== "") {
+    if (image1 !== "") {
       const storageRef = ref(imgStorage, uploadIMG1.name);
       await uploadBytesResumable(storageRef, uploadIMG1)
         .then(async (snapshot) => {
@@ -179,42 +207,43 @@ function AddProduct() {
           console.log("formdata", url1);
 
           console.log("File available at", url1);
-          setImg1URL(url1);
         })
         .catch((error) => {
           console.error("Error uploading image 1", error);
-          setImgUploadError(true);
         });
+    } else {
+      formData.append("img1", img1);
     }
-    if (uploadIMG2 !== "") {
+    if (image2 !== "") {
       const storageRef = ref(imgStorage, uploadIMG2.name);
       await uploadBytesResumable(storageRef, uploadIMG2)
         .then(async (snapshot) => {
           const url2 = await getDownloadURL(snapshot.ref);
           formData.append("img2", url2);
           console.log("File available at", url2);
-          setImg2URL(url2);
         })
         .catch((error) => {
           console.error("Error uploading image 2", error);
-          setImgUploadError(true);
         });
+    } else {
+      formData.append("img2", img2);
     }
-    if (uploadIMG3 !== "") {
+    if (image3 !== "") {
       const storageRef = ref(imgStorage, uploadIMG3.name);
       await uploadBytesResumable(storageRef, uploadIMG3)
         .then(async (snapshot) => {
           const url3 = await getDownloadURL(snapshot.ref);
-          formData.append("img2", url3);
+          formData.append("img3", url3);
           console.log("File available at", url3);
-          setImg2URL(url3);
         })
         .catch((error) => {
           console.error("Error uploading image 3", error);
-          setImgUploadError(true);
         });
+    } else {
+      formData.append("img3", img3);
     }
     // setTimeout(DatabaseCall, 3000); // Delay DatabaseCall() by 3 seconds
+
     const productName = document.getElementById("inputProductName").value;
     const brandName = document.getElementById("inputBrandName").value;
     const category = document.getElementById("categorySelect").value;
@@ -224,6 +253,7 @@ function AddProduct() {
     const reorderLevel = document.getElementById("inputReorderLevel").value;
     const productDetails = document.getElementById("inputProductDetails").value;
     const supplier = document.getElementById("inputSupplier").value;
+    formData.append("productId", productId);
     formData.append("productName", productName);
     formData.append("brandName", brandName);
     formData.append("category", category);
@@ -235,11 +265,9 @@ function AddProduct() {
     formData.append("supplierID", selectedCategoryID);
     console.log("Calling database");
     axios
-      .post("http://localhost:5000/addProduct", formData)
+      .post("http://localhost:5000/updaeteProductInfo", formData)
       .then((res) => {
-        // Handle success response
-
-        setShowConfirmation(true);
+        console.log("Product Edited", res);
       })
       .catch((err) => {
         // Handle error response
@@ -247,6 +275,35 @@ function AddProduct() {
       });
 
     setDataSending(false);
+  };
+
+  // Function to handle opening the delete confirmation modal
+  const handleShowDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+
+  // Function to handle closing the delete confirmation modal
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+
+  // Function to handle deleting the product
+  const handleDeleteProduct = () => {
+   // Send DELETE request to your backend API
+  axios.delete(`http://localhost:5000/deleteProduct/${productId}`)
+  .then((res) => {
+    navigate('/inventory', { replace: true });
+    console.log("Product deleted successfully", res);
+    
+  })
+  .catch((error) => {
+    console.error("Error deleting product", error);
+    // Handle error response, if any
+  });
+
+// Close the modal after successful deletion
+handleCloseDeleteModal();
+    handleCloseDeleteModal();
   };
 
   return (
@@ -279,9 +336,11 @@ function AddProduct() {
                           src={
                             image1
                               ? image1
+                              : img1
+                              ? img1
                               : require("../assets/no_image_selected.jpg")
                           }
-                          alt="Second slide"
+                          alt="First slide"
                           style={{ height: "50vh", width: "100%" }}
                         />
                         <Carousel.Caption>
@@ -293,6 +352,8 @@ function AddProduct() {
                           src={
                             image2
                               ? image2
+                              : img2
+                              ? img2
                               : require("../assets/no_image_selected.jpg")
                           }
                           alt="Second slide"
@@ -308,9 +369,11 @@ function AddProduct() {
                           src={
                             image3
                               ? image3
+                              : img3
+                              ? img3
                               : require("../assets/no_image_selected.jpg")
                           }
-                          alt="Second slide"
+                          alt="Third slide"
                           style={{ height: "50vh", width: "100%" }}
                         />
                         <Carousel.Caption>
@@ -320,17 +383,14 @@ function AddProduct() {
                     </Carousel>
                     {/* ----------------------------------------------------------------------------------------- */}
 
-                    {/* <div className="App">
-                  <h4>Add Image 1:</h4>
-                  <input type="file" onChange={{}} />
-                  <img src={image1} />
-                </div> */}
                     <div style={{ margin: "1rem" }}>
                       <Form.Label>Select image 1</Form.Label>
                       <Form.Control
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleChange(e, 1)}
+                        onChange={(e) => {
+                          handleChange(e, 1);
+                        }}
                       />
                       <Form.Label>Select image 2</Form.Label>
                       <Form.Control
@@ -350,7 +410,7 @@ function AddProduct() {
                   <MDBCol md="6">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
                       <h3 className="mb-5 text-uppercase fw-bold">
-                        New product info
+                        Change product info
                       </h3>
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
@@ -360,6 +420,8 @@ function AddProduct() {
                             id="inputProductName"
                             type="text"
                             placeholder="new product name....."
+                            value={productName}
+                            onChange={(e) => setProductName(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -370,6 +432,8 @@ function AddProduct() {
                             id="inputBrandName"
                             type="text"
                             placeholder="brand name"
+                            value={brand}
+                            onChange={(e) => setBrand(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -405,7 +469,7 @@ function AddProduct() {
                             onChange={handleSubcategoryChange}
                             value={selectedSubcategory}
                           >
-                            {subcategories.map((item) => (
+                            {subCategories.map((item) => (
                               <option
                                 key={item.subcategoryID}
                                 value={item.subcategoryID} // Set the value to the subcategoryID
@@ -419,14 +483,16 @@ function AddProduct() {
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Opening stock</Form.Label>
+                          <Form.Label>Current stock</Form.Label>
                           <Form.Control
                             id="inputOpeningStock"
                             type="text"
                             placeholder="first stock quantity"
+                            value={openingStock}
                             min="0" // Enforce a minimum value of 1
                             step="1" // Allow only whole numbers (integers)
                             pattern="^[1-9]\d*$"
+                            onChange={(e) => setOpeningStock(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -439,7 +505,9 @@ function AddProduct() {
                             placeholder="product reorder level"
                             min="0" // Enforce a minimum value of 1
                             step="1" // Allow only whole numbers (integers)
+                            value={reorderLevel}
                             pattern="^[1-9]\d*$" // Enforce positive integers with regex
+                            onChange={(e) => setReorderLevel(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -451,7 +519,9 @@ function AddProduct() {
                             id="inputUnitPrice"
                             type="number"
                             placeholder="product buying price per unit"
+                            value={unitPrice}
                             min="0" // Enforce a minimum value of 1
+                            onChange={(e) => setUnitPrice(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -474,6 +544,17 @@ function AddProduct() {
                             onChange={handleSupplierChange}
                             value={selectedSupplierID}
                           >
+                            {/* Default option with the selected supplier */}
+                            <option value={selectedSupplierID}>
+                              {supplier}
+                              {console.log(
+                                "Supplier data",
+                                selectedSupplierID,
+                                supplier
+                              )}
+                            </option>
+
+                            {/* Iterate over suppliers and render options */}
                             {suppliers.map((supplier) => (
                               <option
                                 key={supplier.supplierID}
@@ -491,14 +572,20 @@ function AddProduct() {
                         id="inputProductDetails"
                         type="text"
                         placeholder="new product details....."
+                        value={productDescription}
+                        onChange={(e) => setProductDescription(e.target.value)}
                         as={"textarea"}
                         style={{ height: "100px" }}
                       />
                       <Form.Text className="text-muted"></Form.Text>
 
                       <div className="d-flex justify-content-end pt-3">
-                        <Button variant="outline-dark" type="reset">
-                          Clear all
+                        <Button
+                          variant="outline-dark"
+                          type="button"
+                          onClick={handleShowDeleteModal}
+                        >
+                          Delete Product
                         </Button>
                         &nbsp;
                         <Button
@@ -516,6 +603,20 @@ function AddProduct() {
           </MDBRow>
         </MDBContainer>
       </Form>
+      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDeleteModal}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteProduct}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <div
         className="cover"
@@ -530,4 +631,4 @@ function AddProduct() {
   );
 }
 
-export default AddProduct;
+export default EditProduct;

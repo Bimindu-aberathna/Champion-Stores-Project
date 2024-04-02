@@ -8,7 +8,7 @@ function SideNavbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate('/');
+    navigate('/', { replace: true });
   };
 
   return (
@@ -122,7 +122,7 @@ function SideNavbar() {
             />
             {open && <span>Product Returns</span>}
           </li>
-
+          
           <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-5" onClick={handleLogout}>
             <img
               src={require("../assets/logout.png")}

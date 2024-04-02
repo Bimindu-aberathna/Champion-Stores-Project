@@ -1,6 +1,6 @@
 // App.jsx
 import React from 'react';
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, BrowserRouter,useParams } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Orders from './pages/orders';
 import Transaction from './pages/Transaction'; 
@@ -9,6 +9,9 @@ import Login from './pages/Login';
 import Productlist from './Components/productlist';
 import LowStock from './pages/LowStock';
 import AddProduct from './pages/AddProduct';
+import EditProduct from './pages/EditProduct';
+import AddSupplier from './pages/addSupplier';
+import ListSuppliers from './pages/ListSuppliers';
 
 function App() {
   return (
@@ -23,6 +26,9 @@ function App() {
         <Route path="/productlist" element={<Productlist/>} />
         <Route path="/lowstock" element={<LowStock/>} />
         <Route path="/addproduct" element={<AddProduct/>} />
+        <Route path="/editproduct/:productId" element={<EditProduct/>} />
+        <Route path="/addsupplier" element={<AddSupplier/>} />
+        <Route path="/listsuppliers" element={<ListSuppliers/>} />
         
       </Routes>
     </BrowserRouter>
