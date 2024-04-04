@@ -157,8 +157,28 @@ app.post("/addProduct", upload.none(), (req, res) => {
       console.error("Error adding product", err);
       res.status(500).json({ message: "Server error occurred" });
     } else {
-      console.log("Product added successfully");
-      res.status(200).json({ message: "Product added successfully" });
+      // Get the current date
+      const currentDate = new Date();
+
+      // Get the year, month, and day from the current date
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed, so we add 1
+      const day = String(currentDate.getDate()).padStart(2, "0");
+
+      // Concatenate the year, month, and day with hyphens to form the desired format
+      const formattedDate = `${year}-${month}-${day}`;
+
+      const sql2 ="INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`) VALUES (?, ?, ?);";
+      const values2 = [result.insertId, formattedDate, unitPrice];
+      db.query(sql2, values2, (err, result) => {
+        if (err) {
+          console.error("Error adding product", err);
+          res.status(500).json({ message: "Server error occurred" });
+        } else {
+          console.log("Product added successfully");
+          res.status(200).json({ message: "Product added successfully" });
+        }
+      });
     }
   });
 });
@@ -225,73 +245,74 @@ app.delete("/deleteProduct/:productId", (req, res) => {
   res.status(200).json({ message: "Product deleted successfully" });
 });
 
-
 app.post("/transaction", (req, res) => {
-    const { total, discount, subtotal, items } = req.body;
-    const transactionItems = items;
-    const sub_total = total-discount;
-    // Get the current date and time
-    const currentDateTime = new Date();
-  
-    // Format the date and time to match MySQL dateTime format ('YYYY-MM-DD HH:MM:SS')
-    const formattedDateTime = currentDateTime
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
-  
-    // Now you can use formattedDateTime in your MySQL query
-    console.log(formattedDateTime);
-    // Logic to save the transaction to your database
-    const sql1 = "INSERT INTO transactions (dateTime,total, discount, subTotal) VALUES (?, ?,?, ?)";
-    const values = [formattedDateTime,total, discount, sub_total];
-    db.query(sql1, values, (err, result) => {
-      if (err) {
-        console.error("Error updating product", err);
-        res.status(500).json({ message: "Server error occurred" });
-      } else {
-        console.log("Transaction added successfully");
-        // Get the last inserted transactionID
-        db.query("SELECT LAST_INSERT_ID() AS transactionID", (err, result) => {
-          if (err) {
-            console.error("Error fetching transactionID", err);
-            res.status(500).json({ message: "Server error occurred" });
-          } else {
-            const transactionID = result[0].transactionID;
-            console.log("Transaction ID:", transactionID);
-            // Use transactionID to insert transaction items
-            transactionItems.forEach((item) => {
-              const sql2 = "INSERT INTO transaction_items (transactionID, productID, quantity, unitPrice) VALUES (?, ?, ?, ?)";
-              const values = [transactionID, item.id, item.quantity, item.price];
-              db.query(sql2, values, (err, result) => {
-                if (err) {
-                  console.error("Error updating product", err);
-                  // Handle error properly
-                } else {
-                  console.log("Transaction item added successfully");
-                  // Handle success properly
-                }
-              });
-              const sql3 = "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?";
-              const values3 = [item.quantity, item.id];
-              db.query(sql3, values3, (err, result) => {
-                if (err) {
-                  console.error("Error updating product", err);
-                  // Handle error properly
-                } else {
-                  console.log("Product stock updated successfully");
-                  // Handle success properly
-                }
-              }); 
+  const { total, discount, subtotal, items } = req.body;
+  const transactionItems = items;
+  const sub_total = total - discount;
+  // Get the current date and time
+  const currentDateTime = new Date();
 
+  // Format the date and time to match MySQL dateTime format ('YYYY-MM-DD HH:MM:SS')
+  const formattedDateTime = currentDateTime
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+
+  // Now you can use formattedDateTime in your MySQL query
+  console.log(formattedDateTime);
+  // Logic to save the transaction to your database
+  const sql1 =
+    "INSERT INTO transactions (dateTime,total, discount, subTotal) VALUES (?, ?,?, ?)";
+  const values = [formattedDateTime, total, discount, sub_total];
+  db.query(sql1, values, (err, result) => {
+    if (err) {
+      console.error("Error updating product", err);
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      console.log("Transaction added successfully");
+      // Get the last inserted transactionID
+      db.query("SELECT LAST_INSERT_ID() AS transactionID", (err, result) => {
+        if (err) {
+          console.error("Error fetching transactionID", err);
+          res.status(500).json({ message: "Server error occurred" });
+        } else {
+          const transactionID = result[0].transactionID;
+          console.log("Transaction ID:", transactionID);
+          // Use transactionID to insert transaction items
+          transactionItems.forEach((item) => {
+            const sql2 =
+              "INSERT INTO transaction_items (transactionID, productID, quantity, unitPrice) VALUES (?, ?, ?, ?)";
+            const values = [transactionID, item.id, item.quantity, item.price];
+            db.query(sql2, values, (err, result) => {
+              if (err) {
+                console.error("Error updating product", err);
+                // Handle error properly
+              } else {
+                console.log("Transaction item added successfully");
+                // Handle success properly
+              }
             });
-            res.status(200).json({ message: "Transaction added successfully" });
-          }
-        });
-      }
-    });
+            const sql3 =
+              "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?";
+            const values3 = [item.quantity, item.id];
+            db.query(sql3, values3, (err, result) => {
+              if (err) {
+                console.error("Error updating product", err);
+                // Handle error properly
+              } else {
+                console.log("Product stock updated successfully");
+                // Handle success properly
+              }
+            });
+          });
+          res.status(200).json({ message: "Transaction added successfully" });
+        }
+      });
+    }
+  });
 });
 
-app.post('/addSupplier', (req, res) => {
+app.post("/addSupplier", (req, res) => {
   // Retrieve data from request body
   const supplierDetails = req.body.supplierDetails;
   const supplierName = req.body.supplierName;
@@ -301,24 +322,102 @@ app.post('/addSupplier', (req, res) => {
 
   // Example: Saving to a database or performing some other operation
   // Here, we're just logging the received data
-  console.log('Received Supplier Details:');
-  console.log('Supplier Details:', supplierDetails);
-  console.log('Supplier Name:', supplierName);
-  console.log('Supplier Email:', supplierEmail);
-  console.log('Phone 1:', phone1);
-  console.log('Phone 2:', phone2);
+  console.log("Received Supplier Details:");
+  console.log("Supplier Details:", supplierDetails);
+  console.log("Supplier Name:", supplierName);
+  console.log("Supplier Email:", supplierEmail);
+  console.log("Phone 1:", phone1);
+  console.log("Phone 2:", phone2);
 
-  const sql = 'INSERT INTO supplier (name, email, phone1, phone2, details) VALUES (?, ?, ?, ?, ?)';
+  const sql =
+    "INSERT INTO supplier (name, email, phone1, phone2, details) VALUES (?, ?, ?, ?, ?)";
   const values = [supplierName, supplierEmail, phone1, phone2, supplierDetails];
 
-  db.query(sql, values, (err, result) => {
+  db.query(sql, values, (err, res) => {
     if (err) {
-      console.error('Error adding supplier', err);
-      return res.status(500).json({ message: 'Server error occurred' });
+      console.error("Error adding supplier", err);
+      return res.status(500).json({ message: "Server error occurred" });
     }
 
-    console.log('Supplier added successfully');
-    res.status(200).json({ message: 'Supplier added successfully' });
+    console.log("Supplier added successfully");
+    res.status(200).json({ message: "Supplier added successfully" });
+  });
+});
+
+app.post("/newInventory", (req, res) => {
+  const { productId, stock, buyingPrice, supplierId } = req.body;
+   // Get the current date
+   const currentDate = new Date();
+   const year = currentDate.getFullYear();
+   const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+   const day = String(currentDate.getDate()).padStart(2, "0");
+
+   // Concatenate the year, month, and day with hyphens to form the desired format
+   const formattedDate = `${year}-${month}-${day}`;
+  
+  const sql1 = "UPDATE product SET currentStock = currentStock + ? WHERE productID = ?";
+  const values1 = [stock, productId];
+  
+  db.query(sql1, values1, (err1, res) => {
+    if (err1) {
+      console.error("Error updating product", err1);
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      const sql2 = "INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`, `itemCount`, `supplierID`) VALUES (?, ?, ?, ?, ?)";
+      const values2 = [productId, formattedDate, buyingPrice, stock, supplierId];
+      db.query(sql2, values2, (err2, result2) => {
+        if (err2) {
+          console.error("Error inserting into inventory_purchase", err2);
+          res.status(500).json({ message: "Server error occurred" });
+        } else {
+          console.log("Inventory added successfully");
+          res.status(200).json({ message: "success" });
+        }
+      });
+    }
+  });
+});
+
+app.get("/purchaseHistory", (req, res) => {
+  const sql = "SELECT i.*,p.productName,p.brandName,CASE WHEN DATEDIFF(CURRENT_DATE(), i.date) <= 5 THEN true ELSE false END AS ableToCancel,s.name FROM inventory_purchase i INNER JOIN product p ON i.productID = p.productID INNER JOIN supplier s on p.supplierID = s.supplierID;";
+  db.query(sql, (err, result) => {
+    if (err) res.json({ message: "Server error occurred" });
+    res.json(result);
+  });
+});
+
+app.post("/cancelPurchase", (req, res) => {
+  const purchaseID = req.body.purchaseID;
+
+  // Query to select productID from inventory_purchase table
+  const sql = "SELECT productID,itemCount FROM inventory_purchase WHERE purchaseID = ?;";
+  db.query(sql, [purchaseID], (err, result) => {
+    if (err) {
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      if (result.length === 0) {
+        res.status(404).json({ message: "Purchase not found" });
+      } else {
+        const productID = result[0].productID;
+        const itemCount = result[0].itemCount;
+        const sql2 = "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?";
+        const values = [itemCount, productID];
+        db.query(sql2, values, (err2, result2) => {
+          if (err2) {
+            res.status(500).json({ message: "Server error occurred" });
+          } else {
+            const sql3 = "DELETE FROM inventory_purchase WHERE purchaseID = ?";
+            db.query(sql3, [purchaseID], (err3, result3) => {
+              if (err3) {
+                res.status(500).json({ message: "Server error occurred" });
+              } else {
+                res.status(200).json({ message: "Purchase cancelled successfully" });
+              }
+            });
+          }
+        });
+      }
+    }
   });
 });
 

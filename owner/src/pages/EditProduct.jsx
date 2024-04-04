@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -10,6 +10,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from 'react-router-dom';
 import { imgStorage } from "../config";
+
 import {
   MDBBtn,
   MDBContainer,
@@ -27,7 +28,7 @@ const regex = /^(0|[1-9]\d*)$/;
 
 function EditProduct() {
   const navigate = useNavigate();
-  const { productId } = useParams(); // Change 'productName' to 'productId'
+  const { productId } = useParams(); 
   const [productName, setProductName] = useState("");
   const [brand, setBrand] = useState("");
   const [categories, setCategories] = useState([]);
@@ -409,9 +410,20 @@ handleCloseDeleteModal();
 
                   <MDBCol md="6">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
+                      <div style={{display:'flex'}}>
                       <h3 className="mb-5 text-uppercase fw-bold">
                         Change product info
                       </h3>
+                      <Link to={`/newinventory/${productId}`} key={productId} style={{marginLeft:'auto'}}>
+                      <Button
+                          variant="outline-dark"
+                          type="button"
+                          style={{ marginLeft: "auto" ,height:'fit-content',fontWeight:'bold',border:'solid 2px black'}}
+                        >
+                          Add Inventory
+                        </Button>
+                        </Link>
+                      </div>
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
@@ -592,7 +604,7 @@ handleCloseDeleteModal();
                           as="input"
                           variant="dark"
                           type="submit"
-                          value="Add product"
+                          value="Save Changes"
                         />
                       </div>
                     </MDBCardBody>
