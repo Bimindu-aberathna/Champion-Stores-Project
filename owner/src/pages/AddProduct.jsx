@@ -123,12 +123,13 @@ function AddProduct() {
   };
 
   function validateForm(event) {
-    setDataSending(true);
+    
     event.preventDefault();
     const productName = document.getElementById("inputProductName").value;
     const brandName = document.getElementById("inputBrandName").value;
     const category = document.getElementById("categorySelect").value;
     const subCategory = selectedCategoryID;
+    const buyingPrice = document.getElementById("inputbuyingprice").value;
     const unitPrice = document.getElementById("inputUnitPrice").value;
     const openingStock = document.getElementById("inputOpeningStock").value;
     const reorderLevel = document.getElementById("inputReorderLevel").value;
@@ -145,14 +146,22 @@ function AddProduct() {
         productDetails === ""
       ) {
         alert("Please fill all the fields");
+        return;
       } else if (
         !validateIntegers(openingStock) ||
         !validateIntegers(reorderLevel)
       ) {
         alert("Opening stock and reorder level should be integers");
-      } else {
+        return;
+      } else if (
+        !validatePrice(buyingPrice) ||
+        !validatePrice(unitPrice)
+      ) {
+        alert("Buying price and unit price should be numbers greater than zero");
+        return;
+      }else {
         //Create FormData object to send files along with form data
-
+        setDataSending(true);
         imageUpload();
 
         //Send POST request using Axios
@@ -167,6 +176,14 @@ function AddProduct() {
       return false;
     }
   }
+  function validatePrice(value) {
+    // Check if the value is a valid number and greater than zero
+    if (!isNaN(value) && parseFloat(value) > 0) {
+      return true;
+    }
+    return false;
+  }
+  
 
   const imageUpload = async () => {
     const formData = new FormData();
@@ -219,6 +236,7 @@ function AddProduct() {
     const brandName = document.getElementById("inputBrandName").value;
     const category = document.getElementById("categorySelect").value;
     const subCategory = selectedCategoryID;
+    const buyingPrice = document.getElementById("inputbuyingprice").value;
     const unitPrice = document.getElementById("inputUnitPrice").value;
     const openingStock = document.getElementById("inputOpeningStock").value;
     const reorderLevel = document.getElementById("inputReorderLevel").value;
@@ -230,6 +248,7 @@ function AddProduct() {
     formData.append("subCategory", subCategory);
     formData.append("openingStock", openingStock);
     formData.append("reorderLevel", reorderLevel);
+    //formData.append("buyingPrice", buyingPrice);
     formData.append("unitPrice", unitPrice);
     formData.append("productDetails", productDetails);
     formData.append("supplierID", selectedCategoryID);
@@ -349,7 +368,7 @@ function AddProduct() {
 
                   <MDBCol md="6">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
-                      <h3 className="mb-5 text-uppercase fw-bold">
+                      <h3 className="mb-3 text-uppercase fw-bold">
                         New product info
                       </h3>
 
@@ -446,15 +465,32 @@ function AddProduct() {
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Unit price</Form.Label>
+                          <Form.Label>Buying price</Form.Label>
                           <Form.Control
-                            id="inputUnitPrice"
+                            id="inputbuyingprice"
                             type="number"
-                            placeholder="product buying price per unit"
+                            placeholder="buying price per unit"
                             min="0" // Enforce a minimum value of 1
+                            step="0.01"
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
+
+                        <MDBCol md="6">
+                          <Form.Label>Selling price</Form.Label>
+                          <Form.Control
+                            id="inputUnitPrice"
+                            type="number"
+                            placeholder="product selling price per unit"
+                            min="0" // Enforce a minimum value of 1
+                            step="0.01" 
+                          />
+                          <Form.Text className="text-muted"></Form.Text>
+                        </MDBCol>
+
+                      </MDBRow>
+                      <MDBRow style={{ marginBottom: "1rem" }}>
+                       
 
                         {/* <MDBCol md="6">
                           <Form.Label>Supplier</Form.Label>
