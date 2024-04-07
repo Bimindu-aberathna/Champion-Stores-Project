@@ -421,6 +421,64 @@ app.post("/cancelPurchase", (req, res) => {
   });
 });
 
+app.post("/addNewCategory", (req, res) => {
+  const {categoryName} = req.body;
+  const sql = "INSERT INTO category (categoryName) VALUES (?);";
+  db.query(sql, [categoryName], (err, result) => {
+    if (err) {
+      console.error("Error adding category", err);
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      console.log("Category added successfully");
+      res.status(200).json({ message: "Category added successfully" });
+    }
+  });
+});
+
+app.post("/renameCategory", (req, res) => {
+  const {categoryNewName,categoryID} = req.body;
+  const sql = "UPDATE category SET categoryName = ? WHERE categoryID=?;";
+  const values = [categoryNewName,categoryID];
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error renaming category", err);
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      console.log("Category renamed successfully");
+      res.status(200).json({ message: "Category renamed successfully" });
+    }
+  });
+});
+
+app.post("/renameSubCategory", (req, res) => {
+  const {subCategoryNewName,subCategoryID} = req.body;
+  const sql = "UPDATE sub_category SET subCategoryName = ? WHERE subCategoryID=?;";
+  const values = [subCategoryNewName,subCategoryID];
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error renaming category", err);
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      console.log("Sub-Category renamed successfully");
+      res.status(200).json({ message: "Sub-Category renamed successfully" });
+    }
+  });
+});
+
+app.post("/addNewSubCategory", (req, res) => {
+  const {subCategoryName,categoryID} = req.body;
+  const sql = "INSERT INTO sub_category (subCategoryName,categoryID) VALUES (?,?);";
+  db.query(sql, [subCategoryName,categoryID], (err, result) => {
+    if (err) {
+      console.error("Error adding category", err);
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      console.log("Sub-Category added successfully");
+      res.status(200).json({ message: "Sub-Category added successfully" });
+    }
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });

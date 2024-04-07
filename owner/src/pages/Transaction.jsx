@@ -17,6 +17,8 @@ function Transaction() {
   const [listHeight, setListHeight] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [productData, setProductData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
@@ -25,11 +27,24 @@ function Transaction() {
       .then((res) => {
         const mappedData = mapProductData(res.data);
         setProductData(mappedData);
+        setFilteredData(mappedData);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    const filtered = productData.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredData(filtered);
+
+  }, [searchTerm,productData]);
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   useEffect(() => {
     // Calculate total whenever items change
@@ -171,6 +186,7 @@ function Transaction() {
                   type="text"
                   placeholder="Search"
                   className=" mr-sm-2"
+                  onChange={handleSearch}
                 />
               </Col>
               <Col xs="auto">
@@ -182,7 +198,7 @@ function Transaction() {
       </div>
 
       <div className="container" style={{ width: "60%" }}>
-        {productData.map((product, index) => {
+        {filteredData.map((product, index) => {
           return (
             <div
               className="box"

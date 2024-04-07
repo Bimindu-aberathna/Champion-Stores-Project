@@ -9,18 +9,31 @@ import { Link } from "react-router-dom";
 
 function Inventory() {
   const [items, setItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     axios
       .get("http://localhost:5000/listProducts")
       .then((res) => {
         setItems(res.data);
-        console.log(res.data);
+        setSearchResults(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    const results = items.filter((item) =>
+      item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSearchResults(results);
+  }, [searchTerm, items]);
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   const handleMouseOver = (event) => {
     // Add blur effect to the tile when mouse is over
@@ -65,6 +78,7 @@ function Inventory() {
                   type="text"
                   placeholder="Search"
                   className=" mr-sm-2"
+                  onChange={handleSearch}
                 />
               </Col>
               <Col xs="auto">
@@ -76,7 +90,7 @@ function Inventory() {
       </div>
 
       <div className="container">
-        {items.map((product, index) => {
+        {searchResults.map((product, index) => {
           return (
             //<Link to={`/edit-product/${product.productId}`} key={product.productId}>
             <div

@@ -13,6 +13,7 @@ import EditProduct from './pages/EditProduct';
 import NewInventory from './pages/NewInventory';
 import AddSupplier from './pages/addSupplier';
 import ListSuppliers from './pages/ListSuppliers';
+import PurchaseHistory from './pages/PurchaseHistory';
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         <Route path="/newinventory/:productId" element={<NewInventory/>} />
         <Route path="/addsupplier" element={<AddSupplier/>} />
         <Route path="/listsuppliers" element={<ListSuppliers/>} />
+        <Route path="/purchasehistory" element={<PurchaseHistory/>} />
         
       </Routes>
     </BrowserRouter>

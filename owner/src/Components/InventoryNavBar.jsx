@@ -4,6 +4,7 @@ import { BsFillCaretRightFill } from "react-icons/bs";
 import { BiSolidCategoryAlt } from "react-icons/bi";
 import { IoIosAddCircle } from "react-icons/io";
 import { RiAccountCircleFill } from "react-icons/ri";
+import { GrHistory } from "react-icons/gr";
 import { Link } from "react-router-dom";
 
 function SideNavbar() {
@@ -11,7 +12,7 @@ function SideNavbar() {
   
 
   return (
-    <div className="d-flex" style={{ position: "fixed", top: 0, right: 0, height: '100%' }}>
+    <div className="d-flex" style={{ position: "fixed", top: 0, right: 0, height: '100%',zIndex:open ? '1000':'100' }}>
       <div className={`h-screen bg-black position-relative`} style={{display:'flex',transition: "width 0.5s"}} >
       {/* <div
         className={`h-screen bg-black position-relative`}
@@ -38,12 +39,19 @@ function SideNavbar() {
             {open && <span>New<br />Product</span>}
           </li>
           </Link>
+          <Link to="/purchasehistory" >
+          <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white" style={{ paddingTop: '1rem' ,cursor:'pointer'}}>
+            <GrHistory className="w-12 h-12" style={{fontSize:'36px'}}/>&nbsp;&nbsp;
+            {open && <span>Purchase<br />History</span>}
+          </li>
+          </Link>
           <Link to="/listsuppliers" >
           <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white" style={{ paddingTop: '1rem' ,cursor:'pointer'}}>
             <RiAccountCircleFill className="w-12 h-12" style={{fontSize:'36px'}}/>&nbsp;&nbsp;
             {open && <span>Suppliers</span>}
           </li>
           </Link>
+          
         </ul>
       </div>
       <div className=""></div>

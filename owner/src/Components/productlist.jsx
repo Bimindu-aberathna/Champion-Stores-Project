@@ -1,9 +1,9 @@
 import React from 'react'
-import PurchaseHistory from '../pages/PurchaseHistory'
+import AlterCategories from '../pages/AlterCategories'
 function productlist() {
   return (
     <div>
-      <PurchaseHistory/>
+      <AlterCategories />
     </div>
   )
 }
