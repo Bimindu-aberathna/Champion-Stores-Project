@@ -105,7 +105,7 @@ function Inventory() {
                   <img className="img" src={product.image1} alt="product" />
                 </div>
                 <div className="detail">
-                  <div className="info">
+                  <div className="info" style={{color:"#2b2b2b"}}>
                     <p>
                       <b>{product.productName}</b>
                     </p>

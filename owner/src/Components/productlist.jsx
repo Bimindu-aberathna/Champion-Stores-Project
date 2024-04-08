@@ -1,9 +1,9 @@
 import React from 'react'
-import AlterCategories from '../pages/AlterCategories'
+import HandleExpiredProducts from '../pages/HandleExpiredProducts'
 function productlist() {
   return (
     <div>
-      <AlterCategories />
+      <HandleExpiredProducts/>
     </div>
   )
 }

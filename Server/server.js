@@ -79,6 +79,39 @@ app.get("/getSubCategories/:categoryID", (req, res) => {
   });
 });
 
+app.get("/getProductsBySubCategory/:subCategoryID", (req, res) => {
+  const subCategoryID = req.params.subCategoryID;
+
+  const sql = "SELECT * FROM product WHERE subCategoryID = ?;";
+  db.query(sql, [subCategoryID], (err, result) => {
+    if (err) res.json({ message: "Server error occurred" });
+    res.json(result);
+  });
+});
+
+app.post("/removeExpiredProducts", (req, res) => {
+  const { productID, quantity } = req.body;
+  const sql1 = "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
+  const values = [quantity, productID];
+  
+  db.query(sql1, values, (err, result) => {
+    if (err) {
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      const sql2 = "INSERT INTO expiredproducts (productID, date, quantity) VALUES (?, CURDATE(), ?);"
+      const values2 = [productID, quantity];
+      db.query(sql2, values2, (err2, result2) => {
+        if (err2) {
+          res.status(500).json({ message: "Server error occurred" });
+        } else {
+          res.status(200).json({ message: "Expired products removed successfully" });
+        }
+      });
+    }
+  });
+});
+
+
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const sql = "SELECT * FROM owner WHERE email = ?";
