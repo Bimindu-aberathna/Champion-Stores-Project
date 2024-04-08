@@ -47,6 +47,8 @@ function SideNavbar() {
               fontSize: "2rem",
               border: "1px solid black",
               borderRadius: "25px",
+              zIndex: 1000,
+              backgroundColor: "#474747",
             }}
             onClick={() => setOpen(!open)}
           />

@@ -17,3 +17,11 @@ export function validateIntegers(number) {
         return true;
     }
 }
+
+export function nameValidation(name) {
+    var regex = /^[a-zA-Z0-9\s_-]+$/;
+    if (!regex.test(name)) {
+        return false;
+    }
+    return true;
+}
