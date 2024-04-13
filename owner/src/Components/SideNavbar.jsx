@@ -1,20 +1,26 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowDroprightCircle } from "react-icons/io";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function SideNavbar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate('/', { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (
     <div
       className="d-flex"
-      style={{ position: "fixed", top: 0, left: 0, height: "100%", zIndex: open ? 999 : 1 }}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        height: "100%",
+        zIndex: open ? 999 : 1,
+      }}
     >
       <div
         className={`h-screen bg-black position-relative`}
@@ -49,6 +55,7 @@ function SideNavbar() {
               borderRadius: "25px",
               zIndex: 1000,
               backgroundColor: "#474747",
+              transform: open ? "rotate(180deg)" : "none",
             }}
             onClick={() => setOpen(!open)}
           />
@@ -115,17 +122,22 @@ function SideNavbar() {
             />
             {open && <span>Reports</span>}
           </li>
-          <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
-            <img
-              src={require("../assets/return.png")}
-              alt="profile"
-              className="w-10 h-10"
-              style={{ width: open ? "25%" : "100%" }}
-            />
-            {open && <span>Product Returns</span>}
-          </li>
-          
-          <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-5" onClick={handleLogout}>
+          <Link to="/productreturn" className="text-decoration-none text-white">
+            <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
+              <img
+                src={require("../assets/return.png")}
+                alt="profile"
+                className="w-10 h-10"
+                style={{ width: open ? "25%" : "100%" }}
+              />
+              {open && <span>Product Returns</span>}
+            </li>
+          </Link>
+
+          <li
+            className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-5"
+            onClick={handleLogout}
+          >
             <img
               src={require("../assets/logout.png")}
               alt="profile"

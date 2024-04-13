@@ -81,7 +81,7 @@ function AddProduct() {
     console.log(selectedSupplierID);
   }; 
 
-  useEffect(() => {
+  useEffect(() => { 
     axios
       .get(`http://localhost:5000/getSubCategories/${selectedCategoryID}`)
       .then((res) => {
