@@ -10,6 +10,8 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from 'react-router-dom';
 import { imgStorage } from "../config";
+import InventoryNavBar from "../Components/InventoryNavBar";
+import SideNavbar from "../Components/SideNavbar";
 
 import {
   MDBBtn,
@@ -315,12 +317,14 @@ handleCloseDeleteModal();
 
   return (
     <>
+    <SideNavbar/>
+    <InventoryNavBar/>
       <Form onSubmit={validateForm}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol>
               <MDBCard className="my-4">
-                <MDBRow className="g-0">
+                <MDBRow className="g-0" style={{width:"90%",display:"flex",alignSelf:"center",zIndex:"800"}}>
                   <MDBCol
                     md="6"
                     className="d-none d-md-block "

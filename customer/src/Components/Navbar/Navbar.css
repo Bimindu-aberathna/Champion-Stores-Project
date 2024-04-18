@@ -75,3 +75,58 @@
     background-color: #ff0000;
     color: white;
 }
+.searchInput {
+    padding: 5px; /* Adjust padding to match the button */
+    border-radius: 32px !important;
+    border: 1px solid #363535;
+    background: white;
+    cursor: pointer;
+    height: auto; /* Allow height to adjust based on content */
+    font-size: 16px; /* Match font size with the button */
+}
+.searchForm{
+    display: flex;
+    flex-direction: row!important;
+    gap: 10px;
+    padding: 20px;
+    height: 3rem;
+}
+.searchButton{
+    border: none;
+    border-radius: 25px;
+    background: white;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Add a class for the mobile menu */
+.mobile-menu {
+    display: none; /* Hide the mobile menu by default */
+}
+
+
+@media only screen and (max-width: 600px) {
+    /* Adjustments for mobile */
+    .navbar_menu {
+        display: none; /* Hide menu on mobile */
+    }
+
+    .navbar_login_cart {
+        display: none; /* Hide login and cart on mobile */
+    }
+
+    .mobile-menu {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .navbar_logo p {
+        margin-right: auto; /* Push the welcome text to the left */
+    }
+
+    .navbar_search {
+        margin-left: auto; /* Push the search bar to the right */
+    }
+}
