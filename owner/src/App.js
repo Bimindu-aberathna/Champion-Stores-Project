@@ -16,6 +16,7 @@ import ListSuppliers from './pages/ListSuppliers';
 import PurchaseHistory from './pages/PurchaseHistory';
 import AlterCategories from './pages/AlterCategories';
 import HandleExpiredProducts from './pages/HandleExpiredProducts'
+import ProductReturn from './pages/ProductReturn';
 
 
 function App() {
@@ -38,6 +39,8 @@ function App() {
         <Route path="/purchasehistory" element={<PurchaseHistory/>} />
         <Route path="/altercategories" element={<AlterCategories/>} />
         <Route path="/handleexpiredproducts" element={<HandleExpiredProducts/>} />
+        <Route path="/productreturn" element={<ProductReturn/>} />
+
       </Routes>
     </BrowserRouter>
   );

@@ -10,6 +10,8 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from 'react-router-dom';
 import { imgStorage } from "../config";
+import InventoryNavBar from "../Components/InventoryNavBar";
+import SideNavbar from "../Components/SideNavbar";
 
 import {
   MDBBtn,
@@ -33,8 +35,10 @@ function EditProduct() {
   const [brand, setBrand] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategoryID, setSelectedCategoryID] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [subCategories, setSubCategories] = useState([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
+  const [selectedSubcategoryID, setSelectedSubcategoryID] = useState("");
   const [index, setIndex] = useState(0);
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplierID, setSelectedSupplierID] = useState("");
@@ -54,12 +58,14 @@ function EditProduct() {
   const [image3, setImage3] = useState("");
   const [dataSending, setDataSending] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [item, setItem] = useState([]);
 
   useEffect(() => {
     // Fetch product data from backend using product ID
     axios
       .get(`http://localhost:5000/getProductData/${productId}`)
       .then((res) => {
+        setItem(res.data[0]);
         setProductName(res.data[0].productName);
         setBrand(res.data[0].brandName);
 
@@ -69,6 +75,10 @@ function EditProduct() {
         setUnitPrice(res.data[0].unitPrice);
         setProductDescription(res.data[0].details);
         setSelectedSupplierID(res.data[0].supplierID);
+        setSelectedCategoryID(res.data[0].categoryID);
+        setSelectedCategory(res.data[0].categoryName);
+        setSelectedSubcategoryID(res.data[0].subCategoryID);
+        setSelectedSubcategory(res.data[0].subCategoryName);
         setImg1(res.data[0].image1);
         setImg2(res.data[0].image2);
         setImg3(res.data[0].image3);
@@ -82,7 +92,7 @@ function EditProduct() {
     axios
       .get("http://localhost:5000/getSuppliers")
       .then((res) => {
-        setSelectedSupplierID(res.data[0].supplierID);
+        
         setSuppliers(res.data);
       })
       .catch((err) => {
@@ -105,7 +115,6 @@ function EditProduct() {
       .get("http://localhost:5000/getCategories")
       .then((res) => {
         setCategories(res.data);
-        setSelectedCategoryID(res.data[0].categoryID);
         console.log(selectedCategoryID);
       })
       .catch((err) => {
@@ -128,7 +137,8 @@ function EditProduct() {
   // Handle subcategory change
   const handleSubcategoryChange = (e) => {
     const selectedSubcategoryId = e.target.value;
-    setSelectedSubcategory(selectedSubcategoryId);
+    setSelectedSubcategoryID(selectedSubcategoryId);
+    console.log(selectedSubcategoryId);
   };
 
   const handleSelect = (selectedIndex) => {
@@ -248,22 +258,20 @@ function EditProduct() {
     const productName = document.getElementById("inputProductName").value;
     const brandName = document.getElementById("inputBrandName").value;
     const category = document.getElementById("categorySelect").value;
-    const subCategory = selectedCategoryID;
+    const subCategory = selectedSubcategoryID;
     const unitPrice = document.getElementById("inputUnitPrice").value;
     const openingStock = document.getElementById("inputOpeningStock").value;
     const reorderLevel = document.getElementById("inputReorderLevel").value;
     const productDetails = document.getElementById("inputProductDetails").value;
-    const supplier = document.getElementById("inputSupplier").value;
     formData.append("productId", productId);
     formData.append("productName", productName);
     formData.append("brandName", brandName);
-    formData.append("category", category);
     formData.append("subCategory", subCategory);
     formData.append("openingStock", openingStock);
     formData.append("reorderLevel", reorderLevel);
     formData.append("unitPrice", unitPrice);
     formData.append("productDetails", productDetails);
-    formData.append("supplierID", selectedCategoryID);
+    formData.append("supplierID", selectedSupplierID);
     console.log("Calling database");
     axios
       .post("http://localhost:5000/updaeteProductInfo", formData)
@@ -309,12 +317,14 @@ handleCloseDeleteModal();
 
   return (
     <>
+    <SideNavbar/>
+    <InventoryNavBar/>
       <Form onSubmit={validateForm}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol>
               <MDBCard className="my-4">
-                <MDBRow className="g-0">
+                <MDBRow className="g-0" style={{width:"90%",display:"flex",alignSelf:"center",zIndex:"800"}}>
                   <MDBCol
                     md="6"
                     className="d-none d-md-block "
@@ -461,6 +471,8 @@ handleCloseDeleteModal();
                             onChange={handleCategoryChange}
                             value={selectedCategoryID}
                           >
+
+                            <option disabled value={item.categoryID}>{item.categoryName}</option>
                             {categories.map((category) => (
                               <option
                                 key={category.categoryID}
@@ -479,12 +491,13 @@ handleCloseDeleteModal();
                           <Form.Select
                             id="subCategorySelect"
                             onChange={handleSubcategoryChange}
-                            value={selectedSubcategory}
+                            value={selectedSubcategoryID}
                           >
+                            <option disabled value={item.subCategoryID}>{item.subCategoryName}</option>
                             {subCategories.map((item) => (
                               <option
-                                key={item.subcategoryID}
-                                value={item.subcategoryID} // Set the value to the subcategoryID
+                                key={item.subCategoryID}
+                                value={item.subCategoryID} // Set the value to the subcategoryID
                               >
                                 {item.subCategoryName}
                               </option>
@@ -557,7 +570,7 @@ handleCloseDeleteModal();
                             value={selectedSupplierID}
                           >
                             {/* Default option with the selected supplier */}
-                            <option value={selectedSupplierID}>
+                            <option disabled >
                               {supplier}
                               {console.log(
                                 "Supplier data",

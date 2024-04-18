@@ -30,10 +30,7 @@ app.get("/listProducts", getItemList);
 app.get("/getProductData/:productId", (req, res) => {
   const productId = req.params.productId;
   const sql = `
-        SELECT p.*, s.name AS supplierName
-        FROM product p
-        LEFT JOIN supplier s ON p.supplierID = s.supplierID
-        WHERE p.productID = ?;
+  SELECT p.*, s.name AS supplierName,sub_category.subCategoryName AS subCategoryName,cat.* FROM product p LEFT JOIN supplier s ON p.supplierID = s.supplierID LEFT JOIN sub_category ON sub_category.subCategoryID = p.subCategoryID LEFT JOIN category cat ON cat.categoryID = sub_category.categoryID WHERE p.productID = ?;
     `;
 
   db.query(sql, [productId], (err, result) => {
@@ -91,26 +88,29 @@ app.get("/getProductsBySubCategory/:subCategoryID", (req, res) => {
 
 app.post("/removeExpiredProducts", (req, res) => {
   const { productID, quantity } = req.body;
-  const sql1 = "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
+  const sql1 =
+    "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
   const values = [quantity, productID];
-  
+
   db.query(sql1, values, (err, result) => {
     if (err) {
       res.status(500).json({ message: "Server error occurred" });
     } else {
-      const sql2 = "INSERT INTO expiredproducts (productID, date, quantity) VALUES (?, CURDATE(), ?);"
+      const sql2 =
+        "INSERT INTO expiredproducts (productID, date, quantity) VALUES (?, CURDATE(), ?);";
       const values2 = [productID, quantity];
       db.query(sql2, values2, (err2, result2) => {
         if (err2) {
           res.status(500).json({ message: "Server error occurred" });
         } else {
-          res.status(200).json({ message: "Expired products removed successfully" });
+          res
+            .status(200)
+            .json({ message: "Expired products removed successfully" });
         }
       });
     }
   });
 });
-
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -201,7 +201,8 @@ app.post("/addProduct", upload.none(), (req, res) => {
       // Concatenate the year, month, and day with hyphens to form the desired format
       const formattedDate = `${year}-${month}-${day}`;
 
-      const sql2 ="INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`) VALUES (?, ?, ?);";
+      const sql2 =
+        "INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`) VALUES (?, ?, ?);";
       const values2 = [result.insertId, formattedDate, unitPrice];
       db.query(sql2, values2, (err, result) => {
         if (err) {
@@ -379,25 +380,33 @@ app.post("/addSupplier", (req, res) => {
 
 app.post("/newInventory", (req, res) => {
   const { productId, stock, buyingPrice, supplierId } = req.body;
-   // Get the current date
-   const currentDate = new Date();
-   const year = currentDate.getFullYear();
-   const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-   const day = String(currentDate.getDate()).padStart(2, "0");
+  // Get the current date
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
 
-   // Concatenate the year, month, and day with hyphens to form the desired format
-   const formattedDate = `${year}-${month}-${day}`;
-  
-  const sql1 = "UPDATE product SET currentStock = currentStock + ? WHERE productID = ?";
+  // Concatenate the year, month, and day with hyphens to form the desired format
+  const formattedDate = `${year}-${month}-${day}`;
+
+  const sql1 =
+    "UPDATE product SET currentStock = currentStock + ? WHERE productID = ?";
   const values1 = [stock, productId];
-  
+
   db.query(sql1, values1, (err1, res) => {
     if (err1) {
       console.error("Error updating product", err1);
       res.status(500).json({ message: "Server error occurred" });
     } else {
-      const sql2 = "INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`, `itemCount`, `supplierID`) VALUES (?, ?, ?, ?, ?)";
-      const values2 = [productId, formattedDate, buyingPrice, stock, supplierId];
+      const sql2 =
+        "INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`, `itemCount`, `supplierID`) VALUES (?, ?, ?, ?, ?)";
+      const values2 = [
+        productId,
+        formattedDate,
+        buyingPrice,
+        stock,
+        supplierId,
+      ];
       db.query(sql2, values2, (err2, result2) => {
         if (err2) {
           console.error("Error inserting into inventory_purchase", err2);
@@ -412,7 +421,8 @@ app.post("/newInventory", (req, res) => {
 });
 
 app.get("/purchaseHistory", (req, res) => {
-  const sql = "SELECT i.*,p.productName,p.brandName,CASE WHEN DATEDIFF(CURRENT_DATE(), i.date) <= 5 THEN true ELSE false END AS ableToCancel,s.name FROM inventory_purchase i INNER JOIN product p ON i.productID = p.productID INNER JOIN supplier s on p.supplierID = s.supplierID;";
+  const sql =
+    "SELECT i.*,p.productName,p.brandName,CASE WHEN DATEDIFF(CURRENT_DATE(), i.date) <= 5 THEN true ELSE false END AS ableToCancel,s.name FROM inventory_purchase i INNER JOIN product p ON i.productID = p.productID INNER JOIN supplier s on p.supplierID = s.supplierID;";
   db.query(sql, (err, result) => {
     if (err) res.json({ message: "Server error occurred" });
     res.json(result);
@@ -423,7 +433,8 @@ app.post("/cancelPurchase", (req, res) => {
   const purchaseID = req.body.purchaseID;
 
   // Query to select productID from inventory_purchase table
-  const sql = "SELECT productID,itemCount FROM inventory_purchase WHERE purchaseID = ?;";
+  const sql =
+    "SELECT productID,itemCount FROM inventory_purchase WHERE purchaseID = ?;";
   db.query(sql, [purchaseID], (err, result) => {
     if (err) {
       res.status(500).json({ message: "Server error occurred" });
@@ -433,7 +444,8 @@ app.post("/cancelPurchase", (req, res) => {
       } else {
         const productID = result[0].productID;
         const itemCount = result[0].itemCount;
-        const sql2 = "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?";
+        const sql2 =
+          "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?";
         const values = [itemCount, productID];
         db.query(sql2, values, (err2, result2) => {
           if (err2) {
@@ -444,7 +456,9 @@ app.post("/cancelPurchase", (req, res) => {
               if (err3) {
                 res.status(500).json({ message: "Server error occurred" });
               } else {
-                res.status(200).json({ message: "Purchase cancelled successfully" });
+                res
+                  .status(200)
+                  .json({ message: "Purchase cancelled successfully" });
               }
             });
           }
@@ -455,7 +469,7 @@ app.post("/cancelPurchase", (req, res) => {
 });
 
 app.post("/addNewCategory", (req, res) => {
-  const {categoryName} = req.body;
+  const { categoryName } = req.body;
   const sql = "INSERT INTO category (categoryName) VALUES (?);";
   db.query(sql, [categoryName], (err, result) => {
     if (err) {
@@ -469,9 +483,9 @@ app.post("/addNewCategory", (req, res) => {
 });
 
 app.post("/renameCategory", (req, res) => {
-  const {categoryNewName,categoryID} = req.body;
+  const { categoryNewName, categoryID } = req.body;
   const sql = "UPDATE category SET categoryName = ? WHERE categoryID=?;";
-  const values = [categoryNewName,categoryID];
+  const values = [categoryNewName, categoryID];
   db.query(sql, values, (err, result) => {
     if (err) {
       console.error("Error renaming category", err);
@@ -484,9 +498,10 @@ app.post("/renameCategory", (req, res) => {
 });
 
 app.post("/renameSubCategory", (req, res) => {
-  const {subCategoryNewName,subCategoryID} = req.body;
-  const sql = "UPDATE sub_category SET subCategoryName = ? WHERE subCategoryID=?;";
-  const values = [subCategoryNewName,subCategoryID];
+  const { subCategoryNewName, subCategoryID } = req.body;
+  const sql =
+    "UPDATE sub_category SET subCategoryName = ? WHERE subCategoryID=?;";
+  const values = [subCategoryNewName, subCategoryID];
   db.query(sql, values, (err, result) => {
     if (err) {
       console.error("Error renaming category", err);
@@ -499,15 +514,42 @@ app.post("/renameSubCategory", (req, res) => {
 });
 
 app.post("/addNewSubCategory", (req, res) => {
-  const {subCategoryName,categoryID} = req.body;
-  const sql = "INSERT INTO sub_category (subCategoryName,categoryID) VALUES (?,?);";
-  db.query(sql, [subCategoryName,categoryID], (err, result) => {
+  const { subCategoryName, categoryID } = req.body;
+  const sql =
+    "INSERT INTO sub_category (subCategoryName,categoryID) VALUES (?,?);";
+  db.query(sql, [subCategoryName, categoryID], (err, result) => {
     if (err) {
       console.error("Error adding category", err);
       res.status(500).json({ message: "Server error occurred" });
     } else {
       console.log("Sub-Category added successfully");
       res.status(200).json({ message: "Sub-Category added successfully" });
+    }
+  });
+});
+
+app.post("/returnProduct", (req, res) => {
+  const { productID, quantity, supplierID, notExchanging } = req.body;
+  const sql1 =
+    "INSERT INTO product_return (productID, quantity,date, supplierID, notExchanging) VALUES (?,?, CURDATE(), ?, ?);";
+    const values1 = [productID, quantity, supplierID, notExchanging];
+    db.query(sql1, values1, (err, result) => {
+      if (err) {
+        res.status(500).json({ message: "Server error occurred" });
+      } else {
+        if(!notExchanging){
+          const sql2 = "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
+          const values2 = [quantity, productID];
+          db.query(sql2, values2, (err2, result2) => {
+            if (err2) {
+              res.status(500).json({ message: "Server error occurred" });
+            } else {
+              res.status(200).json({ message: "success" });
+            }
+          });	
+      }else{
+        res.status(200).json({ message: "success" });
+      }
     }
   });
 });

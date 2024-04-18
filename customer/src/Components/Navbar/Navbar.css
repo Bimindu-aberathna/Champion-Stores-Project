@@ -1,0 +1,132 @@
+.navbar{
+    display: flex;
+    justify-content: space-around;
+    padding: 16px;
+    box-shadow: 0 1px 3px -2px black;
+}
+
+.navbar_logo{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar_logo p{
+    color: #171717;
+    font-size: 18px;
+    font-weight: 600;
+}
+.navbar_menu{
+    display: flex;
+    gap: 50px;
+    list-style-type: none;
+    align-items: center;
+
+}
+.navbar_menu li{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+}
+
+.navbar_menu hr{
+
+    border: none;
+    width: 80%;
+    background: #ff0000	;
+    height: 3px;
+    border-radius: 10px;
+
+}
+.navbar_login_cart{
+    display: flex;
+    gap: 45px;
+    align-items: center;
+}
+.navbar_login_cart button{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    color: #ff0000;
+    border: 1px solid #ff0000;
+    background: white;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.navbar_login_cart button:active{
+    background: #ff0000;
+    color: white;
+}
+.navbar_cart_count{
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -36px;
+    margin-left: -55px;
+    border-radius: 11px;
+    font-size: 14px;
+    background-color: #ff0000;
+    color: white;
+}
+.searchInput {
+    padding: 5px; /* Adjust padding to match the button */
+    border-radius: 32px !important;
+    border: 1px solid #363535;
+    background: white;
+    cursor: pointer;
+    height: auto; /* Allow height to adjust based on content */
+    font-size: 16px; /* Match font size with the button */
+}
+.searchForm{
+    display: flex;
+    flex-direction: row!important;
+    gap: 10px;
+    padding: 20px;
+    height: 3rem;
+}
+.searchButton{
+    border: none;
+    border-radius: 25px;
+    background: white;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Add a class for the mobile menu */
+.mobile-menu {
+    display: none; /* Hide the mobile menu by default */
+}
+
+
+@media only screen and (max-width: 600px) {
+    /* Adjustments for mobile */
+    .navbar_menu {
+        display: none; /* Hide menu on mobile */
+    }
+
+    .navbar_login_cart {
+        display: none; /* Hide login and cart on mobile */
+    }
+
+    .mobile-menu {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .navbar_logo p {
+        margin-right: auto; /* Push the welcome text to the left */
+    }
+
+    .navbar_search {
+        margin-left: auto; /* Push the search bar to the right */
+    }
+}

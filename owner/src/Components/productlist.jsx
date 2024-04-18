@@ -1,9 +1,9 @@
 import React from 'react'
-import HandleExpiredProducts from '../pages/HandleExpiredProducts'
+import InventoryNavBar from "../Components/InventoryNavBar";
+
 function productlist() {
   return (
     <div>
-      <HandleExpiredProducts/>
     </div>
   )
 }
