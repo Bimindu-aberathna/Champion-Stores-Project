@@ -3,6 +3,7 @@
     justify-content: space-around;
     padding: 16px;
     box-shadow: 0 1px 3px -2px black;
+    padding: 0 2rem 0 2rem !important;
 }
 
 .navbar_logo{
@@ -36,10 +37,10 @@
 
     border: none;
     width: 80%;
-    background: #ff0000	;
+    background:#ff0000	;
     height: 3px;
     border-radius: 10px;
-
+    opacity: 1;
 }
 .navbar_login_cart{
     display: flex;
@@ -98,35 +99,4 @@
     font-size: 18px;
     font-weight: 500;
     cursor: pointer;
-}
-
-/* Add a class for the mobile menu */
-.mobile-menu {
-    display: none; /* Hide the mobile menu by default */
-}
-
-
-@media only screen and (max-width: 600px) {
-    /* Adjustments for mobile */
-    .navbar_menu {
-        display: none; /* Hide menu on mobile */
-    }
-
-    .navbar_login_cart {
-        display: none; /* Hide login and cart on mobile */
-    }
-
-    .mobile-menu {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-    }
-
-    .navbar_logo p {
-        margin-right: auto; /* Push the welcome text to the left */
-    }
-
-    .navbar_search {
-        margin-left: auto; /* Push the search bar to the right */
-    }
 }
