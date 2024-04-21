@@ -1,7 +1,9 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
-import './productGrid.css';
+import Button from "@mui/material/Button";
+import FilterOptions from "../FilterOptions/FilterOptions";
+import "./productGrid.css";
 
 const Products = [
   {
@@ -84,49 +86,56 @@ const noImage =
 
 export default function ProductGrid() {
   return (
-    <Box sx={{ flexGrow: 1, p: 2 }}>
+    <div >
+      <FilterOptions/>
+    <Box sx={{ flexGrow: 1, p: 2 }} className="productBox">
+      
       <Grid
+      className="productGrid"
         container
         spacing={2}
         sx={{
           "--Grid-borderWidth": "1px",
-          borderTop: "var(--Grid-borderWidth) solid",
-          borderLeft: "var(--Grid-borderWidth) solid",
+          borderTop: "var(--Grid-borderWidth) ",
+          borderLeft: "var(--Grid-borderWidth) ",
           borderColor: "divider",
           "& > div": {
-            borderRight: "var(--Grid-borderWidth) solid",
-            borderBottom: "var(--Grid-borderWidth) solid",
+            borderRight: "var(--Grid-borderWidth) ",
+            borderBottom: "var(--Grid-borderWidth) ",
             borderColor: "divider",
           },
         }}
       >
-        {/* <div class="card">
-  <img src="https://mdbcdn.b-cdn.net/img/new/standard/nature/184.webp" class="card-img-top" alt="Fissure in Sandstone"/>
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#!" class="btn btn-primary" data-mdb-ripple-init>Button</a>
-  </div>
-</div> */}
         {Products.map((product) => (
           <Grid key={product.id} item xs={12} sm={6} md={4} lg={2}>
-          <div class="card">
-            <img src={product.image} className="card-img-top" alt="Product" />
-            <div class="card-body">
-              <h6 class="card-productName">{product.name}</h6>
-              <p class="card-productPrice">Rs. {product.price}.00</p>
-              <a href="#!" class="btn btn-primary" data-mdb-ripple-init>
-                Button
-              </a>
+            <div class="card">
+              <img src={product.image} className="card-img-top" alt="Product" />
+              <div class="card-body">
+                <h6 class="card-productName">{product.name}</h6>
+                <p class="card-productPrice"><b>Rs. {product.price}.00</b></p>
+                <div className="card-button-status">
+                  <Button variant="contained" >
+                    View
+                  </Button>
+                  {product.status ? (
+                    <p style={{ color: "green" }}>Available</p>
+                  ) : (
+                    <p style={{ color: "red" }}>
+                      Not
+                      <br />
+                      Available
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </Grid>
-        
+          </Grid>
         ))}
         {/* {[...Array(6)].map((_, index) => (
           <Grid key={index} {...{ xs: 12, sm: 6, md: 4, lg: 2 }} minHeight={160} />
         ))} */}
       </Grid>
     </Box>
+    </div>
   );
 }

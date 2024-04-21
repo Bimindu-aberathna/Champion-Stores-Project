@@ -1,0 +1,33 @@
+.loginInput{
+    width: 100px!important;
+
+}
+#loginPage{
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#formControlLg{
+    width: 100%!important;
+}
+.loginFormDiv{
+    width: 80%;
+}
+.loginColumn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#signInBtn{
+    background-color: black;
+    color: snow;
+}
+#loginHeader h1{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem!important;
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
