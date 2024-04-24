@@ -5,15 +5,17 @@ import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import ProductGrid from './Components/productGrid/productGrid';
 import Login from './Components/Login & SignUp/Login';
+import SignUp from './Components/Login & SignUp/Sign-Up';
 
 function MainContent() {
   const location = useLocation();
   return (
     <>
-      {location.pathname !== '/login' && <Navbar />}
+      {(location.pathname !== '/login') && (location.pathname !== '/signup') && <Navbar />}
       <Routes>
         <Route path="/" element={<ProductGrid />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
       </Routes>
     </>
   );

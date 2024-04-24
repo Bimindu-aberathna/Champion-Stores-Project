@@ -247,7 +247,7 @@ function AddProduct() {
     formData.append("category", category);
     formData.append("subCategory", subCategory);
     formData.append("openingStock", openingStock);
-    formData.append("reorderLevel", reorderLevel);
+    formData.append("reorderLevel", reorderLevel); 
     //formData.append("buyingPrice", buyingPrice);
     formData.append("unitPrice", unitPrice);
     formData.append("productDetails", productDetails);

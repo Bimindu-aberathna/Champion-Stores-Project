@@ -6,9 +6,11 @@ const bcrypt = require("bcryptjs");
 const e = require("express");
 const bodyParser = require("body-parser");
 const { getItemList } = require("./controllers/productController");
+const customerServicesRouter = require("./routes/customerServices");
 const { pseudoRandomBytes } = require("crypto");
 const multer = require("multer");
 const upload = multer();
+
 
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
@@ -18,14 +20,12 @@ const port = 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "champions_stores",
-});
+const db = require("./Server_Configuration");
 
 app.get("/listProducts", getItemList);
+
+// Use the customer services route handler for the /api/customerServices route
+app.use("/api/customerServices", customerServicesRouter);
 
 app.get("/getProductData/:productId", (req, res) => {
   const productId = req.params.productId;
