@@ -80,6 +80,7 @@ function addSupplier() {
         .post("http://localhost:5000/addSupplier", data)
         .then((res) => {
           // Handle success response
+          console.log("Supplier added", res);
         })
         .catch((err) => {
           // Handle error response
