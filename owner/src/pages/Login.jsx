@@ -25,7 +25,7 @@ function Login() {
     const email = emailInputRef.current.value;
     const password = passwordInputRef.current.value;
 
-    axios.post('http://localhost:5000/login', { email, password })
+    axios.post('http://localhost:5000/api/owner/accountServices/login', { email, password })
       .then((res) => {
         console.log(res.data);
         console.log("Login Successful!");

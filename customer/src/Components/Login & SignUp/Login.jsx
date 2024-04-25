@@ -26,9 +26,6 @@ function Login() {
         "\nRedirecting to Home Page..."
     );
   };
-  const notify = () => {
-    toast.error("Success Notification !", {});
-  };
 
   return (
     <MDBContainer fluid className="p-3 my-5" id="loginPage">
@@ -46,7 +43,8 @@ function Login() {
             <div id="loginHeader">
               <h1>Log in</h1>
             </div>
-            <form className="loginForm" action="handleLogin">
+            <form className="loginForm" onSubmit={handleLogin}>
+
               <MDBInput
                 wrapperClass="mb-4"
                 label="Email address"
@@ -69,8 +67,7 @@ function Login() {
               </div>
 
               <MDBBtn
-                type="button"
-                onClick={notify}
+                type="submit"
                 rounded
                 className="mb-4 w-100"
                 size="lg"

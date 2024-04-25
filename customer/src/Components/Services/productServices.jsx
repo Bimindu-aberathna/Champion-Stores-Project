@@ -1,3 +1,7 @@
+import { getProductsEndpoint } from "../apiCalls";
+import { React, useState } from "react";
+import axios from "axios";
+
 const categories = [
   {
     id: 1,
@@ -44,6 +48,11 @@ const categories = [
     ],
   },
 ];
+
+export const getProducts = async () => {
+  const response = await axios.get(getProductsEndpoint);
+  return response.data;
+};
 
 function getCategories() {
   const returnItems = categories.map((category) => {

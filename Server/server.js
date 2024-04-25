@@ -7,6 +7,10 @@ const e = require("express");
 const bodyParser = require("body-parser");
 const { getItemList } = require("./controllers/productController");
 const customerServicesRouter = require("./routes/customerServices");
+const productServicesRouter = require("./routes/productServices");
+const ownerProductServicesRouter = require("./routes/ownerProductServices");
+const ownerSupplierServicesRouter = require("./routes/ownerSupplierServices");
+const ownerAccountServicesRouter = require("./routes/ownerAccountServices");
 const { pseudoRandomBytes } = require("crypto");
 const multer = require("multer");
 const upload = multer();
@@ -26,115 +30,13 @@ app.get("/listProducts", getItemList);
 
 // Use the customer services route handler for the /api/customerServices route
 app.use("/api/customerServices", customerServicesRouter);
+app.use("/api/ProductServices", productServicesRouter);
+app.use("/api/owner/productServices", ownerProductServicesRouter);
+app.use("/api/owner/supplierServices", ownerSupplierServicesRouter);
+app.use("/api/owner/accountServices", ownerAccountServicesRouter);
 
-app.get("/getProductData/:productId", (req, res) => {
-  const productId = req.params.productId;
-  const sql = `
-  SELECT p.*, s.name AS supplierName,sub_category.subCategoryName AS subCategoryName,cat.* FROM product p LEFT JOIN supplier s ON p.supplierID = s.supplierID LEFT JOIN sub_category ON sub_category.subCategoryID = p.subCategoryID LEFT JOIN category cat ON cat.categoryID = sub_category.categoryID WHERE p.productID = ?;
-    `;
 
-  db.query(sql, [productId], (err, result) => {
-    if (err) {
-      res.status(500).json({ message: "Server error occurred" });
-    } else {
-      res.json(result);
-    }
-  });
-});
 
-app.get("/listLowStockProducts", (req, res) => {
-  const sql = "SELECT * from product WHERE preorderLevel>=currentStock;";
-  db.query(sql, (err, result) => {
-    if (err) res.json({ message: "Server error occurred" });
-    res.json(result);
-  });
-});
-
-app.get("/getCategories", (req, res) => {
-  const sql = "SELECT * FROM category;";
-  db.query(sql, (err, result) => {
-    if (err) res.json({ message: "Server error occurred" });
-    res.json(result);
-  });
-});
-
-app.get("/getSuppliers", (req, res) => {
-  const sql = "SELECT * FROM supplier;";
-  db.query(sql, (err, result) => {
-    if (err) res.json({ message: "Server error occurred" });
-    res.json(result);
-  });
-});
-
-app.get("/getSubCategories/:categoryID", (req, res) => {
-  const categoryID = req.params.categoryID;
-
-  const sql = "SELECT * FROM sub_category WHERE categoryID = ?;";
-  db.query(sql, [categoryID], (err, result) => {
-    if (err) res.json({ message: "Server error occurred" });
-    res.json(result);
-  });
-});
-
-app.get("/getProductsBySubCategory/:subCategoryID", (req, res) => {
-  const subCategoryID = req.params.subCategoryID;
-
-  const sql = "SELECT * FROM product WHERE subCategoryID = ?;";
-  db.query(sql, [subCategoryID], (err, result) => {
-    if (err) res.json({ message: "Server error occurred" });
-    res.json(result);
-  });
-});
-
-app.post("/removeExpiredProducts", (req, res) => {
-  const { productID, quantity } = req.body;
-  const sql1 =
-    "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
-  const values = [quantity, productID];
-
-  db.query(sql1, values, (err, result) => {
-    if (err) {
-      res.status(500).json({ message: "Server error occurred" });
-    } else {
-      const sql2 =
-        "INSERT INTO expiredproducts (productID, date, quantity) VALUES (?, CURDATE(), ?);";
-      const values2 = [productID, quantity];
-      db.query(sql2, values2, (err2, result2) => {
-        if (err2) {
-          res.status(500).json({ message: "Server error occurred" });
-        } else {
-          res
-            .status(200)
-            .json({ message: "Expired products removed successfully" });
-        }
-      });
-    }
-  });
-});
-
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  const sql = "SELECT * FROM owner WHERE email = ?";
-
-  db.query(sql, [email], (err, result) => {
-    if (err) {
-      res.status(500).json({ message: "Server error occurred" });
-    } else {
-      if (result.length > 0) {
-        const user = result[0];
-        console.log(user);
-        console.log(password);
-        if (user.password === password) {
-          res.json({ success: true });
-        } else {
-          res.json({ success: false, message: "Incorrect password" });
-        }
-      } else {
-        res.json({ success: false, message: "User not found" });
-      }
-    }
-  });
-});
 
 app.post("/addProduct", upload.none(), (req, res) => {
   const {
@@ -367,7 +269,7 @@ app.post("/addSupplier", (req, res) => {
     "INSERT INTO supplier (name, email, phone1, phone2, details) VALUES (?, ?, ?, ?, ?)";
   const values = [supplierName, supplierEmail, phone1, phone2, supplierDetails];
 
-  db.query(sql, values, (err, res) => {
+  db.query(sql, values, (err, result) => {
     if (err) {
       console.error("Error adding supplier", err);
       return res.status(500).json({ message: "Server error occurred" });
@@ -393,7 +295,7 @@ app.post("/newInventory", (req, res) => {
     "UPDATE product SET currentStock = currentStock + ? WHERE productID = ?";
   const values1 = [stock, productId];
 
-  db.query(sql1, values1, (err1, res) => {
+  db.query(sql1, values1, (err1, result) => {
     if (err1) {
       console.error("Error updating product", err1);
       res.status(500).json({ message: "Server error occurred" });

@@ -63,7 +63,7 @@ function EditProduct() {
   useEffect(() => {
     // Fetch product data from backend using product ID
     axios
-      .get(`http://localhost:5000/getProductData/${productId}`)
+      .get(`http://localhost:5000/api/owner/productServices/getProductData/${productId}`)
       .then((res) => {
         setItem(res.data[0]);
         setProductName(res.data[0].productName);
@@ -90,7 +90,7 @@ function EditProduct() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getSuppliers")
+      .get("http://localhost:5000/api/owner/supplierServices/getSuppliers")
       .then((res) => {
         
         setSuppliers(res.data);
@@ -112,7 +112,7 @@ function EditProduct() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getCategories")
+      .get("http://localhost:5000/api/owner/productServices/getCategories")
       .then((res) => {
         setCategories(res.data);
         console.log(selectedCategoryID);
@@ -124,7 +124,7 @@ function EditProduct() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/getSubCategories/${selectedCategoryID}`)
+      .get(`http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategoryID}`)
       .then((res) => {
         setSubCategories(res.data);
       })

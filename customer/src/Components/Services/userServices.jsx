@@ -1,4 +1,4 @@
-import { signUpEndpoint } from "../apiCalls"
+import { signUpEndpoint,loginEndpoint } from "../apiCalls"
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
@@ -10,3 +10,8 @@ export const signUpUser = async (userData) => {
     return response.status;
  
 };
+
+export const loginUser = async(loginData) => {
+    const response = await axios.post(loginEndpoint, loginData);
+    return response.status;
+}

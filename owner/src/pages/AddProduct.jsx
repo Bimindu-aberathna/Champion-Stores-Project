@@ -45,9 +45,18 @@ function AddProduct() {
   const [imgUploadError, setImgUploadError] = useState(false);
   const [dataSending, setDataSending] = useState(false);
 
+  //Variables to store form data
+    const [productName, setProductName] = useState("");
+    const [brandName, setBrandName] = useState("");
+    const [buyingPrice, setBuyingPrice] = useState("");
+    const [unitPrice, setUnitPrice] = useState("");
+    const [openingStock, setOpeningStock] = useState("");
+    const [reorderLevel, setReorderLevel] = useState("");
+    const [productDetails, setProductDetails] = useState("");
+
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getCategories")
+      .get("http://localhost:5000/api/owner/productServices/getCategories")
       .then((res) => {
         setCategories(res.data);
         setSelectedCategoryID(res.data[0].categoryID);
@@ -60,7 +69,7 @@ function AddProduct() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getSuppliers")
+      .get("http://localhost:5000/api/owner/supplierServices/getSuppliers")
       .then((res) => {
         setSelectedSupplierID(res.data[0].supplierID);
         setSuppliers(res.data);
@@ -83,9 +92,10 @@ function AddProduct() {
 
   useEffect(() => { 
     axios
-      .get(`http://localhost:5000/getSubCategories/${selectedCategoryID}`)
+      .get(`http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategoryID}`)
       .then((res) => {
         setSubcategories(res.data);
+        setSelectedSubcategory(res.data[0].subCategoryID);
       })
 
       .catch((err) => {
@@ -96,6 +106,7 @@ function AddProduct() {
   // Handle subcategory change
   const handleSubcategoryChange = (e) => {
     const selectedSubcategoryId = e.target.value;
+    console.log("Selected subcategory", selectedSubcategoryId);
     setSelectedSubcategory(selectedSubcategoryId);
   };
 
@@ -125,22 +136,20 @@ function AddProduct() {
   function validateForm(event) {
     
     event.preventDefault();
-    const productName = document.getElementById("inputProductName").value;
-    const brandName = document.getElementById("inputBrandName").value;
-    const category = document.getElementById("categorySelect").value;
-    const subCategory = selectedCategoryID;
-    const buyingPrice = document.getElementById("inputbuyingprice").value;
-    const unitPrice = document.getElementById("inputUnitPrice").value;
-    const openingStock = document.getElementById("inputOpeningStock").value;
-    const reorderLevel = document.getElementById("inputReorderLevel").value;
-    const productDetails = document.getElementById("inputProductDetails").value;
-    const supplier = document.getElementById("inputSupplier").value;
+    
+    console.log("productName", productName);
+    console.log("brandName", brandName);
+    console.log("subCategory", selectedSubcategory);
+    console.log("openingStock", openingStock);
+    console.log("reorderLevel", reorderLevel); 
+    console.log("buyingPrice", buyingPrice);
+    console.log("unitPrice", unitPrice);
+    console.log("productDetails", productDetails);
+    console.log("supplierID", selectedSupplierID);
     {
       if (
         productName === "" ||
         brandName === "" ||
-        category === "" ||
-        subCategory === "" ||
         openingStock === "" ||
         reorderLevel === "" ||
         productDetails === ""
@@ -232,26 +241,15 @@ function AddProduct() {
         });
     }
     // setTimeout(DatabaseCall, 3000); // Delay DatabaseCall() by 3 seconds
-    const productName = document.getElementById("inputProductName").value;
-    const brandName = document.getElementById("inputBrandName").value;
-    const category = document.getElementById("categorySelect").value;
-    const subCategory = selectedCategoryID;
-    const buyingPrice = document.getElementById("inputbuyingprice").value;
-    const unitPrice = document.getElementById("inputUnitPrice").value;
-    const openingStock = document.getElementById("inputOpeningStock").value;
-    const reorderLevel = document.getElementById("inputReorderLevel").value;
-    const productDetails = document.getElementById("inputProductDetails").value;
-    const supplier = document.getElementById("inputSupplier").value;
     formData.append("productName", productName);
     formData.append("brandName", brandName);
-    formData.append("category", category);
-    formData.append("subCategory", subCategory);
+    formData.append("subCategory", selectedSubcategory);
     formData.append("openingStock", openingStock);
     formData.append("reorderLevel", reorderLevel); 
-    //formData.append("buyingPrice", buyingPrice);
+    formData.append("buyingPrice", buyingPrice);
     formData.append("unitPrice", unitPrice);
     formData.append("productDetails", productDetails);
-    formData.append("supplierID", selectedCategoryID);
+    formData.append("supplierID", selectedSupplierID);
     console.log("Calling database");
     axios
       .post("http://localhost:5000/addProduct", formData)
@@ -379,6 +377,7 @@ function AddProduct() {
                             id="inputProductName"
                             type="text"
                             placeholder="new product name....."
+                            onChange={(e) => setProductName(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -389,6 +388,7 @@ function AddProduct() {
                             id="inputBrandName"
                             type="text"
                             placeholder="brand name"
+                            onChange={(e)=> setBrandName(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -427,7 +427,7 @@ function AddProduct() {
                             {subcategories.map((item) => (
                               <option
                                 key={item.subcategoryID}
-                                value={item.subcategoryID} // Set the value to the subcategoryID
+                                value={item.subCategoryID} // Set the value to the subcategoryID
                               >
                                 {item.subCategoryName}
                               </option>
@@ -446,6 +446,7 @@ function AddProduct() {
                             min="0" // Enforce a minimum value of 1
                             step="1" // Allow only whole numbers (integers)
                             pattern="^[1-9]\d*$"
+                            onChange={(e) => setOpeningStock(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -459,6 +460,7 @@ function AddProduct() {
                             min="0" // Enforce a minimum value of 1
                             step="1" // Allow only whole numbers (integers)
                             pattern="^[1-9]\d*$" // Enforce positive integers with regex
+                            onChange={(e) => setReorderLevel(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -472,6 +474,7 @@ function AddProduct() {
                             placeholder="buying price per unit"
                             min="0" // Enforce a minimum value of 1
                             step="0.01"
+                            onChange={(e) => setBuyingPrice(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -484,6 +487,7 @@ function AddProduct() {
                             placeholder="product selling price per unit"
                             min="0" // Enforce a minimum value of 1
                             step="0.01" 
+                            onChange={(e) => setUnitPrice(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -529,6 +533,7 @@ function AddProduct() {
                         placeholder="new product details....."
                         as={"textarea"}
                         style={{ height: "100px" }}
+                        onChange={(e) => setProductDetails(e.target.value)}
                       />
                       <Form.Text className="text-muted"></Form.Text>
 
