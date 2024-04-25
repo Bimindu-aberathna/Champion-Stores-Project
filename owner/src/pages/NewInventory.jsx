@@ -30,7 +30,7 @@ function NewInventory() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/getProductData/${productId}`)
+      .get(`http://localhost:5000/api/owner/productServices/getProductData/${productId}`)
       .then((res) => {
         console.log(res.data);
         setProduct(res.data[0]);

@@ -31,7 +31,7 @@ function HandleExpiredProducts() {
     const [selectedProduct, setSelectedProduct] = useState("");
 
     useEffect(() => {
-        axios.get("http://localhost:5000/getCategories").then((res) => {
+        axios.get("http://localhost:5000/api/owner/productServices/getCategories").then((res) => {
           console.log(res.data);
           setCategories(res.data);
             setSelectedCategory(res.data[0]);
@@ -42,7 +42,7 @@ function HandleExpiredProducts() {
 
       useEffect(() => {
         if (selectedCategory !== "") { 
-            axios.get(`http://localhost:5000/getSubCategories/${selectedCategory.categoryID}`).then((res) => {
+            axios.get(`http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategory.categoryID}`).then((res) => {
                 setSubCategories(res.data);
                 setSelectedSubCategory(res.data[0]);
             }).catch((err) => {
@@ -53,7 +53,7 @@ function HandleExpiredProducts() {
 
     useEffect(() => {
         if (selectedSubCategory !== "") { 
-            axios.get(`http://localhost:5000/getProductsBySubCategory/${selectedSubCategory.subCategoryID}`).then((res) => {
+            axios.get(`http://localhost:5000/api/owner/productServices/getProductsBySubCategory/${selectedSubCategory.subCategoryID}`).then((res) => {
                 setProducts(res.data);
                 setSelectedProduct(res.data[0]);
             }).catch((err) => {
@@ -80,7 +80,7 @@ function HandleExpiredProducts() {
     }else{
     
     axios
-      .post("http://localhost:5000/removeExpiredProducts", {
+      .post("http://localhost:5000/api/owner/productServices/removeExpiredProducts", {
         productID: productID,
         quantity: quantity,
       })

@@ -18,7 +18,7 @@ function ListSuppliers() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getSuppliers") // Assuming this endpoint fetches suppliers
+      .get("http://localhost:5000/api/owner/supplierServices/getSuppliers") // Assuming this endpoint fetches suppliers
       .then((res) => {
         setSuppliers(res.data);
         setSelectedSupplier(res.data[0]);

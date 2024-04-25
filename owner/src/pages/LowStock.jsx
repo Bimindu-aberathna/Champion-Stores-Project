@@ -8,7 +8,7 @@ function LowStock() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/listLowStockProducts")
+    axios.get("http://localhost:5000/api/owner/productServices/listLowStockProducts")
     .then((res) => {
       setItems(res.data);
       console.log(res.data);

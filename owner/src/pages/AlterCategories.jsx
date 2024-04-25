@@ -21,7 +21,7 @@ function AlterCategories() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getCategories")
+      .get("http://localhost:5000/api/owner/productServices/getCategories")
       .then((res) => {
         setCategories(res.data);
         setSelectedCategory(res.data[0]);
@@ -35,7 +35,7 @@ function AlterCategories() {
   useEffect(() => {
     axios
       .get(
-        `http://localhost:5000/getSubCategories/${selectedCategory.categoryID}`
+        `http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategory.categoryID}`
       )
       .then((res) => {
         setSubCategories(res.data);
