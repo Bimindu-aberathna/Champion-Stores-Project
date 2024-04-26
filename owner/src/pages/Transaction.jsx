@@ -151,7 +151,7 @@ function Transaction() {
   };
 
   // Make an HTTP POST request to your backend API
-  axios.post('http://localhost:5000/transaction', transactionData)
+  axios.post('http://localhost:5000/api/owner/productServices/transaction', transactionData)
     .then(response => {
       console.log('Transaction successful:', response.data);
       setShowConfirmation(false);
