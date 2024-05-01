@@ -12,19 +12,40 @@ import storeIMG from "../Assets/store.png";
 import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { loginUser } from "../Services/userServices";
+import { Navigate } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleLogin = () => {
-    alert(
-      "Login Successful\nEmail: " +
-        email +
-        "\nPassword: " +
-        password +
-        "\nRedirecting to Home Page..."
-    );
+  const handleLogin = (event) => {
+    event.preventDefault();
+    loginUser({ email, password })
+      .then((status) => {
+        if (status === 200) {
+          console.log();
+          toast.success("Login successful!", {
+            position: "top-right",
+            autoClose: 3500,
+          });
+          window.location.href = "/";
+
+        } else {
+          toast.error("Invalid credentials!", {
+            position: "top-right",
+            autoClose: 3500,
+          });
+        }
+      })
+      .catch((error) => {
+        if(error.response.status === 401){
+          toast.error("Invalid credentials!", {
+            position: "top-right",
+            autoClose: 3500,
+          });}
+        console.log(error);
+      });
   };
 
   return (

@@ -8,12 +8,15 @@ const bodyParser = require("body-parser");
 const { getItemList } = require("./controllers/productController");
 const customerServicesRouter = require("./routes/customerServices");
 const productServicesRouter = require("./routes/productServices");
+const cartServicesRouter = require("./routes/cartServices");
 const ownerProductServicesRouter = require("./routes/ownerProductServices");
 const ownerSupplierServicesRouter = require("./routes/ownerSupplierServices");
 const ownerAccountServicesRouter = require("./routes/ownerAccountServices");
 const { pseudoRandomBytes } = require("crypto");
 const multer = require("multer");
+const cookieParser = require("cookie-parser");
 const upload = multer();
+const {createToken, validateToken} = require("./JWT");
 
 
 const app = express();
@@ -21,8 +24,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.json());
 const port = 5000;
+app.use(cookieParser()); 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 
 const db = require("./Server_Configuration");
 
@@ -31,9 +36,15 @@ app.get("/listProducts", getItemList);
 // Use the customer services route handler for the /api/customerServices route
 app.use("/api/customerServices", customerServicesRouter);
 app.use("/api/ProductServices", productServicesRouter);
-app.use("/api/owner/productServices", ownerProductServicesRouter);
+app.use("/api/owner/productServices",ownerProductServicesRouter);
 app.use("/api/owner/supplierServices", ownerSupplierServicesRouter);
 app.use("/api/owner/accountServices", ownerAccountServicesRouter);
+app.use("/api/cartServices", cartServicesRouter);
+
+app.get("/isAuth", validateToken, (req, res) => {
+    console.log("User is authenticated");
+    return res.status(200).json({ message: "User is authenticated" });
+});
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

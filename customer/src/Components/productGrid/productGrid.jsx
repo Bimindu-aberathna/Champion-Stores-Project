@@ -5,13 +5,14 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Button from "@mui/material/Button";
 import FilterOptions from "../FilterOptions/FilterOptions";
 import { getProducts } from "../Services/productServices";
+import { Link } from "react-router-dom";
 import "./productGrid.css";
 
 
 const noImage =
   "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
 
-export default function ProductGrid() {
+export default function ProductGrid({ searchTerm}) {
   const [products,setProducts] = useState([]);
   useEffect(() => {
     getProducts()
@@ -23,6 +24,15 @@ export default function ProductGrid() {
         console.log(error);
       });
   }, []);
+
+  // Filter products based on searchQuery
+const filteredProducts = products.filter((product) =>
+  product.productName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+  product.categoryName?.toLowerCase().includes(searchTerm?.toLowerCase())
+);
+
+
+
 
   return (
     <div>
@@ -44,7 +54,7 @@ export default function ProductGrid() {
             },
           }}
         >
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Grid key={product.productID} item xs={12} sm={6} md={4} lg={2}>
               <div class="card">
                 <img
@@ -59,7 +69,9 @@ export default function ProductGrid() {
                     <b>Rs. {product.unitPrice}.00</b>
                   </p>
                   <div className="card-button-status">
+                  <Link to={`/product/${product.productID}`}>
                     <Button variant="contained">View</Button>
+                  </Link>
                     {product.currentStock <= 10 ? (
                       <p style={{ color: "green" }}>Available</p>
                     ) : (

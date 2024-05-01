@@ -13,5 +13,10 @@ export const signUpUser = async (userData) => {
 
 export const loginUser = async(loginData) => {
     const response = await axios.post(loginEndpoint, loginData);
+   const accessToken = response.data.accessToken;
+    localStorage.setItem("logged", response.data.auth);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("customerName", response.data.customerName);
+    localStorage.setItem("customerID", response.data.customerID);
     return response.status;
 }
