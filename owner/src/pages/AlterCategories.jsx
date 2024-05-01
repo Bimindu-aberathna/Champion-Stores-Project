@@ -58,7 +58,7 @@ function AlterCategories() {
         return;
       } else {
         axios
-          .post("http://localhost:5000/addNewCategory", {
+          .post("http://localhost:5000/api/owner/productServices/addNewCategory", {
             categoryName: newCategory,
           })
           .then((res) => {
@@ -87,7 +87,7 @@ function AlterCategories() {
         return;
       } else {
         axios
-          .post("http://localhost:5000/renameCategory", {
+          .post("http://localhost:5000/api/owner/productServices/renameCategory", {
             categoryNewName: newCategoryName,
             categoryID: selectedCategory.categoryID,
           })
@@ -117,7 +117,7 @@ function AlterCategories() {
         return;
       } else {
         axios
-          .post("http://localhost:5000/renameSubCategory", {
+          .post("http://localhost:5000/api/owner/productServices/renameSubCategory", {
             subCategoryNewName: newSubCategoryName,
             subCategoryID: selectedSubCategory.subCategoryID,
           })
@@ -147,7 +147,7 @@ function AlterCategories() {
         return;
       } else {
         axios
-          .post("http://localhost:5000/addNewSubCategory", {
+          .post("http://localhost:5000/api/owner/productServices/addNewSubCategory", {
             subCategoryName: newSubCategoryName,
             categoryID: selectedCategory.categoryID,
           })

@@ -52,7 +52,7 @@ function NewInventory() {
       return;
     } else {
         axios
-            .post("http://localhost:5000/newInventory", {
+            .post("http://localhost:5000/api/owner/productServices/newInventory", {
                 productId: productId,
                 stock: stock,
                 buyingPrice: buyingPrice,

@@ -11,6 +11,7 @@ function ProductReturn() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [items, setItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const [isNotExchanging, setIsNotExchanging] = useState(false);
 
   useEffect(() => {
@@ -44,27 +45,27 @@ function ProductReturn() {
   };
 
   const handleReturn = () => {
-    if(selectedItem === null) {
+    if (selectedItem === null) {
       alert("Please select a product to return.");
       return;
     }
     const productID = selectedItem.productID;
-    const quantity = document.getElementById("quantity").value;
-    if(!validateIntegers(quantity)) {
+    if (!validateIntegers(quantity)||quantity===0) {
       alert("Please enter a valid quantity.");
-      return
+      return;
     }
     const supplierID = selectedItem.supplierID;
     const notExchanging = isNotExchanging;
     axios
-      .post("http://localhost:5000/returnProduct", {
+      .post("http://localhost:5000/api/owner/productServices/returnProduct", {
         productID,
         quantity,
         supplierID,
         notExchanging,
       })
       .then((res) => {
-        if (res.data.message === "success") { // Corrected response handling
+        if (res.data.message === "success") {
+          // Corrected response handling
           alert("Product returned successfully.");
           cancelReturn();
         } else {
@@ -75,14 +76,13 @@ function ProductReturn() {
         console.log(err);
         alert("Product return failed."); // Handle network errors
       });
-    quantity.value = 1;  
+    setQuantity(1);
     setShowConfirmation(false);
   };
 
-
   return (
     <>
-        <SideNavbar />    
+      <SideNavbar />
       <div
         style={{
           height: "100vh",
@@ -97,13 +97,26 @@ function ProductReturn() {
         >
           <h1>Product return</h1>
         </div>
-        <div style={{ height: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Card style={{ width: "55%",paddingTop:'2.5rem',paddingBottom:'2.5rem' }}>
+        <div
+          style={{
+            height: "80vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Card
+            style={{
+              width: "55%",
+              paddingTop: "2.5rem",
+              paddingBottom: "2.5rem",
+            }}
+          >
             <Card.Body className="d-flex justify-content-center align-items-center">
               <div style={{ width: "85%" }}>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                {/* Render the SearchBar component */}
-                <SearchBar items={items} onItemSelect={handleItemSelect} />
+                  {/* Render the SearchBar component */}
+                  <SearchBar items={items} onItemSelect={handleItemSelect} />
                 </div>
                 <Form style={{ marginTop: "6rem" }}>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -120,10 +133,9 @@ function ProductReturn() {
                     <Form.Control
                       id="quantity"
                       type="number"
-                      placeholder="Return item count..."
-                      defaultValue={1}
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
                     />
-                    
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicCheckbox">
                     <Form.Check

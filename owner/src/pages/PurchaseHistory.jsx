@@ -10,11 +10,15 @@ function PurchaseHistory() {
   const [showModal, setShowModal] = useState(false);
   const [purchaseID, setPurchaseID] = useState(null);
   useEffect(() => {
-    axios.get("http://localhost:5000/purchaseHistory").then((res) => {
+    getPurchaseHistory();
+  }, []);
+
+  const getPurchaseHistory = () => {
+    axios.get("http://localhost:5000/api/owner/productServices/purchaseHistory").then((res) => {
       console.log(res.data);
       setItems(res.data);
     });
-  }, []);
+  };
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -32,7 +36,7 @@ function PurchaseHistory() {
 
   const cacelPurchase = () => {
     axios
-      .post("http://localhost:5000/cancelPurchase", {
+      .post("http://localhost:5000/api/owner/productServices/cancelPurchase", {
         purchaseID: purchaseID,
       })
       .then((res) => {
@@ -45,6 +49,7 @@ function PurchaseHistory() {
             return item;
           })
         );
+        getPurchaseHistory();
         setShowModal(false);
       });
   };

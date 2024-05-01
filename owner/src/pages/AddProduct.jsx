@@ -252,7 +252,7 @@ function AddProduct() {
     formData.append("supplierID", selectedSupplierID);
     console.log("Calling database");
     axios
-      .post("http://localhost:5000/addProduct", formData)
+      .post("http://localhost:5000/api/owner/productServices/addProduct", formData)
       .then((res) => {
         // Handle success response
 

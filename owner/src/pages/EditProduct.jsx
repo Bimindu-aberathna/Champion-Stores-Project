@@ -274,7 +274,7 @@ function EditProduct() {
     formData.append("supplierID", selectedSupplierID);
     console.log("Calling database");
     axios
-      .post("http://localhost:5000/updaeteProductInfo", formData)
+      .post("http://localhost:5000/api/owner/productServices/updateProductInfo", formData)
       .then((res) => {
         console.log("Product Edited", res);
       })
@@ -299,7 +299,7 @@ function EditProduct() {
   // Function to handle deleting the product
   const handleDeleteProduct = () => {
    // Send DELETE request to your backend API
-  axios.delete(`http://localhost:5000/deleteProduct/${productId}`)
+  axios.delete(`http://localhost:5000/api/owner/productServices/deleteProduct/${productId}`)
   .then((res) => {
     navigate('/inventory', { replace: true });
     console.log("Product deleted successfully", res);

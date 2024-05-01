@@ -77,7 +77,7 @@ function addSupplier() {
       };
     
       axios
-        .post("http://localhost:5000/addSupplier", data)
+        .post("http://localhost:5000/api/owner/supplierServices/addSupplier", data)
         .then((res) => {
           // Handle success response
           console.log("Supplier added", res);

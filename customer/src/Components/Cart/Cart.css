@@ -1,0 +1,90 @@
+.cardBody {
+    cursor: default;
+    display: flex;
+}
+
+.itemQuantity{
+    display: flex;
+    gap: 1rem;
+}
+
+.qtyChangeBtn{
+    border-radius: 25px;
+    font-size: large;
+}
+.qtyChangeBtn:active{
+    transform: scale(0.9);
+    background-color: black;
+    color: white;
+}
+.itemName{
+    width: 60%;
+}
+.itemDataNControls{
+    display: flex;
+    justify-content: space-between;
+    width: 40%;
+	
+}
+.removeButton{
+    background-color: rgb(0, 0, 0);
+    color: white;
+    height: 2rem;
+}
+.removeButton:active{
+    transform: scale(0.9);
+    background-color: #ff0000!important;
+    color: white;
+}
+.qtyChangeBtn{
+    font-size: larger;
+}
+
+.itemCard{
+    margin-bottom: 5px;
+}
+.detailItem{
+    display: flex;
+}
+.detailField{
+    width: 80%;
+
+}
+.detailCardBody{
+    align-items: center;
+}
+.detailItem{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.receiverDatailNBtn{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+@media (min-width: 768px) {
+
+    .itemsColumn {
+        width: 60% !important;
+    }
+    .detailsColumn{
+        width: 40%;
+    }
+
+    .itemsColumn:hover {
+        cursor: pointer;
+    }
+    .itemName{
+        width: 60%;
+    }
+    .itemDataNControls{
+        display: flex;
+        justify-content: space-between;
+        width: 40%;
+        
+    }
+}
