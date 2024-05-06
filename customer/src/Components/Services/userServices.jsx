@@ -1,4 +1,4 @@
-import { signUpEndpoint,loginEndpoint } from "../apiCalls"
+import { signUpEndpoint,loginEndpoint,customerServicesEndpoint } from "../apiCalls"
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
@@ -20,3 +20,31 @@ export const loginUser = async(loginData) => {
     localStorage.setItem("customerID", response.data.customerID);
     return response.status;
 }
+
+
+
+// export async function getCustomerDetails(){
+//   console.log("Front end service ***************************** ");
+//   const accessToken = localStorage.getItem("accessToken");
+
+//   const response = await axios.post(customerServicesEndpoint + "/getCustomerDetails", {
+//     headers: {
+//       "x-access-token": accessToken,
+//     },
+//   });
+//   return response.data;
+// }
+export const getCustomerDetails = async () => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.post(customerServicesEndpoint + "/getCustomerDetails", {}, {
+      headers: {
+        "x-access-token": accessToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching customer details:", error);
+    throw error;
+  }
+};
