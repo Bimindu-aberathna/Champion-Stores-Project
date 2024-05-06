@@ -17,7 +17,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useEffect, useState } from "react";
 import { getProductDetails } from "../Services/productServices";
 import { IoIosAddCircleOutline,IoIosRemoveCircleOutline } from "react-icons/io";
-import {addProductToCart} from "../Services/productServices";	
+import {addProductToCart} from "../Services/cartServices";	
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./ProductPage.css";
@@ -50,6 +50,13 @@ function ProductPage() {
           }
         })
         .catch((error) => {
+          if(error.response.status===402){
+            toast.error("Sesion time out. ", {
+              position: "top-right",
+              autoClose: 3500,
+            });
+            return;
+          }
           console.log(error);
         });
 
@@ -135,7 +142,9 @@ function ProductPage() {
             <div className="changeQTY" onClick={() => handleQuantityChange('add')}><IoIosAddCircleOutline/></div>
           </div>
           <div className="productButtonDiv">
-            <MDBBtn color="primary" onClick={handleAddCart}>Add to Cart</MDBBtn>
+            {product.currentStock>=15?<MDBBtn color="primary" onClick={handleAddCart}>Add to Cart</MDBBtn>:
+            <MDBBtn color="danger">Out of Stock</MDBBtn>
+            }
           </div>
           <div className="productDescriptionDiv">
             <p className='attributeLabel'>Description:</p>

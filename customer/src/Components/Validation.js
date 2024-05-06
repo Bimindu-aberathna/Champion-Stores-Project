@@ -84,3 +84,68 @@ export function validateName(name) {
     return { isValid: true, errorMessage: "" };
   }
   
+ export const validateExpiryDate = (expiry) => {
+    // Check if the expiry date is in the MM/YY format
+    if (!/^(0[1-9]|1[0-2])\/?([0-9]{2})$/.test(expiry)) {
+      return {status: false, message: 'Invalid expiry date. Please enter in MM/YY format.'};
+    }
+  
+    // Check if the expiry date is in the future
+    const expiryDate = new Date(`20${expiry.slice(3)}`, expiry.slice(0, 2) - 1);
+    const currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() + 1); // set to next month
+    currentDate.setDate(0); // set to the last day of the next month
+    if (expiryDate < currentDate) {
+      return {status:false,message:'Invalid expiry date. The date must be in the future.'};
+    }
+  
+    // If there are no errors, return an empty string
+    return {status:true,message:''};
+  };
+
+ export const validateCVC = (cvc, cardType) => {
+    // Regular expressions for different card types
+    const cvcRegex = {
+      visa: /^[0-9]{3}$/,
+      mastercard: /^[0-9]{3}$/,
+      amex: /^[0-9]{4}$/
+    };
+  
+    // Check if the CVC matches the regex for the given card type
+    if (cvcRegex[cardType]) {
+      return cvcRegex[cardType].test(cvc);
+    } else {
+      return false; // Invalid card type
+    }
+  };
+  
+  export const validateCardNumber = (number) => {
+    // Regular expression to validate card numbers
+    const cardNumberRegex = /^(\d{4} ?){3}\d{1,4}$/;
+  
+    // Remove spaces from the card number
+    const numberWithoutSpaces = number.replace(/\s/g, '');
+  
+    // Check if the card number matches the regular expression
+    if (!cardNumberRegex.test(numberWithoutSpaces)) {
+      return {status: false, message: 'Invalid card number. Please enter a valid 13-16 digit card number.'};
+    }
+  
+    // If there are no errors, return an empty string
+    return {status: true, message: ''};
+  };
+
+export const validateCardHolderName = (name) => {
+  // Check if the name is not empty
+  if (!name) {
+    return {status:false,message:'Name is required'};
+  }
+
+  // Check if the name contains only letters, spaces, and .
+  if (!/^[a-zA-Z\s.]+$/.test(name)) {
+    return {status:false,message:'Name can only contain letters, spaces, and .'};
+  }
+
+  // If there are no errors, return an empty string
+  return {status:true,message:''};
+}

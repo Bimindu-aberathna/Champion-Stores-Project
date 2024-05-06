@@ -15,8 +15,10 @@ function Navbar({ onSearch }) {
   const [menu, setMenu] = useState("home");
   const [searchTerm, setSearchTerm] = useState("");
   const customerName = localStorage.getItem("customerName") || "Customer";
-  const itemCount =  0;
-  const [loggedIn, setLoggedIn] = useState(localStorage.getItem("logged") || false);
+  const itemCount = localStorage.getItem("itemCount") || 0;
+  const [loggedIn, setLoggedIn] = useState(
+    localStorage.getItem("logged") || false
+  );
 
   const handleSearch = () => {
     onSearch(searchTerm);
@@ -24,7 +26,7 @@ function Navbar({ onSearch }) {
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
-  
+
   const handleLogOut = () => {
     localStorage.removeItem("logged");
     localStorage.removeItem("accessToken");
@@ -32,13 +34,15 @@ function Navbar({ onSearch }) {
     localStorage.removeItem("customerID");
     setLoggedIn(false);
     window.location.href = "/";
-  }
+  };
 
   return (
     <div>
       <div className="navbar">
         <div className="navbar_logo">
+        <Link to={"/"}>
           <img src={logo} alt="logo" style={{ width: "10rem" }} />
+          </Link>
           <p>Welcome</p>
         </div>
         <div className="navbar_search">
@@ -59,10 +63,10 @@ function Navbar({ onSearch }) {
                 "aria-label": "weight",
               }}
             />
-            
           </FormControl>
         </div>
         <ul className="navbar_menu">
+          <Link to={"/"}>
           <li
             onClick={() => {
               setMenu("home");
@@ -71,14 +75,19 @@ function Navbar({ onSearch }) {
           >
             Home{menu === "home" ? <hr /> : null}
           </li>
+          </Link>
+          <Link to={"/"}>
           <li
             onClick={() => {
               setMenu("cosmetics");
               setSearchTerm("cosmetics");
+              
             }}
           >
             Cosmetics{menu === "cosmetics" ? <hr /> : null}
           </li>
+          </Link>
+          <Link to={"/"}>
           <li
             onClick={() => {
               setMenu("toys");
@@ -87,23 +96,45 @@ function Navbar({ onSearch }) {
           >
             Toys{menu === "toys" ? <hr /> : null}
           </li>
+          </Link>
         </ul>
         <div className="navbar_login_cart">
-          {!loggedIn ?<Link to={'/login'}><button>Login</button></Link>:<button onClick={handleLogOut}>Log out</button>}
-          <MdOutlineShoppingCart style={{ fontSize: "2rem" }} />
+          {!loggedIn ? (
+            <Link to={"/login"}>
+              <button>Login</button>
+            </Link>
+          ) : (
+            <button onClick={handleLogOut}>Log out</button>
+          )}
+          {loggedIn ? (
+            <Link to={"/cart"}>
+              {" "}
+              <MdOutlineShoppingCart style={{ fontSize: "2rem" }} />
+            </Link>
+          ) : (
+            <MdOutlineShoppingCart style={{ fontSize: "2rem" }} />
+          )}
           <div className="navbar_cart_count">{itemCount}</div>
-            {loggedIn ? (
-              <div style={{display:'flex',alignItems:"center",justifyContent:'center',gap:'10px'}}>
-                <p>
-                  <FaRegUser style={{ fontSize: "1.8rem",marginTop:'10px' }} />
+          {loggedIn ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+              }}
+            >
+              <p>
+                <FaRegUser style={{ fontSize: "1.8rem", marginTop: "10px" }} />
+              </p>
+              <div>
+                <p style={{ fontSize: "14px", marginBottom: "-2px" }}>Hello</p>
+                <p style={{ fontWeight: "bold", marginBottom: "-2px" }}>
+                  {customerName}
                 </p>
-                <div>
-                  <p style={{ fontSize: "14px", marginBottom: "-2px" }}>Hello</p>
-                  <p style={{ fontWeight: "bold", marginBottom: '-2px' }}>{customerName}</p>
-                </div>
               </div>
-            ) : null}
-          
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

@@ -72,7 +72,7 @@ const filteredProducts = products.filter((product) =>
                   <Link to={`/product/${product.productID}`}>
                     <Button variant="contained">View</Button>
                   </Link>
-                    {product.currentStock <= 10 ? (
+                    {product.currentStock >= 10 ? (
                       <p style={{ color: "green" }}>Available</p>
                     ) : (
                       <p style={{ color: "red" }}>

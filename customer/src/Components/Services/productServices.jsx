@@ -1,4 +1,4 @@
-import { getProductsEndpoint,getProduceDetailsEndpoint,addToCartEndpoint } from "../apiCalls";
+import { getProductsEndpoint,getProduceDetailsEndpoint } from "../apiCalls";
 import { React, useState } from "react";
 import axios from "axios";
 
@@ -75,22 +75,6 @@ async function getProductDetails(productId) {
   const response = await axios.get(getProduceDetailsEndpoint + "/" + productId);
   return response.data;
 }
-async function addProductToCart(productID, quantity = 1,unitPrice) {
-  const accessToken = localStorage.getItem("accessToken");
-  try {
-    const response = await axios.post(addToCartEndpoint,
-      { productID: productID , quantity: quantity,unitPrice:unitPrice},
-      {
-        headers: {
-          "x-access-token": accessToken,
-        }
-      });
-      
-    return response.status;
-  } catch (error) {
-    console.error(error);
-    console.log("Error adding product to cart caught in product services");
-  }
-}
 
-export { getCategories, getSubcategories,getProductDetails,addProductToCart };
+
+export { getCategories, getSubcategories,getProductDetails };

@@ -9,19 +9,23 @@ const createToken = (userID) => {
 const validateToken = (req, res, next) => {
     const accessToken = req.headers["x-access-token"]
     if (!accessToken) {
-        return res.status(400).json({message: "User not authenticated"});
+        console.log("User not authenticated");
+        return res.status(402).json({status:402,message: "User not authenticated"});
     }
     try {
         const validToken = verify(accessToken,"JWT_SECRET_KEY")
         if (validToken) {
             req.authenticated = true;
             req.customerID = validToken.userID.customerID;
+            console.log("User authenticated -> next()");
             return next();
         }else{
-            return res.status(400).json({message: "User not authenticated"});
+            console.log("User not authenticated");
+            return res.status(402).json({status:402,message: "User not authenticated"});
         }
     }catch(err) {
-        return res.status(500).json({message: err});
+        console.log(err);
+        return res.status(402).json({status:402,message: "JWT ERROR",err});
     }   
 
   };

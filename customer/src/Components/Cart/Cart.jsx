@@ -6,98 +6,190 @@ import {
   MDBCard,
   MDBCardBody,
   MDBBtn,
+  MDBModal,
+  MDBModalDialog,
+  MDBModalContent,
+  MDBModalHeader,
+  MDBModalTitle,
+  MDBModalBody,
+  MDBModalFooter,
   MDBInput,
 } from "mdb-react-ui-kit";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useEffect, useState } from "react";
-import {
-  IoIosAddCircleOutline,
-  IoIosRemoveCircleOutline,
-} from "react-icons/io";
+import { CiTrash } from "react-icons/ci";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import PaymentModal from "./PaymentModal";
 import TextField from "@mui/material/TextField";
-import { validateName, validatePhoneNumber } from "../Validation";
+import {
+  validateName,
+  validatePhoneNumber,
+  validateAddress,
+} from "../Validation";
+import {
+  getCart,
+  changeDeliveryInfo,
+  changeCartItemQuantity,
+  removeCartItem,
+} from "../Services/cartServices";
+import { getCustomerDetails } from "../Services/userServices";
 import "./Cart.css";
+
 function Cart() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const customerID = localStorage.getItem("customerID");
+  const [loggedIn, setLoggedIn] = useState(
+    localStorage.getItem("logged") || false
+  );
+  const customerID = localStorage.getItem("customerID") || "";
   const total = 1564;
   const deliveryCharge = 250;
   const [editable, setEditable] = useState(false);
-  const [receiverName, setReceiverName] = useState("Bimindu Aberathna");
-  const [mobile, setMobile] = useState("0778910378");
-  const [address, setAddress] = useState(
-    "217/4, 1st Lane, Polonnaruwa, Kandana"
-  );
+  const [cartID, setCartID] = useState("");
+  const [receiverName, setReceiverName] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [address, setAddress] = useState("");
+  const [cart_Items, setCart_Items] = useState([]);
+  const [subTotal, setSubTotal] = useState(0);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  useEffect(() => {
+    getCartDetails();
+  }, []);
+
+  function getCartDetails() {
+    if (loggedIn) {
+      getCart(customerID)
+        .then((data) => {
+          setCart_Items(data);
+          setCartID(data[0].cartID);
+        })
+        .catch((err) => {
+          if (err.response.status === 402) {
+            toast.error("Authentication Error", {
+              position: "top-right",
+              autoClose: 3500,
+            });
+            return;
+          } else {
+            toast.error("Error loading cart items");
+          }
+        });
+    } else {
+      toast.error("Please login to view cart items");
+    }
+  }
+
+  useEffect(() => {
+    if (loggedIn) {
+      getCustomerDetails()
+        .then((response) => {
+          setReceiverName(
+            response.data.firstName + " " + response.data.lastName
+          );
+          setAddress(response.data.address);
+          setMobile(response.data.telephone);
+        })
+        .catch((err) => {
+          toast.error("Error loading customer details");
+        });
+    }
+  }, []);
 
   /////add to cart handle krpn
 
-  const cartItems = [
-    {
-      id: 1,
-      name: "Lakme Absolute Matte Lipstick",
-      price: 100,
-      quantity: 2,
-    },
-    {
-      id: 2,
-      name: "Maybelline Fit Me Foundation",
-      price: 200,
-      quantity: 1,
-    },
-    {
-      id: 3,
-      name: "L'Oreal Paris Mascara",
-      price: 150,
-      quantity: 3,
-    },
-    {
-      id: 4,
-      name: "Revlon ColorStay Eyeliner",
-      price: 50,
-      quantity: 5,
-    },
-    {
-      id: 5,
-      name: "MAC Studio Fix Powder Plus Foundation",
-      price: 300,
-      quantity: 2,
-    },
-    {
-      id: 6,
-      name: "NYX Professional Makeup Highlight & Contour Palette. 10 colors with 2 brushes. Delivery charges applied. Good qulity. Made in India",
-      price: 120,
-      quantity: 1,
-    },
-    {
-      id: 7,
-      name: "The Body Shop Tea Tree Oil",
-      price: 250,
-      quantity: 4,
-    },
-    {
-      id: 8,
-      name: "Clinique Moisture Surge 72-Hour Auto-Replenishing Hydrator shala lala lala lala laaaaaaaa",
-      price: 80,
-      quantity: 3,
-    },
-    {
-      id: 9,
-      name: "Estee Lauder Double Wear Stay-in-Place Foundation",
-      price: 180,
-      quantity: 2,
-    },
-    {
-      id: 10,
-      name: "NARS Radiant Creamy Concealer",
-      price: 90,
-      quantity: 1,
-    },
-  ];
-  const handleQuantityChange = (id, value) => {};
-  const handleRemove = (id) => {};
+  const changeQuantityInDb = async (id, quantity) => {
+    try {
+      const response = await changeCartItemQuantity(id, quantity);
+      if (response && response.status === 200) {
+        getCartDetails();
+      } else {
+        toast.error(response.message, {
+          position: "top-right",
+          autoClose: 3500,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error updating quantity", {
+        position: "top-right",
+        autoClose: 3500,
+      });
+    }
+  };
+
+  const handleQuantityChange = (id, change) => {
+    setCart_Items((prevItems) => {
+      return prevItems.map((item) => {
+        if (item.cart_itemID === id) {
+          item.quantity += change;
+          changeQuantityInDb(id, change);
+
+          if (item.quantity < 1) {
+            item.quantity = 1;
+            changeQuantityInDb(id, 0);
+          }
+        }
+        return item;
+      });
+    });
+  };
+
+  const handleRemove = (id) => {
+    removeCartItem(id)
+      .then((response) => {
+        if (response.status === 200) {
+          setCart_Items((prevItems) => {
+            console.log("Item removed from cart");
+            return prevItems.filter((item) => item.cart_itemID !== id);
+          });
+        } else {
+          alert("Error removing item");
+          toast.error(response.message, {
+            position: "top-right",
+            autoClose: 3500,
+          });
+        }
+      })
+      .catch((error) => {
+        alert("Error removing item from cart");
+        console.error("Error removing item from cart:", error);
+        toast.error("Error removing item from cart", {
+          position: "top-right",
+          autoClose: 3500,
+        });
+      });
+    getCartDetails();
+  };
+
+  const handleDeliveryDataChange = async () => {
+    try {
+      setEditable(false);
+      const response = await changeDeliveryInfo(receiverName, mobile, address);
+      if (response.status === 200) {
+        toast.success(response.message, {
+          position: "top-right",
+          autoClose: 3500,
+        });
+      } else {
+        toast.error(response.message, {
+          position: "top-right",
+          autoClose: 3500,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating delivery information:", error);
+      toast.error("Error updating delivery information", {
+        position: "top-right",
+        autoClose: 3500,
+      });
+    }
+  };
+  useEffect(() => {
+    let subTotal = 0;
+    cart_Items.forEach((item) => {
+      subTotal += item.unitPrice * item.quantity;
+    });
+    setSubTotal(subTotal);
+  }, [cart_Items]);
 
   return (
     <MDBContainer fluid className="p-3 my-5">
@@ -105,29 +197,47 @@ function Cart() {
         <div col="10" className="itemsColumn">
           <h1>Cart</h1>
           <div className="cartItems">
-            {cartItems.map((item) => (
-              <MDBCard className="itemCard" key={item.id}>
+            {cart_Items.map((item) => (
+              <MDBCard className="itemCard" key={item.cart_itemID}>
                 <MDBCardBody className="cardBody">
-                  <div className="itemName">{item.name}</div>
+                  <div className="itemName">{item.productName}</div>
                   <div className="itemDataNControls">
-                    <div className="itemPrice">{item.price} p.p</div>
+                    <div className="itemPrice">{item.unitPrice} p.p</div>
                     <div className="itemQuantity">
-                      <IoIosRemoveCircleOutline
+                      <MDBBtn
                         className="qtyChangeBtn"
-                        onClick={() => handleQuantityChange(item.id, -1)}
-                      />
+                        color="dark"
+                        onClick={() =>
+                          handleQuantityChange(item.cart_itemID, -1)
+                        }
+                      >
+                        -
+                      </MDBBtn>
+
                       {item.quantity}
-                      <IoIosAddCircleOutline
+                      <MDBBtn
                         className="qtyChangeBtn"
-                        onClick={() => handleQuantityChange(item.id, 1)}
-                      />
+                        color="dark"
+                        onClick={() =>
+                          handleQuantityChange(item.cart_itemID, 1)
+                        }
+                      >
+                        +
+                      </MDBBtn>
                     </div>
                     <MDBBtn
                       color="dark"
-                      className="removeButton"
-                      onClick={() => handleRemove(item.id)}
+                      id="removeTextButton"
+                      onClick={() => handleRemove(item.cart_itemID)}
                     >
                       Remove
+                    </MDBBtn>
+                    <MDBBtn
+                      color="dark"
+                      id="removeIconButton"
+                      onClick={() => handleRemove(item.cart_itemID)}
+                    >
+                      <CiTrash />
                     </MDBBtn>
                   </div>
                 </MDBCardBody>
@@ -147,7 +257,7 @@ function Cart() {
                   {!editable ? (
                     <MDBBtn onClick={(e) => setEditable(true)}>Edit</MDBBtn>
                   ) : (
-                    <MDBBtn onClick={(e) => setEditable(false)}>Change</MDBBtn>
+                    <MDBBtn onClick={handleDeliveryDataChange}>Change</MDBBtn>
                   )}
                 </div>
                 <div className="detailItem">
@@ -159,6 +269,7 @@ function Cart() {
                     value={receiverName}
                     focused
                     disabled={!editable}
+                    onChange={(e) => setReceiverName(e.target.value)}
                   />
                 </div>
                 <div className="detailItem">
@@ -170,6 +281,7 @@ function Cart() {
                     focused
                     className="detailField"
                     disabled={!editable}
+                    onChange={(e) => setMobile(e.target.value)}
                   />
                 </div>
                 <div className="detailItem">
@@ -181,6 +293,7 @@ function Cart() {
                     value={address}
                     focused
                     disabled={!editable}
+                    onChange={(e) => setAddress(e.target.value)}
                   />
                 </div>
               </MDBCardBody>
@@ -188,33 +301,59 @@ function Cart() {
           </div>
           <div>
             <MDBCard className="detailCard">
+              {cart_Items.length !== 0 ? (
+                <MDBCardBody className="detailCardBody">
+                  <h5>Order Details</h5>
+                  <MDBContainer>
+                    <MDBRow>
+                      <MDBCol md="8" className="text-end">
+                        <h5>Subtotal:</h5>
+                      </MDBCol>
+                      <MDBCol md="4" className="text-end">
+                        <h4>Rs. {subTotal}</h4>
+                      </MDBCol>
+                    </MDBRow>
+                    <MDBRow>
+                      <MDBCol md="8" className="text-end">
+                        <h5>Delivery charge:</h5>
+                      </MDBCol>
+                      <MDBCol md="4" className="text-end">
+                        <h4>Rs. {deliveryCharge}</h4>
+                      </MDBCol>
+                    </MDBRow>
+                    <MDBRow>
+                      <MDBCol md="8" className="text-end">
+                        <h3>Net total:</h3>
+                      </MDBCol>
+                      <MDBCol md="4" className="text-end">
+                        <h4 style={{ display: "flex" }}>
+                          Rs.{" "}
+                          <h1 style={{ fontWeight: "bold" }}>
+                            {subTotal + 250}
+                          </h1>
+                          .00
+                        </h4>
+                      </MDBCol>
+                    </MDBRow>
+                    <MDBRow>
+                      <MDBCol className="text-end">
+                        <div id="proceedBTNdiv">
+                          <PaymentModal
+                            cartID={cartID}
+                            subtotal={subTotal}
+                            deliveryCharge={deliveryCharge}
+                          />
+                        </div>
+                      </MDBCol>
+                    </MDBRow>
+                  </MDBContainer>
+                </MDBCardBody>
+              ):
               <MDBCardBody className="detailCardBody">
                 <h5>Order Details</h5>
-                <MDBContainer>
-                  <MDBRow>
-                    <MDBCol md="8" className="text-end"><h5>Subtotal:</h5></MDBCol>
-                    <MDBCol md="4" className="text-end"><h4>Rs. {total}</h4></MDBCol>
-                  </MDBRow>
-                  <MDBRow>
-                    <MDBCol md="8" className="text-end"><h5>Delivery charge:</h5></MDBCol>
-                    <MDBCol md="4" className="text-end"><h4>Rs. {deliveryCharge}</h4></MDBCol>
-                  </MDBRow>
-                  <MDBRow>
-                    <MDBCol md="8" className="text-end"><h3>Net total:</h3></MDBCol>
-                    <MDBCol md="4" className="text-end"><h4 style={{display:'flex'}}>Rs. <h1 style={{fontWeight:'bold'}}>{total}</h1>.00</h4></MDBCol>
-                  </MDBRow>
-                </MDBContainer>
-
-                {/* <div className="orderSubTitle">
-                  <h5>Subtotal</h5>
-                </div>
-                <div className="orderSubTitle">
-                  <h5>Delivery charge</h5>
-                </div>
-                <div className="orderSubTitle">
-                  <h3>Total:</h3><h3><p style={{width:'10rem',backgroundColor:'gray',padding:'1rem',borderRadius:'10px'}}>{total}.00</p></h3>
-                </div> */}
+                <h4>No items in cart</h4>
               </MDBCardBody>
+              }
             </MDBCard>
           </div>
         </div>
