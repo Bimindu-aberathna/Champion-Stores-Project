@@ -2,7 +2,7 @@ const e = require('express');
 const {sign, verify} = require('jsonwebtoken');
 
 const createToken = (userID) => {
-    const accessToken = sign({userID},"JWT_SECRET_KEY", {expiresIn: "2h"});
+    const accessToken = sign({userID},"JWT_SECRET_KEY", {expiresIn: "5h"});
     return accessToken;	
 };
 
@@ -17,7 +17,6 @@ const validateToken = (req, res, next) => {
         if (validToken) {
             req.authenticated = true;
             req.customerID = validToken.userID.customerID;
-            console.log("User authenticated -> next()");
             return next();
         }else{
             console.log("User not authenticated");

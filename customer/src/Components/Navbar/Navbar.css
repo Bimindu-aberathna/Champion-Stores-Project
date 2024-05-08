@@ -100,3 +100,15 @@
     font-weight: 500;
     cursor: pointer;
 }
+.userAccount{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 5px;
+}
+.userAccount:hover{
+    box-shadow: 0 2px 3px -2px black;
+}

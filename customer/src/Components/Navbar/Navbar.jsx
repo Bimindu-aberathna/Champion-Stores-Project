@@ -116,13 +116,9 @@ function Navbar({ onSearch }) {
           )}
           <div className="navbar_cart_count">{itemCount}</div>
           {loggedIn ? (
+            <Link to={"/profile"}>
             <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
-              }}
+              className="userAccount"
             >
               <p>
                 <FaRegUser style={{ fontSize: "1.8rem", marginTop: "10px" }} />
@@ -134,6 +130,7 @@ function Navbar({ onSearch }) {
                 </p>
               </div>
             </div>
+            </Link>
           ) : null}
         </div>
       </div>

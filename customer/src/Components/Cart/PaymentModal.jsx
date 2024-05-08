@@ -254,7 +254,7 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
                 </MDBCard>
               </MDBModalBody>
               <MDBModalFooter>
-                <MDBBtn color="secondary" onClick={toggleOpen}>
+                <MDBBtn color="secondary" type="button" onClick={toggleOpen}>
                   Close
                 </MDBBtn>
                 <Stack direction="row" spacing={2}>
