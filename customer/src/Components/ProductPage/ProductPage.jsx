@@ -16,10 +16,13 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useEffect, useState } from "react";
 import { getProductDetails } from "../Services/productServices";
-import { IoIosAddCircleOutline,IoIosRemoveCircleOutline } from "react-icons/io";
-import {addProductToCart} from "../Services/cartServices";	
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {
+  IoIosAddCircleOutline,
+  IoIosRemoveCircleOutline,
+} from "react-icons/io";
+import { addProductToCart } from "../Services/cartServices";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./ProductPage.css";
 function ProductPage() {
   const productID = useParams().id;
@@ -40,7 +43,7 @@ function ProductPage() {
   const handleAddCart = () => {
     if (loggedIn) {
       console.log("Add to cart");
-      addProductToCart(productID, quantity,product.unitPrice)
+      addProductToCart(productID, quantity, product.unitPrice)
         .then((status) => {
           if (status === 200) {
             toast.success("Product added to cart!", {
@@ -50,7 +53,7 @@ function ProductPage() {
           }
         })
         .catch((error) => {
-          if(error.response.status===402){
+          if (error.response.status === 402) {
             toast.error("Sesion time out. ", {
               position: "top-right",
               autoClose: 3500,
@@ -59,7 +62,6 @@ function ProductPage() {
           }
           console.log(error);
         });
-
     } else {
       toast.error("Please login to add to cart!", {
         position: "top-right",
@@ -69,8 +71,8 @@ function ProductPage() {
   };
 
   const handleQuantityChange = (value) => {
-    if (value === 'add') {
-      setQuantity(quantity + 1);
+    if (value === "add") {
+      if (quantity < 5) setQuantity(quantity + 1);
     } else {
       if (quantity > 1) {
         setQuantity(quantity - 1);
@@ -115,41 +117,55 @@ function ProductPage() {
         <MDBCol col="4" md="6">
           <dev className="productNameDiv">{product.productName}</dev>
           <div className="brand-category-div">
-          <dev className="productBrandDiv">
-            <p className='attributeLabel'>Brand: </p>
-           {product.brandName}
-          </dev>
-          <dev className="productCategoryDiv">
-            <p className='attributeLabel'>Category: </p>
-            {product.subCategoryName}
-          </dev>
+            <dev className="productBrandDiv">
+              <p className="attributeLabel">Brand: </p>
+              {product.brandName}
+            </dev>
+            <dev className="productCategoryDiv">
+              <p className="attributeLabel">Category: </p>
+              {product.subCategoryName}
+            </dev>
           </div>
           <div className="productPriceDiv">
-            <p className='attributeLabel'>Price: Rs. {product.unitPrice}</p>
+            <p className="attributeLabel">Price: Rs. {product.unitPrice}</p>
           </div>
           <div className="productQuantityDiv">
-            <p className='attributeLabel'>Quantity:</p>
-            
-            <div className="changeQTY" onClick={() => handleQuantityChange('minus')}><IoIosRemoveCircleOutline/></div>
-            <div className="quantityInput">
-            <MDBInput
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-            />
+            <p className="attributeLabel">Quantity:</p>
+
+            <div
+              className="changeQTY"
+              onClick={() => handleQuantityChange("minus")}
+            >
+              <IoIosRemoveCircleOutline />
             </div>
-            
-            <div className="changeQTY" onClick={() => handleQuantityChange('add')}><IoIosAddCircleOutline/></div>
+            <div className="quantityInput">
+              <MDBInput
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
+            </div>
+
+            <div
+              className="changeQTY"
+              onClick={() => handleQuantityChange("add")}
+            >
+              <IoIosAddCircleOutline />
+            </div>
           </div>
           <div className="productButtonDiv">
-            {product.currentStock>=15?<MDBBtn color="primary" onClick={handleAddCart}>Add to Cart</MDBBtn>:
-            <MDBBtn color="danger">Out of Stock</MDBBtn>
-            }
+            {product.currentStock >= 15 ? (
+              <MDBBtn color="primary" onClick={handleAddCart}>
+                Add to Cart
+              </MDBBtn>
+            ) : (
+              <MDBBtn color="danger">Out of Stock</MDBBtn>
+            )}
           </div>
           <div className="productDescriptionDiv">
-            <p className='attributeLabel'>Description:</p>
-            <p>{product.details}</p> 
-            </div>
+            <p className="attributeLabel">Description:</p>
+            <p>{product.details}</p>
+          </div>
         </MDBCol>
       </MDBRow>
       <ToastContainer />

@@ -18,6 +18,7 @@ const multer = require("multer");
 const cookieParser = require("cookie-parser");
 const upload = multer();
 const {createToken, validateToken} = require("./JWT");
+const {createOwnerToken, validateOwnerToken} = require("./ownerJWT");
 
 
 const app = express();
@@ -43,8 +44,9 @@ app.use("/api/owner/accountServices", ownerAccountServicesRouter);
 app.use("/api/cartServices", cartServicesRouter);
 app.use("/api/owner/ECOM_services", owner_ECOM_servicesRouter);
 
-app.get("/isAuth", validateToken, (req, res) => {
+app.get("/isAuth", validateOwnerToken, (req, res) => {
     console.log("User is authenticated");
+    console.log(req.role);
     return res.status(200).json({ message: "User is authenticated" });
 });
 

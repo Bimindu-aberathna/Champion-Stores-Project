@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 // import bcrypt from 'bcryptjs';
 import { useRef } from 'react';
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 function Login() {
@@ -29,16 +30,24 @@ function Login() {
       .then((res) => {
         console.log(res.data);
         console.log("Login Successful!");
-        if(res.data.success === true){
+        if(res.status === 200){
+          localStorage.setItem("accessToken", res.data.accessToken);
           window.location.href = "/transaction";
         } else {
-          alert('Login Failed!'); 
+          toast.error(res.data.message, {
+            position: "top-right",
+            autoClose: 3500,
+          });
         }
 
       })
       .catch(error => {
-        alert('Login Error!');
+        console.log(error);
+        toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 3500,
       });
+    });
 }
 
 
@@ -77,6 +86,7 @@ function Login() {
           <h2>STORES</h2>
         </div> 
       </div>
+      <ToastContainer />
     </div>
   );
 }

@@ -8,6 +8,8 @@ import Boot_Button from "react-bootstrap/Button";
 import Boot_Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import "./TransactionProductList.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 function Transaction() {
@@ -60,7 +62,15 @@ function Transaction() {
   }, [items]);
 
   const changeQuantity = (itemId, change) => {
-    
+    const itansQuantity = items.find((item) => item.id === itemId).quantity;
+    const productQuantity = productData.find((product) => product.id === itemId).quantity;
+    if (itansQuantity + change > productQuantity) {
+      toast.error("Out of stock", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+      return;
+    }
     setItems((prevItems) => {
       return prevItems.map((item) => {
         if (item.id === itemId) {
@@ -112,24 +122,38 @@ function Transaction() {
 
   const addItem = (product) => {
     const existingItem = items.find((item) => item.name === product.name);
+    if (product.quantity <= 0) {
+      toast.error("Out of stock", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+      return;
+    }
     if (existingItem) {
+      if (existingItem.quantity >= product.quantity) {
+      toast.error("Out of stock", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+      return;
+      }
       setItems((prevItems) => {
-        return prevItems.map((item) => {
-          if (item.id === existingItem.id) {
-            return { ...item, quantity: item.quantity + 1 };
-          }
-          return item;
-        });
+      return prevItems.map((item) => {
+        if (item.id === existingItem.id) {
+        return { ...item, quantity: item.quantity + 1 };
+        }
+        return item;
+      });
       });
     } else {
       setItems((prevItems) => [
-        ...prevItems,
-        {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          quantity: 1,
-        },
+      ...prevItems,
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+      },
       ]);
     }
   };
@@ -149,15 +173,29 @@ function Transaction() {
     discount: discount,
     items: items
   };
+  const accessToken = localStorage.getItem("accessToken")||"";
 
   // Make an HTTP POST request to your backend API
-  axios.post('http://localhost:5000/api/owner/productServices/transaction', transactionData)
+  axios.post('http://localhost:5000/api/owner/productServices/transaction', transactionData, {
+    headers: {
+      "x-access-token": accessToken,
+    },
+  }
+  )
     .then(response => {
       console.log('Transaction successful:', response.data);
       setShowConfirmation(false);
-      clearList();
+      setItems([]);
+      toast.success('Transaction successful', {
+        position: "top-right",
+        autoClose: 1500,
+      });
     })
     .catch(error => {
+      toast.error("Hello"+error.response.data.message, {
+        position: "top-right",
+        autoClose: 3500,
+      });
       console.error('Error occurred during transaction:', error);
       // Optionally, you can handle error response here
     });
@@ -426,6 +464,7 @@ function Transaction() {
           </Modal.Footer>
         </Modal>
       </div>
+      <ToastContainer />
     </>
   );
 }
