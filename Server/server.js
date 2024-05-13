@@ -13,6 +13,7 @@ const ownerProductServicesRouter = require("./routes/ownerProductServices");
 const ownerSupplierServicesRouter = require("./routes/ownerSupplierServices");
 const ownerAccountServicesRouter = require("./routes/ownerAccountServices");
 const owner_ECOM_servicesRouter = require("./routes/owner_ECOM_services");
+const Report_AnalyticsRouter = require("./routes/OwnerReport&Analytics");
 const { pseudoRandomBytes } = require("crypto");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
@@ -43,6 +44,7 @@ app.use("/api/owner/supplierServices", ownerSupplierServicesRouter);
 app.use("/api/owner/accountServices", ownerAccountServicesRouter);
 app.use("/api/cartServices", cartServicesRouter);
 app.use("/api/owner/ECOM_services", owner_ECOM_servicesRouter);
+app.use("/ownerReportServices", Report_AnalyticsRouter);
 
 app.get("/isAuth", validateOwnerToken, (req, res) => {
     console.log("User is authenticated");

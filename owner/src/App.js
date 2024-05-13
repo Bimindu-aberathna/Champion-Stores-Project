@@ -17,6 +17,7 @@ import PurchaseHistory from './pages/PurchaseHistory';
 import AlterCategories from './pages/AlterCategories';
 import HandleExpiredProducts from './pages/HandleExpiredProducts'
 import ProductReturn from './pages/ProductReturn';
+import Reports from './pages/Reports';
 
 
 function App() {
@@ -40,7 +41,7 @@ function App() {
         <Route path="/altercategories" element={<AlterCategories/>} />
         <Route path="/handleexpiredproducts" element={<HandleExpiredProducts/>} />
         <Route path="/productreturn" element={<ProductReturn/>} />
-
+        <Route path="/reports" element={<Reports/>} />
       </Routes>
     </BrowserRouter>
   );

@@ -113,6 +113,7 @@ function SideNavbar() {
               {open && <span>Low Stocks</span>}
             </li>
           </Link>
+          
           <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
             <img
               src={require("../assets/report.png")}

@@ -96,6 +96,7 @@ function Transaction() {
   };
 
   const handleProceed = () => {
+    setDiscount(0);
     setShowConfirmation(true);
   };
 
