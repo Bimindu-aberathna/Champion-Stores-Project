@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowDroprightCircle } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import "./SideNavbar.css";
 
-function SideNavbar() {
+function SideNavbar({ selected }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -19,6 +20,7 @@ function SideNavbar() {
         top: 0,
         left: 0,
         height: "100%",
+        width: "20%",
         zIndex: open ? 999 : 1,
       }}
     >
@@ -26,9 +28,12 @@ function SideNavbar() {
         className={`h-screen bg-black position-relative`}
         style={{
           height: "100%",
-          width: open ? "60%" : "30%",
+          width: open ? "60%" : "20%",
           transition: "width 0.5s",
           zIndex: open ? 999 : 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "left",
         }}
       >
         {open && (
@@ -56,6 +61,7 @@ function SideNavbar() {
               zIndex: 1000,
               backgroundColor: "#474747",
               transform: open ? "rotate(180deg)" : "none",
+              cursor: "pointer",
             }}
             onClick={() => setOpen(!open)}
           />
@@ -68,84 +74,145 @@ function SideNavbar() {
         )}
 
         <br />
-        <ul className="pt-6" style={{ marginTop: open ? "auto" : "5rem" }}>
+        <ul
+          className="pt-6"
+          style={{
+            marginTop: open ? "auto" : "5rem",
+            height: "100%",
+            paddingLeft: 0,
+          }}
+        >
           <Link to="/transaction" className="text-decoration-none text-white">
-            <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
+            <li
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
+              style={{
+                backgroundColor: selected === "Transaction" ? "#474747" : "",
+              }}
+            >
               <img
                 src={require("../assets/credit-card-machine.png")}
                 alt="profile"
-                className="w-10 h-10"
-                style={{ width: open ? "25%" : "100%" }}
+                className="navBarIcon"
+                style={{ width: open ? "25%" : "90%" }}
               />
               {open && <span>Transaction</span>}
             </li>
           </Link>
           <Link to="/orders" className="text-decoration-none text-white">
-            <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
+            <li
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
+              style={{
+                backgroundColor: selected === "Orders" ? "#474747" : "",
+              }}
+            >
               <img
                 src={require("../assets/logistics.png")}
                 alt="profile"
-                className="w-10 h-10"
-                style={{ width: open ? "25%" : "100%" }}
+                className="navBarIcon"
+                style={{ width: open ? "25%" : "90%" }}
               />
               {open && <span>Orders</span>}
             </li>
           </Link>
           <Link to="/inventory" className="text-decoration-none text-white">
-            <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
+            <li
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
+              style={{
+                backgroundColor: selected === "Inventory" ? "#474747" : "",
+              }}
+            >
               <img
                 src={require("../assets/checklists.png")}
                 alt="profile"
-                className="w-10 h-10"
-                style={{ width: open ? "25%" : "100%" }}
+                className="navBarIcon"
+                style={{ width: open ? "25%" : "90%" }}
               />
               {open && <span>Inventory</span>}
             </li>
           </Link>
           <Link to="/lowstock" className="text-decoration-none text-white">
-            <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
+            <li
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
+              style={{
+                backgroundColor: selected === "Low Stocks" ? "#474747" : "",
+              }}
+            >
               <img
                 src={require("../assets/delivery-cancelled.png")}
                 alt="profile"
-                className="w-10 h-10"
-                style={{ width: open ? "25%" : "100%" }}
+                className="navBarIcon"
+                style={{ width: open ? "25%" : "90%" }}
               />
               {open && <span>Low Stocks</span>}
             </li>
           </Link>
-          <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
-            <img
-              src={require("../assets/report.png")}
-              alt="profile"
-              className="w-10 h-10"
-              style={{ width: open ? "25%" : "100%" }}
-            />
-            {open && <span>Reports</span>}
-          </li>
+          <Link to="/reports" className="text-decoration-none text-white">
+            <li
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
+              style={{
+                backgroundColor: selected === "Reports" ? "#474747" : "",
+              }}
+            >
+              <img
+                src={require("../assets/report.png")}
+                alt="profile"
+                className="navBarIcon"
+                style={{ width: open ? "25%" : "90%" }}
+              />
+              {open && <span>Reports</span>}
+            </li>
+          </Link>
           <Link to="/productreturn" className="text-decoration-none text-white">
-            <li className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2">
+            <li
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
+              style={{
+                backgroundColor:
+                  selected === "Product Returns" ? "#474747" : "",
+              }}
+            >
               <img
                 src={require("../assets/return.png")}
-                alt="profile"
-                className="w-10 h-10"
-                style={{ width: open ? "25%" : "100%" }}
+                alt="Return"
+                className="navBarIcon"
+                style={{ width: open ? "25%" : "90%" }}
               />
               {open && <span>Product Returns</span>}
             </li>
           </Link>
+          <li></li><li></li><li></li>
 
           <li
-            className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-5"
+            className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
             onClick={handleLogout}
           >
             <img
               src={require("../assets/logout.png")}
               alt="profile"
-              className="w-8 h-8"
-              style={{ width: open ? "25%" : "100%" }}
+              className="navBarIcon"
+              style={{ width: open ? "25%" : "90%" }}
             />
             {open && <span>Log Out</span>}
           </li>
+          <Link
+            to="/accountsettings"
+            className="text-decoration-none text-white"
+          >
+            <li
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
+              style={{
+                backgroundColor:
+                  selected === "AccountSettings" ? "#474747" : "",
+              }}
+            >
+              <img
+                src={require("../assets/user.png")}
+                alt="Settings"
+                className="navBarIcon"
+                style={{ width: open ? "25%" : "90%" }}
+              />
+              {open && <span>Account Settings</span>}
+            </li>
+          </Link>
         </ul>
       </div>
       <div className=""></div>

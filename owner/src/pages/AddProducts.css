@@ -26,3 +26,6 @@
     padding: 2rem;  
     border-radius: 20px;
 }
+#inputBarcodeBtn:active{
+    transform: scale(0.9);
+}

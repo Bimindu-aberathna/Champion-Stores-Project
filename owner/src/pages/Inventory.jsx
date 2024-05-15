@@ -56,7 +56,7 @@ function Inventory() {
   return (
     <div>
       <InventoryNavBar />
-      <SideNavbar />
+      <SideNavbar selected="Inventory"/>
 
       <div style={{ paddingTop: "1rem", paddingLeft: "13rem" }}>
         <div style={{ display: "flex", alignItems: "center", width: "90%" }}>
@@ -98,9 +98,10 @@ function Inventory() {
               key={index}
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
-              style={{ zIndex: "888" }}
+              style={{ zIndex: "888",width:'150px'}}
+            
             ><Link to={`/editproduct/${product.productID}`} key={product.productID}>
-              <div className="contant">
+              <div className="contant" >
                 <div className="img-box">
                   <img className="img" src={product.image1} alt="product" />
                 </div>

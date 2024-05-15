@@ -154,7 +154,7 @@ function NewInventory() {
                           <Form.Label>Supplier</Form.Label>
                           <Form.Control
                             type="text"
-                            placeholder="product buying price per unit"
+                            placeholder="Supplier name"
                             value={product.supplierName}
                             disabled
                           />

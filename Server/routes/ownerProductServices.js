@@ -4,6 +4,7 @@ const db = require("../Server_Configuration");
 const e = require("express");
 const multer = require("multer");
 const upload = multer();
+const { validateOwnerToken } = require("../ownerJWT");
 
 
 router.get("/getProductData/:productId", (req, res) => {
@@ -22,7 +23,7 @@ router.get("/getProductData/:productId", (req, res) => {
 });
 
 router.get("/listLowStockProducts", (req, res) => {
-  const sql = "SELECT * from product WHERE preorderLevel>=currentStock;";
+  const sql = "SELECT * from product WHERE preorderLevel>=currentStock AND status = 1;";
   db.query(sql, (err, result) => {
     if (err) res.json({ message: "Server error occurred" });
     res.json(result);
@@ -49,7 +50,7 @@ router.get("/getSubCategories/:categoryID", (req, res) => {
 router.get("/getProductsBySubCategory/:subCategoryID", (req, res) => {
   const subCategoryID = req.params.subCategoryID;
 
-  const sql = "SELECT * FROM product WHERE subCategoryID = ?;";
+  const sql = "SELECT * FROM product WHERE subCategoryID = ? AND status = 1;";
   db.query(sql, [subCategoryID], (err, result) => {
     if (err) res.json({ message: "Server error occurred" });
     res.json(result);
@@ -95,10 +96,11 @@ router.post("/addProduct", upload.none(), (req, res) => {
     img1,
     img2,
     img3,
+    barcode,
   } = req.body;
   console.log(req.body);
   const sql =
-    "INSERT INTO product (subCategoryID, productName, brandName, details, unitPrice, preorderLevel, currentStock,supplierID,";
+    "INSERT INTO product (subCategoryID, productName, brandName, details, unitPrice, preorderLevel, currentStock, supplierID, barcode,";
 
   // Create placeholders for images based on the number of images being passed
   const placeholders = ["image1", "image2", "image3"]
@@ -109,7 +111,7 @@ router.post("/addProduct", upload.none(), (req, res) => {
   const placeholdersString = placeholders.join(",");
 
   // Complete the SQL query
-  const finalSql = `${sql}${placeholdersString}) VALUES (?, ?, ?, ?, ?, ?,?, ?,${placeholders
+  const finalSql = `${sql}${placeholdersString}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,${placeholders
     .fill("?")
     .join(",")} );`;
 
@@ -123,6 +125,7 @@ router.post("/addProduct", upload.none(), (req, res) => {
     reorderLevel,
     openingStock,
     supplierID,
+    barcode,
   ];
 
   // Add image values to the values array
@@ -211,7 +214,8 @@ router.delete("/deleteProduct/:productId", (req, res) => {
   const productId = req.params.productId;
 
   // Logic to delete the product from your database
-  const sql = "DELETE FROM product WHERE productID = ?";
+  const sql = "UPDATE product SET status = 0 WHERE productID = ?;";
+  //"DELETE FROM product WHERE productID = ?";
   db.query(sql, [productId], (err, result) => {
     if (err) {
       // If an error occurs, respond with a server error status code
@@ -223,7 +227,7 @@ router.delete("/deleteProduct/:productId", (req, res) => {
   res.status(200).json({ message: "Product deleted successfully" });
 });
 
-router.post("/transaction", (req, res) => {
+router.post("/transaction",validateOwnerToken, (req, res) => {
   const { total, discount, subtotal, items } = req.body;
   const transactionItems = items;
   const sub_total = total - discount;
@@ -465,5 +469,18 @@ router.post("/returnProduct", (req, res) => {
     }
   });
 });
+
+router.get("/getBarcodes", (req, res) => {
+  const sql = "SELECT barcode FROM product WHERE barcode IS NOT NULL AND barcode <> 'null'AND status=1;";
+  db.query(sql, (err, result) => {
+    if (err) {
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      const barcodes = result.map((product) => product.barcode);
+      res.json(barcodes);
+    }
+  });
+});
+
 
 module.exports = router;

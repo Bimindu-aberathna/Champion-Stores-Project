@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
 import "./AddProducts.css";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
+import SideNavbar from "../Components/SideNavbar";
 // import { imgDB } from "../firebase";
 import { imgStorage } from "../config";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { getBarcodes } from "../Services/productServices";
 
 import {
   MDBBtn,
@@ -44,15 +49,19 @@ function AddProduct() {
   const [img3URL, setImg3URL] = useState("");
   const [imgUploadError, setImgUploadError] = useState(false);
   const [dataSending, setDataSending] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [barcode, setBarcode] = useState("");
+  const [scannedCode, setScannedCode] = useState("");
+  const [existingBarcodes, setExistingBarcodes] = useState([]);
 
   //Variables to store form data
-    const [productName, setProductName] = useState("");
-    const [brandName, setBrandName] = useState("");
-    const [buyingPrice, setBuyingPrice] = useState("");
-    const [unitPrice, setUnitPrice] = useState("");
-    const [openingStock, setOpeningStock] = useState("");
-    const [reorderLevel, setReorderLevel] = useState("");
-    const [productDetails, setProductDetails] = useState("");
+  const [productName, setProductName] = useState("");
+  const [brandName, setBrandName] = useState("");
+  const [buyingPrice, setBuyingPrice] = useState("");
+  const [unitPrice, setUnitPrice] = useState("");
+  const [openingStock, setOpeningStock] = useState("");
+  const [reorderLevel, setReorderLevel] = useState("");
+  const [productDetails, setProductDetails] = useState("");
 
   useEffect(() => {
     axios
@@ -64,6 +73,10 @@ function AddProduct() {
       })
       .catch((err) => {
         console.log(err);
+        toast.error("Error fetching categories", {
+          position: "top-right",
+          autoClose: 2000,
+        });
       });
   }, []);
 
@@ -73,11 +86,20 @@ function AddProduct() {
       .then((res) => {
         setSelectedSupplierID(res.data[0].supplierID);
         setSuppliers(res.data);
-        
       })
       .catch((err) => {
         console.log(err);
+        toast.error("Error fetching suppliers", {
+          position: "top-right",
+          autoClose: 2000,
+        });
       });
+  }, []);
+
+  useEffect(() => {
+    getBarcodes().then((res) => {
+      setExistingBarcodes(res);
+    });
   }, []);
 
   const handleCategoryChange = (event) => {
@@ -88,11 +110,13 @@ function AddProduct() {
   const handleSupplierChange = (event) => {
     setSelectedSupplierID(event.target.value);
     console.log(selectedSupplierID);
-  }; 
+  };
 
-  useEffect(() => { 
+  useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategoryID}`)
+      .get(
+        `http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategoryID}`
+      )
       .then((res) => {
         setSubcategories(res.data);
         setSelectedSubcategory(res.data[0].subCategoryID);
@@ -134,18 +158,8 @@ function AddProduct() {
   };
 
   function validateForm(event) {
-    
     event.preventDefault();
-    
-    console.log("productName", productName);
-    console.log("brandName", brandName);
-    console.log("subCategory", selectedSubcategory);
-    console.log("openingStock", openingStock);
-    console.log("reorderLevel", reorderLevel); 
-    console.log("buyingPrice", buyingPrice);
-    console.log("unitPrice", unitPrice);
-    console.log("productDetails", productDetails);
-    console.log("supplierID", selectedSupplierID);
+
     {
       if (
         productName === "" ||
@@ -154,21 +168,36 @@ function AddProduct() {
         reorderLevel === "" ||
         productDetails === ""
       ) {
-        alert("Please fill all the fields");
+        toast.error("Please fill all the fields", {
+          autoClose: 2000,
+        });
+
         return;
       } else if (
         !validateIntegers(openingStock) ||
         !validateIntegers(reorderLevel)
       ) {
-        alert("Opening stock and reorder level should be integers");
+        toast.error("Opening stock and reorder level should be integers", {
+          position: "top-right",
+          autoClose: 2000,
+        });
+
         return;
-      } else if (
-        !validatePrice(buyingPrice) ||
-        !validatePrice(unitPrice)
-      ) {
-        alert("Buying price and unit price should be numbers greater than zero");
+      } else if (!validatePrice(buyingPrice) || !validatePrice(unitPrice)) {
+        toast.error(
+          "Buying price and unit price should be numbers greater than zero",
+          {
+            position: "top-right",
+            autoClose: 2000,
+          }
+        );
         return;
-      }else {
+      } else if (existingBarcodes.includes(scannedCode)) {
+        toast.error("Barcode already exists", {
+          position: "top-right",
+          autoClose: 2000,
+        });
+      } else {
         //Create FormData object to send files along with form data
         setDataSending(true);
         imageUpload();
@@ -192,7 +221,6 @@ function AddProduct() {
     }
     return false;
   }
-  
 
   const imageUpload = async () => {
     const formData = new FormData();
@@ -210,6 +238,10 @@ function AddProduct() {
         .catch((error) => {
           console.error("Error uploading image 1", error);
           setImgUploadError(true);
+          toast("Error uploading image 1", {
+            position: "top-right",
+            autoClose: 2000,
+          });
         });
     }
     if (uploadIMG2 !== "") {
@@ -224,6 +256,10 @@ function AddProduct() {
         .catch((error) => {
           console.error("Error uploading image 2", error);
           setImgUploadError(true);
+          toast("Error uploading image 2", {
+            position: "top-right",
+            autoClose: 2000,
+          });
         });
     }
     if (uploadIMG3 !== "") {
@@ -231,7 +267,7 @@ function AddProduct() {
       await uploadBytesResumable(storageRef, uploadIMG3)
         .then(async (snapshot) => {
           const url3 = await getDownloadURL(snapshot.ref);
-          formData.append("img2", url3);
+          formData.append("img3", url3);
           console.log("File available at", url3);
           setImg2URL(url3);
         })
@@ -245,26 +281,72 @@ function AddProduct() {
     formData.append("brandName", brandName);
     formData.append("subCategory", selectedSubcategory);
     formData.append("openingStock", openingStock);
-    formData.append("reorderLevel", reorderLevel); 
+    formData.append("reorderLevel", reorderLevel);
     formData.append("buyingPrice", buyingPrice);
     formData.append("unitPrice", unitPrice);
     formData.append("productDetails", productDetails);
     formData.append("supplierID", selectedSupplierID);
+    if (scannedCode === "") {
+      formData.append("barcode", "null");
+    } else {
+      formData.append("barcode", scannedCode);
+    }
     console.log("Calling database");
     axios
-      .post("http://localhost:5000/api/owner/productServices/addProduct", formData)
+      .post(
+        "http://localhost:5000/api/owner/productServices/addProduct",
+        formData
+      )
       .then((res) => {
         // Handle success response
-
+        toast.success("Product added successfully", {
+          position: "top-right",
+          autoClose: 2000,
+        });
         setShowConfirmation(true);
       })
       .catch((err) => {
         // Handle error response
         console.error("Error adding product", err);
+        toast.error("Error adding product", {
+          position: "top-right",
+          autoClose: 2000,
+        });
       });
 
     setDataSending(false);
   };
+  const handleKeyPress = useCallback(
+    (event) => {
+      if (event.key === "Enter") {
+        if (barcode) {
+          setScannedCode(barcode);
+          setBarcode("");
+        }
+      } else {
+        setBarcode((prev) => prev + event.key);
+      }
+    },
+    [barcode]
+  );
+
+  const barcodeReader = () => {
+    setBarcode("");
+    setIsScanning((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (isScanning) {
+      window.addEventListener("keypress", handleKeyPress);
+    } else {
+      window.removeEventListener("keypress", handleKeyPress);
+    }
+
+    // Cleanup event listener on component unmount or when scanning stops
+    return () => {
+      window.removeEventListener("keypress", handleKeyPress);
+    };
+  }, [isScanning, handleKeyPress]);
 
   return (
     <>
@@ -279,7 +361,6 @@ function AddProduct() {
                     className="d-none d-md-block "
                     style={{ marginTop: "1rem" }}
                   >
-                    {/* ----------------------------------------------------------------------------------------- */}
 
                     <Carousel
                       interval={5000}
@@ -388,7 +469,7 @@ function AddProduct() {
                             id="inputBrandName"
                             type="text"
                             placeholder="brand name"
-                            onChange={(e)=> setBrandName(e.target.value)}
+                            onChange={(e) => setBrandName(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
@@ -486,16 +567,13 @@ function AddProduct() {
                             type="number"
                             placeholder="product selling price per unit"
                             min="0" // Enforce a minimum value of 1
-                            step="0.01" 
+                            step="0.01"
                             onChange={(e) => setUnitPrice(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
-
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
-                       
-
                         {/* <MDBCol md="6">
                           <Form.Label>Supplier</Form.Label>
                           <Form.Control
@@ -523,6 +601,54 @@ function AddProduct() {
                               </option>
                             ))}
                           </Form.Select>
+                        </MDBCol>
+                        <MDBCol md="6">
+                          <Form.Label htmlFor="disabledSelect">
+                            Barcode
+                          </Form.Label>
+                          <InputGroup>
+                            <Form.Control
+                              type="text"
+                              placeholder="product barcode"
+                              aria-describedby="inputBarcode"
+                              value={scannedCode ? scannedCode : barcode}
+                              readOnly
+                            />
+                            {scannedCode === "" ? (
+                              <InputGroup.Text
+                                id="inputBarcodeBtn"
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: isScanning
+                                    ? "white"
+                                    : "black",
+                                  border: "2px solid black",
+                                  color: isScanning ? "black" : "white",
+                                }}
+                                onClick={() => {
+                                  barcodeReader();
+                                }}
+                              >
+                                {isScanning ? "Stop scanning" : "Scan barcode"}
+                              </InputGroup.Text>
+                            ) : (
+                              <InputGroup.Text
+                                id="inputBarcodeBtn"
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: "black",
+                                  border: "2px solid black",
+                                  color: "white",
+                                }}
+                                onClick={() => {
+                                  setScannedCode("");
+                                  setBarcode("");
+                                }}
+                              >
+                                {"Clear"}
+                              </InputGroup.Text>
+                            )}
+                          </InputGroup>
                         </MDBCol>
                       </MDBRow>
 
@@ -567,6 +693,7 @@ function AddProduct() {
           <h4 style={{ color: "snow" }}>Database Updating</h4>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

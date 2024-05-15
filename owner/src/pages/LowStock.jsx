@@ -70,7 +70,7 @@ function LowStock() {
         </div>
       </div>
 
-      <SideNavbar />
+      <SideNavbar selected="Low Stocks"/>
     </>
   );
 }

@@ -8,6 +8,7 @@ import Login from './Components/Login & SignUp/Login';
 import SignUp from './Components/Login & SignUp/Sign-Up';
 import ProductPage from './Components/ProductPage/ProductPage';
 import Cart from './Components/Cart/Cart';
+import ProfileNav from './Components/CustomerProfile/ProfileNav';
 
 function MainContent({ searchTerm, onSearch }) {
   const location = useLocation();
@@ -20,6 +21,7 @@ function MainContent({ searchTerm, onSearch }) {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<ProfileNav />} />
 
       </Routes>
     </>

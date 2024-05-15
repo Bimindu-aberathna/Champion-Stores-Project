@@ -63,15 +63,7 @@ function Cart() {
           setCartID(data[0].cartID);
         })
         .catch((err) => {
-          if (err.response.status === 402) {
-            toast.error("Authentication Error", {
-              position: "top-right",
-              autoClose: 3500,
-            });
-            return;
-          } else {
-            toast.error("Error loading cart items");
-          }
+          console.error("Error fetching cart details:", err);
         });
     } else {
       toast.error("Please login to view cart items");
@@ -89,7 +81,7 @@ function Cart() {
           setMobile(response.data.telephone);
         })
         .catch((err) => {
-          toast.error("Error loading customer details");
+          console.error("Error fetching customer details:", err);
         });
     }
   }, []);

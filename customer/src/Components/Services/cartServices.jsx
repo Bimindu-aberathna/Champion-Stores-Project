@@ -1,5 +1,7 @@
 import { cartServiceEndpoint, addToCartEndpoint } from "../apiCalls";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 async function addProductToCart(productID, quantity = 1, unitPrice) {
   const accessToken = localStorage.getItem("accessToken");
@@ -17,17 +19,54 @@ async function addProductToCart(productID, quantity = 1, unitPrice) {
   return response.status;
 }
 
-async function getCart(customerID) {
+async function getCart() {
   const accessToken = localStorage.getItem("accessToken");
-
-  const response = await axios.get(cartServiceEndpoint + "/getCart", {
-    headers: {
-      "x-access-token": accessToken,
-    },
-  });
-  //console.log(response.data);
-  return response.data;
+  try {
+    const response = await axios.get(cartServiceEndpoint + "/getCart", {
+      headers: {
+        "x-access-token": accessToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.message, {
+      position: "top-right",
+      autoClose: 3500,
+    });
+    console.error("Error fetching cart details:", error);
+    throw error;
+  }
+  <ToastContainer />;
 }
+
+/*
+export const changeCustomerDetails = async (newDetails) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.post(customerServicesEndpoint + "/updateCustomerDetails", newDetails, {
+      headers: {
+        "x-access-token": accessToken,
+      },
+    });
+    toast.success(response.data.message, {
+      position: "top-right",
+      autoClose: 3500,
+    }
+    );
+
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    toast.error(error.message, {
+      position: "top-right",
+      autoClose: 3500,
+    });
+    console.error("Error changing customer details:", error);
+    return error;
+  }
+};
+*/
+
 async function changeDeliveryInfo(receiverName, mobile, address) {
   const accessToken = localStorage.getItem("accessToken");
   const response = await axios.post(
@@ -65,40 +104,37 @@ function changeCartItemQuantity(cardItemID, quantity) {
 }
 async function removeCartItem(cartItemId) {
   const accessToken = localStorage.getItem("accessToken");
-  const response = await axios.delete(
-    cartServiceEndpoint + "/removeCartItem",
-    {
-      data: { cartItemID: cartItemId },
-      headers: {
-        "x-access-token": accessToken,
-      },
-    }
-  );
+  const response = await axios.delete(cartServiceEndpoint + "/removeCartItem", {
+    data: { cartItemID: cartItemId },
+    headers: {
+      "x-access-token": accessToken,
+    },
+  });
   console.log("hello world");
   console.log(response.data);
   return response.data;
 }
 
 async function CompletePayment(cartID, cardNumber, expiryDate, cvc) {
-    const accessToken = localStorage.getItem("accessToken");
-    console.log(cartID, cardNumber, expiryDate, cvc);
-    const response = await axios.post(
-      cartServiceEndpoint + "/checkout",
-      {
-        cartID: cartID,
-        cardNumber: cardNumber,
-        expiryDate: expiryDate,
-        cvc: cvc,
+  const accessToken = localStorage.getItem("accessToken");
+  console.log(cartID, cardNumber, expiryDate, cvc);
+  const response = await axios.post(
+    cartServiceEndpoint + "/checkout",
+    {
+      cartID: cartID,
+      cardNumber: cardNumber,
+      expiryDate: expiryDate,
+      cvc: cvc,
+    },
+    {
+      headers: {
+        "x-access-token": accessToken,
       },
-      {
-        headers: {
-          "x-access-token": accessToken,
-        },
-      }
-    )
-    //console.log(response.data); 
-    return response.data;
-  }
+    }
+  );
+  //console.log(response.data);
+  return response.data;
+}
 
 export {
   addProductToCart,
