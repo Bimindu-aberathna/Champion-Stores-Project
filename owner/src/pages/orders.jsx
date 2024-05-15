@@ -145,7 +145,7 @@ function Orders() {
         </div>
       </div>
 
-      <SideNavbar />
+      <SideNavbar selected="Orders"/>
 
       <div style={{ position: "relative", height: "100vh" }}>
         <Card

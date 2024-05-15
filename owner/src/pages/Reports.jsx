@@ -10,7 +10,7 @@ import SalesGraph from "../Components/SalesGraph";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { generateInventoryReport,generateSalesReport } from "../Services/ReporService";
+import { generateInventoryReport,generateSalesReport} from "../Services/ReporService";
 import dayjs from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -22,6 +22,8 @@ function Reports() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [toDate, setToDate] = useState(dayjs());
   const [fromDate, setFromDate] = useState(dayjs().subtract(3, "month"));
+
+
   const handleCloseConfirmation = () => {
     setShowConfirmation(false);
   };
@@ -60,7 +62,7 @@ function Reports() {
 
   return (
     <div style={{ width: "100%", marginTop: "1rem" }}>
-      <SideNavbar />
+      <SideNavbar selected="Reports"/>
       <div style={{ marginLeft: "6.5rem" }}>
         <Row style={{ width: "100%" }}>
           <Col style={{ zIndex: "800" }} sm={8}>

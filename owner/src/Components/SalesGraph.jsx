@@ -1,12 +1,44 @@
 import * as React from 'react';
+import { useState,useEffect } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import './SalesGraph.css';
+import {getWeeklyInstoreSales,getWeeklyOnlineSales} from '../Services/ReporService'; 
+import axios from 'axios';
 
 export default function SalesGraph() {
-const weeks =  [1, 2, 3, 5, 8, 10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35];
-const onlinesales = [8,9,6,5,7,10,11,10.3,6.8,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,12.5,11.5,16.5,8.5,10.5,11.5,12.15,13.5,14.5,15.5,16.5,17.5];
-const offlinesales = [8.5,12.6,13.42,17.21,15.6,18.3,12.36,13.54,14.23,15.45,16.23,17.45,18.23,19.45,14.23,15.45,13.23,16.45,17.23,19.45,14.23,16.45,12.23,12.45,10.23,11.45,12.23,13.45,14.23,18.45];
-const totalSales = onlinesales.map((value, index) => value + offlinesales[index]);
+const weeks =  [1, 2, 3, 5, 8, 10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52];
+const [online_sales, setOnline_Sales] = useState([]);
+const [instore_sales, setInstore_Sales] = useState([]);
+const [total_sales, setTotal_Sales] = useState([]);
+let onlinesales = [];
+let offlinesales = [];
+
+let totalSales = [];
+//const totalSales = onlinesales.map((value, index) => value + offlinesales[index]);
+useEffect(() => {
+  axios.get('http://localhost:5000/ownerReportServices/getOnlineSales').then((res) => {
+    onlinesales = res.data;
+    console.log('----------------',onlinesales);
+    axios.get('http://localhost:5000/ownerReportServices/getInstoreSales').then((res) => {
+      offlinesales = res.data;
+      console.log('//////////////////',offlinesales);
+      totalSales = onlinesales.map((value, index) => value + offlinesales[index]);
+      console.log('*********',totalSales);
+  }
+  ).catch((error) => {
+    console.log(error);
+  })
+}
+).catch((error) => {
+  console.log(error);
+})
+}, []);
+
+useEffect(() => {
+  setOnline_Sales(onlinesales);
+  setInstore_Sales(offlinesales);
+  setTotal_Sales(totalSales);
+}, [onlinesales, offlinesales, totalSales]);
 
   return (
     <div>
@@ -15,13 +47,13 @@ const totalSales = onlinesales.map((value, index) => value + offlinesales[index]
       yAxis={[{ axisLabel: 'Sales' }]} 
       series={[
         {
-          data: onlinesales,
+          data: online_sales,
         },
         {
-          data: offlinesales,
+          data: instore_sales,
         },
         {
-          data: totalSales,
+          data: total_sales,
         },
       ]}
       width={750}

@@ -15,10 +15,10 @@ const validateOwnerToken = (req, res, next) => {
     }
     try {
         const validToken = verify(accessToken,"SUPER_SECRET_JWT_KEY_FOR_OWNER")
-        if (validToken) {
+        if (validToken && validToken.role === "owner") {
             req.authenticated = true;
+            req.ownerID = validToken.ownerID;
             req.role = validToken.role;
-            console.log(req.role);
             console.log("User authenticated");
             return next();
         }else{

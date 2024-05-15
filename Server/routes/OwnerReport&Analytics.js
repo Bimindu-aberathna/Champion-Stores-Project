@@ -21,6 +21,7 @@ router.get("/getInstoreSales", (req, res) => {
         } else {
             const sales = formatSalesWeekly(result);
            const formattedSales = extendObject(sales);
+           console.log(formattedSales);
             res.status(200).json( formattedSales );
         }
     });
@@ -54,13 +55,12 @@ function formatSalesWeekly(data) {
     return sales;
 }
 function extendObject(obj) {
-    const extendedObj = {};
+    const extendedArray = [];
     for (let i = 1; i <= 52; i++) {
-      extendedObj[i.toString()] = obj[i.toString()] || 0;
+        extendedArray.push(obj[i.toString()] || 0);
     }
-    return extendedObj;
-  }
-
+    return extendedArray;
+}
 
 
 

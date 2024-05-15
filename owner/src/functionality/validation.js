@@ -25,3 +25,21 @@ export function nameValidation(name) {
     }
     return true;
 }
+
+export function validateEmail(email) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(emailRegex.test(email)){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+export function validatePassword(password) {
+    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{7,}$/;
+    if(passwordRegex.test(password)){
+        return true;
+    }else{
+        return false;
+    }
+}

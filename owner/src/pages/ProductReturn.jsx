@@ -82,7 +82,7 @@ function ProductReturn() {
 
   return (
     <>
-      <SideNavbar />
+      <SideNavbar selected="Product Returns"/>
       <div
         style={{
           height: "100vh",

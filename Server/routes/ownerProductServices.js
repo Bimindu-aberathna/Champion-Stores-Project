@@ -96,10 +96,11 @@ router.post("/addProduct", upload.none(), (req, res) => {
     img1,
     img2,
     img3,
+    barcode,
   } = req.body;
   console.log(req.body);
   const sql =
-    "INSERT INTO product (subCategoryID, productName, brandName, details, unitPrice, preorderLevel, currentStock,supplierID,";
+    "INSERT INTO product (subCategoryID, productName, brandName, details, unitPrice, preorderLevel, currentStock, supplierID, barcode,";
 
   // Create placeholders for images based on the number of images being passed
   const placeholders = ["image1", "image2", "image3"]
@@ -110,7 +111,7 @@ router.post("/addProduct", upload.none(), (req, res) => {
   const placeholdersString = placeholders.join(",");
 
   // Complete the SQL query
-  const finalSql = `${sql}${placeholdersString}) VALUES (?, ?, ?, ?, ?, ?,?, ?,${placeholders
+  const finalSql = `${sql}${placeholdersString}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,${placeholders
     .fill("?")
     .join(",")} );`;
 
@@ -124,6 +125,7 @@ router.post("/addProduct", upload.none(), (req, res) => {
     reorderLevel,
     openingStock,
     supplierID,
+    barcode,
   ];
 
   // Add image values to the values array
@@ -467,5 +469,18 @@ router.post("/returnProduct", (req, res) => {
     }
   });
 });
+
+router.get("/getBarcodes", (req, res) => {
+  const sql = "SELECT barcode FROM product WHERE barcode IS NOT NULL AND barcode <> 'null'AND status=1;";
+  db.query(sql, (err, result) => {
+    if (err) {
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      const barcodes = result.map((product) => product.barcode);
+      res.json(barcodes);
+    }
+  });
+});
+
 
 module.exports = router;

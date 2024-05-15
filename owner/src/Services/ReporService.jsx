@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useState,useEffect } from 'react';
 import { saveAs } from "file-saver";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -79,4 +80,32 @@ const generateSalesReport = async (fromDate, toDate) => {
   <ToastContainer />;
 };
 
-export { generateInventoryReport, generateSalesReport };
+const getWeeklyOnlineSales = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/ownerReportServices/getOnlineSales');
+      return res.data;
+    } catch (err) {
+      toast.error("Error fetching sales data", {
+        position: "top-right",
+        autoClose: 3500,
+      });
+      console.log(err);
+      throw err; // Rethrow the error to handle it in the caller function
+    }
+};
+const getWeeklyInstoreSales = async () => {
+  try {
+    const res = await axios.get('http://localhost:5000/ownerReportServices/getInstoreSales');
+    console.log(res.data);
+    return res.data;
+  } catch (err) {
+    toast.error("Error fetching sales data", {
+      position: "top-right",
+      autoClose: 3500,
+    });
+    console.log(err);
+    throw err; // Rethrow the error to handle it in the caller function
+  }
+};
+
+export { generateInventoryReport, generateSalesReport, getWeeklyOnlineSales, getWeeklyInstoreSales};
