@@ -10,15 +10,17 @@ import {
 } from "mdb-react-ui-kit";
 import storeIMG from "../Assets/store.png";
 import { ToastContainer, toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { loginUser } from "../Services/userServices";
 import { Navigate } from "react-router-dom";
 import "./Login.css";
 
-function Login() {
+function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
   const handleLogin = (event) => {
     event.preventDefault();
     loginUser({ email, password })
@@ -29,7 +31,9 @@ function Login() {
             position: "top-right",
             autoClose: 3500,
           });
-          window.location.href = "/";
+          setIsAuthenticated(true);
+          navigate("/");
+          //window.location.href = "/";
 
         } else {
           toast.error("Invalid credentials!", {
