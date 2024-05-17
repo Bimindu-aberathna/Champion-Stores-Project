@@ -78,7 +78,7 @@ function Reports() {
               </Card.Body>
             </Card>
           </Col>
-          <Col style={{ backgroundColor: "yellow" }} sm={4}>
+          <Col  sm={4}>
             <div className="reportGenerationDiv">
               <h3>Generate Reports</h3>
               <Card style={{ width: "97%" }}>

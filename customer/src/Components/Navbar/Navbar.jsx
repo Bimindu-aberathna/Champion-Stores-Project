@@ -9,13 +9,23 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
 import { CiSearch } from "react-icons/ci";
 import { FaRegUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import {
+  MDBDropdown,
+  MDBDropdownMenu,
+  MDBDropdownToggle,
+  MDBDropdownItem,
+  MDBBtn,
+} from "mdb-react-ui-kit";
+import { LuMenu } from "react-icons/lu";
 
-function Navbar({ onSearch }) {
+function Navbar({ onSearch,setIsAuthenticated  }) {
   const [menu, setMenu] = useState("home");
   const [searchTerm, setSearchTerm] = useState("");
   const customerName = localStorage.getItem("customerName") || "Customer";
   const itemCount = localStorage.getItem("itemCount") || 0;
+  const navigate = useNavigate();
+
   const [loggedIn, setLoggedIn] = useState(
     localStorage.getItem("logged") || false
   );
@@ -33,17 +43,41 @@ function Navbar({ onSearch }) {
     localStorage.removeItem("customerName");
     localStorage.removeItem("customerID");
     setLoggedIn(false);
-    window.location.href = "/";
+    setIsAuthenticated(false);
+    navigate("/");
   };
 
   return (
     <div>
       <div className="navbar">
         <div className="navbar_logo">
-        <Link to={"/"}>
-          <img src={logo} alt="logo" style={{ width: "10rem" }} />
+          <Link to={"/"}>
+            <img src={logo} alt="logo" style={{ width: "10rem" }} />
           </Link>
-          <p>Welcome</p>
+          <p className="greeting">Welcome</p>
+          <div className="mobileDropdown">
+            <MDBDropdown dropleft group>
+              <MDBDropdownToggle class="custom-dropdown-toggle">
+                <LuMenu className="menuBTN" />
+              </MDBDropdownToggle>
+              <MDBDropdownMenu>
+                <MDBDropdownItem link>Hello! {customerName}</MDBDropdownItem>
+                <MDBDropdownItem divider />
+                <Link to={"/cart"}>
+                <MDBDropdownItem link>My Cart</MDBDropdownItem>
+                </Link>
+                <Link to={"/profile"}>
+                <MDBDropdownItem link>My account</MDBDropdownItem>
+                </Link>
+                <MDBDropdownItem divider />
+                {!loggedIn ? (
+                  <Link to={"/login"}>
+                    <MDBDropdownItem link>Login</MDBDropdownItem>
+                  </Link>
+                ) : <MDBDropdownItem link onClick={handleLogOut}>LogOut</MDBDropdownItem>}
+              </MDBDropdownMenu>
+            </MDBDropdown>
+          </div>
         </div>
         <div className="navbar_search">
           <FormControl sx={{ m: 1 }} variant="outlined" className="searchForm">
@@ -67,35 +101,34 @@ function Navbar({ onSearch }) {
         </div>
         <ul className="navbar_menu">
           <Link to={"/"}>
-          <li
-            onClick={() => {
-              setMenu("home");
-              setSearchTerm("");
-            }}
-          >
-            Home{menu === "home" ? <hr /> : null}
-          </li>
+            <li
+              onClick={() => {
+                setMenu("home");
+                setSearchTerm("");
+              }}
+            >
+              Home{menu === "home" ? <hr /> : null}
+            </li>
           </Link>
           <Link to={"/"}>
-          <li
-            onClick={() => {
-              setMenu("cosmetics");
-              setSearchTerm("cosmetics");
-              
-            }}
-          >
-            Cosmetics{menu === "cosmetics" ? <hr /> : null}
-          </li>
+            <li
+              onClick={() => {
+                setMenu("cosmetics");
+                setSearchTerm("cosmetics");
+              }}
+            >
+              Cosmetics{menu === "cosmetics" ? <hr /> : null}
+            </li>
           </Link>
           <Link to={"/"}>
-          <li
-            onClick={() => {
-              setMenu("toys");
-              setSearchTerm("toys");
-            }}
-          >
-            Toys{menu === "toys" ? <hr /> : null}
-          </li>
+            <li
+              onClick={() => {
+                setMenu("toys");
+                setSearchTerm("toys");
+              }}
+            >
+              Toys{menu === "toys" ? <hr /> : null}
+            </li>
           </Link>
         </ul>
         <div className="navbar_login_cart">
@@ -117,19 +150,21 @@ function Navbar({ onSearch }) {
           <div className="navbar_cart_count">{itemCount}</div>
           {loggedIn ? (
             <Link to={"/profile"}>
-            <div
-              className="userAccount"
-            >
-              <p>
-                <FaRegUser style={{ fontSize: "1.8rem", marginTop: "10px" }} />
-              </p>
-              <div>
-                <p style={{ fontSize: "14px", marginBottom: "-2px" }}>Hello</p>
-                <p style={{ fontWeight: "bold", marginBottom: "-2px" }}>
-                  {customerName}
+              <div className="userAccount">
+                <p>
+                  <FaRegUser
+                    style={{ fontSize: "1.8rem", marginTop: "10px" }}
+                  />
                 </p>
+                <div>
+                  <p style={{ fontSize: "14px", marginBottom: "-2px" }}>
+                    Hello
+                  </p>
+                  <p style={{ fontWeight: "bold", marginBottom: "-2px" }}>
+                    {customerName}
+                  </p>
+                </div>
               </div>
-            </div>
             </Link>
           ) : null}
         </div>

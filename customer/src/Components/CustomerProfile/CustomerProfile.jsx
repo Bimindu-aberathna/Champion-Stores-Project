@@ -45,7 +45,7 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
         });
       })
       .catch((error) => {
-        alert("Error fetching customer details");
+        
         console.log(error);
       });
   }

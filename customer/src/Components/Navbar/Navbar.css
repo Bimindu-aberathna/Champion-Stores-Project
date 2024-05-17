@@ -112,3 +112,45 @@
 .userAccount:hover{
     box-shadow: 0 2px 3px -2px black;
 }
+/* Styles for PC */
+@media screen and (min-width: 768px) {
+    .navbar {
+        /* PC-specific styles */
+    }
+    .mobileDropdown{
+        display: none;
+    }
+}
+
+/* Styles for smaller devices */
+@media screen and (max-width: 767px) {
+    .navbar {
+        /* Smaller device-specific styles */
+    }
+    .greeting{
+        display: none;
+    }
+    .mobileDropdown{
+        display: flex;
+        gap: 10px;
+        position: absolute;
+        margin-left: 50%;
+        padding: 1rem;
+    }
+    .navbar_logo{
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .searchForm{
+        width: 100%;
+    }
+    .searchInput{
+        width: 100%;
+    }
+    .navbar_search{
+        width: 100%;
+    }
+    .navbar_login_cart{
+        display: none;
+    }
+}

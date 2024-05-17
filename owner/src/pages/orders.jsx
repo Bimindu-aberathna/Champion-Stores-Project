@@ -105,6 +105,8 @@ function Orders() {
             <ListGroup.Item
               as="li"
               style={{ display: "flex", justifyContent: "space-between" }}
+              
+              
             >
               <div className="listGroupHeader">
                 <b>Order Number</b>
@@ -128,6 +130,7 @@ function Orders() {
                     justifyContent: "space-between",
                     cursor: "pointer",
                   }}
+                  id="listItem"
                   onClick={() => handleItemClick(order)}
                 >
                   <div className="listGroupItem">{order.cartID}</div>

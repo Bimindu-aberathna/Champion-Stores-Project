@@ -25,7 +25,6 @@ export default function ProfileNav() {
         setCustomerEmail(response.data.email);
       })
       .catch((error) => {
-        alert("Error fetching customer details");
         console.log(error);
       });
   }
