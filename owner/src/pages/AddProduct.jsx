@@ -64,8 +64,11 @@ function AddProduct() {
   const [productDetails, setProductDetails] = useState("");
 
   useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
     axios
-      .get("http://localhost:5000/api/owner/productServices/getCategories")
+      .get("http://localhost:5000/api/owner/productServices/getCategories", {
+        headers: { "x-access-token": accessToken },
+      })
       .then((res) => {
         setCategories(res.data);
         setSelectedCategoryID(res.data[0].categoryID);
@@ -73,10 +76,18 @@ function AddProduct() {
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Error fetching categories", {
+        if(err.response.data.status === 402){
+        toast.error(err.response.data.message, {
           position: "top-right",
           autoClose: 2000,
         });
+        return;
+      }else{
+          toast.error("Error fetching categories", {
+            position: "top-right",
+            autoClose: 2000,
+          });
+        }
       });
   }, []);
 
@@ -292,11 +303,31 @@ function AddProduct() {
       formData.append("barcode", scannedCode);
     }
     console.log("Calling database");
-    axios
-      .post(
-        "http://localhost:5000/api/owner/productServices/addProduct",
-        formData
-      )
+    // axios
+    //   .post(
+    //     "http://localhost:5000/api/owner/productServices/addProduct",,
+    //     formData
+    //   )
+    //   .then((res) => {
+    //     // Handle success response
+    //     toast.success("Product added successfully", {
+    //       position: "top-right",
+    //       autoClose: 2000,
+    //     });
+    //     setShowConfirmation(true);
+    //   })
+    //   .catch((err) => {
+    //     // Handle error response
+    //     console.error("Error adding product", err);
+    //     toast.error("Error adding product", {
+    //       position: "top-right",
+    //       autoClose: 2000,
+    //     });
+    //   });
+    const accessToken = localStorage.getItem("accessToken");
+    axios.post("http://localhost:5000/api/owner/productServices/addProduct", formData, {
+      headers: { "x-access-token": accessToken },
+    })
       .then((res) => {
         // Handle success response
         toast.success("Product added successfully", {

@@ -6,6 +6,9 @@ import Card from "react-bootstrap/Card";
 import SearchBar from "../Components/SearchBar";
 import SideNavbar from "../Components/SideNavbar";
 import { validateIntegers } from "../functionality/validation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 function ProductReturn() {
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -14,67 +17,106 @@ function ProductReturn() {
   const [quantity, setQuantity] = useState(1);
   const [isNotExchanging, setIsNotExchanging] = useState(false);
 
-  useEffect(() => {
+  // Fetch the list of products
+  useEffect(() => {// Fetch the list of products
     axios
       .get("http://localhost:5000/listProducts")
       .then((res) => {
         setItems(res.data);
       })
-      .catch((err) => {
+      .catch((err) => {// Handle network errors
         console.log(err);
+        toast.error("Failed to fetch products.", {
+          position: "top-right",
+          autoClose: 3500,
+        });
       });
   }, []);
 
+  // Handle the selection of an item
   const handleItemSelect = (item) => {
-    setSelectedItem(item); // Set the selected item in the state
+    setSelectedItem(item); 
   };
 
+  // Handle the confirmation modal
   const handleProceed = () => {
+    if (selectedItem === null) {
+      toast.error("Please select a product to return.", {
+        position: "top-right",
+        autoClose: 3500,
+      });
+      return;
+    }
     setShowConfirmation(true);
   };
 
+  // Close the confirmation modal
   const handleCloseConfirmation = () => {
     setShowConfirmation(false);
   };
 
+  // Cancel the return process
   const cancelReturn = () => {
     setSelectedItem(null); // Clear the selected item
   };
+
+  // Handle the checkbox change
   const handleCheckBoxChange = (event) => {
     setIsNotExchanging(event.target.checked);
   };
 
+  // Handle the return process
   const handleReturn = () => {
     if (selectedItem === null) {
-      alert("Please select a product to return.");
+      toast.error("Please select a product to return.", {
+        position: "top-right",
+        autoClose: 3500,
+      });
       return;
     }
     const productID = selectedItem.productID;
     if (!validateIntegers(quantity)||quantity===0) {
-      alert("Please enter a valid quantity.");
+      toast.error("Invalid quantity", {
+        position: "top-right",
+        autoClose: 3500,
+      });
       return;
     }
     const supplierID = selectedItem.supplierID;
     const notExchanging = isNotExchanging;
+    const accessToken = localStorage.getItem("accessToken");
     axios
       .post("http://localhost:5000/api/owner/productServices/returnProduct", {
         productID,
         quantity,
         supplierID,
         notExchanging,
+      },{
+        headers: {
+          "x-access-token": accessToken,
+        },
       })
       .then((res) => {
-        if (res.data.message === "success") {
+        if (res.status === 200) {
           // Corrected response handling
-          alert("Product returned successfully.");
+          toast.success("Product returned successfully.", {
+            position: "top-right",
+            autoClose: 3500,
+          });
           cancelReturn();
         } else {
-          alert("Product return failed.");
+          toast.error(res.data.message, {
+            position: "top-right",
+            autoClose: 3500,
+          });
         }
       })
       .catch((err) => {
         console.log(err);
-        alert("Product return failed."); // Handle network errors
+        toast.error(err.response.data.message, {
+          position: "top-right",
+          autoClose: 3500,
+        });
       });
     setQuantity(1);
     setShowConfirmation(false);
@@ -150,6 +192,7 @@ function ProductReturn() {
                       style={{ width: "6rem" }}
                       variant="outline-dark"
                       type="reset"
+                      onClick={cancelReturn}
                     >
                       Clear
                     </Button>
@@ -159,7 +202,7 @@ function ProductReturn() {
                       type="button"
                       onClick={handleProceed}
                     >
-                      Submit
+                      Return
                     </Button>
                   </div>
                 </Form>
@@ -200,6 +243,7 @@ function ProductReturn() {
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer />
     </>
   );
 }

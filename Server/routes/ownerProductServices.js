@@ -5,6 +5,7 @@ const e = require("express");
 const multer = require("multer");
 const upload = multer();
 const { validateOwnerToken } = require("../ownerJWT");
+const { rename } = require("fs");
 
 
 router.get("/getProductData/:productId", (req, res) => {
@@ -33,8 +34,9 @@ router.get("/listLowStockProducts", (req, res) => {
 router.get("/getCategories", (req, res) => {
   const sql = "SELECT * FROM category;";
   db.query(sql, (err, result) => {
-    if (err) res.json({ message: "Server error occurred" });
-    res.json(result);
+    if (err) res.status(500).json({ message: "Server error occurred" });
+    //res.json(result);
+    res.status(200).json(result);
   });
 });
 
@@ -57,7 +59,7 @@ router.get("/getProductsBySubCategory/:subCategoryID", (req, res) => {
   });
 });
 
-router.post("/removeExpiredProducts", (req, res) => {
+router.post("/removeExpiredProducts",validateOwnerToken, (req, res) => {
   const { productID, quantity } = req.body;
   const sql1 =
     "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
@@ -83,7 +85,7 @@ router.post("/removeExpiredProducts", (req, res) => {
   });
 });
 
-router.post("/addProduct", upload.none(), (req, res) => {
+router.post("/addProduct", upload.none(),validateOwnerToken, (req, res) => {
   const {
     productName,
     brandName,
@@ -165,7 +167,7 @@ router.post("/addProduct", upload.none(), (req, res) => {
   });
 });
 
-router.post("/updateProductInfo", upload.none(), (req, res) => {
+router.post("/updateProductInfo", upload.none(),validateOwnerToken, (req, res) => {
   const {
     productId,
     productName,
@@ -210,12 +212,9 @@ router.post("/updateProductInfo", upload.none(), (req, res) => {
   });
 });
 
-router.delete("/deleteProduct/:productId", (req, res) => {
+router.delete("/deleteProduct/:productId", validateOwnerToken,(req, res) => {
   const productId = req.params.productId;
-
-  // Logic to delete the product from your database
   const sql = "UPDATE product SET status = 0 WHERE productID = ?;";
-  //"DELETE FROM product WHERE productID = ?";
   db.query(sql, [productId], (err, result) => {
     if (err) {
       // If an error occurs, respond with a server error status code
@@ -223,7 +222,6 @@ router.delete("/deleteProduct/:productId", (req, res) => {
     }
   });
 
-  // Respond with a success message
   res.status(200).json({ message: "Product deleted successfully" });
 });
 
@@ -294,7 +292,7 @@ router.post("/transaction",validateOwnerToken, (req, res) => {
   });
 });
 
-router.post("/newInventory", (req, res) => {
+router.post("/newInventory",validateOwnerToken, (req, res) => {
   const { productId, stock, buyingPrice, supplierId } = req.body;
   // Get the current date
   const currentDate = new Date();
@@ -336,6 +334,7 @@ router.post("/newInventory", (req, res) => {
   });
 });
 
+//get all purchase history
 router.get("/purchaseHistory", (req, res) => {
   const sql =
     "SELECT i.*,p.productName,p.brandName,CASE WHEN DATEDIFF(CURRENT_DATE(), i.date) <= 5 THEN true ELSE false END AS ableToCancel,s.name FROM inventory_purchase i INNER JOIN product p ON i.productID = p.productID INNER JOIN supplier s on p.supplierID = s.supplierID;";
@@ -345,6 +344,8 @@ router.get("/purchaseHistory", (req, res) => {
   });
 });
 
+
+//cancel purchase done by owner
 router.post("/cancelPurchase", (req, res) => {
   const purchaseID = req.body.purchaseID;
 
@@ -375,6 +376,7 @@ router.post("/cancelPurchase", (req, res) => {
                 res
                   .status(200)
                   .json({ message: "Purchase cancelled successfully" });
+                  console.log("Purchase cancelled successfully");
               }
             });
           }
@@ -384,7 +386,7 @@ router.post("/cancelPurchase", (req, res) => {
   });
 });
 
-router.post("/addNewCategory", (req, res) => {
+router.post("/addNewCategory",validateOwnerToken, (req, res) => {
   const { categoryName } = req.body;
   const sql = "INSERT INTO category (categoryName) VALUES (?);";
   db.query(sql, [categoryName], (err, result) => {
@@ -398,7 +400,7 @@ router.post("/addNewCategory", (req, res) => {
   });
 });
 
-router.post("/renameCategory", (req, res) => {
+router.post("/renameCategory",validateOwnerToken, (req, res) => {
   const { categoryNewName, categoryID } = req.body;
   const sql = "UPDATE category SET categoryName = ? WHERE categoryID=?;";
   const values = [categoryNewName, categoryID];
@@ -444,7 +446,7 @@ router.post("/addNewSubCategory", (req, res) => {
   });
 });
 
-router.post("/returnProduct", (req, res) => {
+router.post("/returnProduct", validateOwnerToken,(req, res) => {
   const { productID, quantity, supplierID, notExchanging } = req.body;
   const sql1 =
     "INSERT INTO product_return (productID, quantity,date, supplierID, notExchanging) VALUES (?,?, CURDATE(), ?, ?);";
@@ -460,7 +462,7 @@ router.post("/returnProduct", (req, res) => {
             if (err2) {
               res.status(500).json({ message: "Server error occurred" });
             } else {
-              res.status(200).json({ message: "success" });
+              res.status(200).json({ message: "Product returned successfully" });
             }
           });	
       }else{

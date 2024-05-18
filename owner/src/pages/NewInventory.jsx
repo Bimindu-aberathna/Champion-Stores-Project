@@ -4,7 +4,6 @@ import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
 import {
   MDBBtn,
@@ -18,19 +17,24 @@ import {
   MDBRadio,
 } from "mdb-react-ui-kit";
 import { validatePrice, validateIntegers } from "../functionality/validation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 function NewInventory() {
   const { productId } = useParams();
   const [product, setProduct] = useState({});
-  const [buyingPrice, setBuyingPrice] = useState(0);
-  const [stock, setStock] = useState(0);
+  const [buyingPrice, setBuyingPrice] = useState("");
+  const [stock, setStock] = useState("");
   const [showModal, setShowModal] = useState(false);
   console.log(productId);
   const navigate = useNavigate();
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/owner/productServices/getProductData/${productId}`)
+      .get(
+        `http://localhost:5000/api/owner/productServices/getProductData/${productId}`
+      )
       .then((res) => {
         console.log(res.data);
         setProduct(res.data[0]);
@@ -42,41 +46,75 @@ function NewInventory() {
   }, [productId]);
 
   const handleSubmit = () => {
-    const stock = document.getElementById("inputStock").value;
-    const buyingPrice = document.getElementById("inputBuyingPrice").value;
-    if (!validateIntegers(stock)||stock===0) {
-      alert("Invalid stock value");
+    if (!validateIntegers(stock) || stock === 0) {
+      toast.error("Invalid stock", {
+        position: "top-right",
+        autoClose: 3500,
+      });
       return;
-    } else if (!validatePrice(buyingPrice)||buyingPrice===0) {
-      alert("Invalid buying price");
+    } else if (!validatePrice(buyingPrice) || buyingPrice === 0) {
+      toast.error("Invalid buying price", {
+        position: "top-right",
+        autoClose: 3500,
+      });
       return;
     } else {
-        axios
-            .post("http://localhost:5000/api/owner/productServices/newInventory", {
-                productId: productId,
-                stock: stock,
-                buyingPrice: buyingPrice,
-                supplierId: product.supplierID,
-            })
-            .then((res) => {
-                console.log(res);
-                if (res.status === 200){setShowModal(true);}
-                else{alert("Error adding inventory");}
-            })
-            .catch((err) => {
-                console.log(err);
+      const accessToken = localStorage.getItem("accessToken");
+      axios
+        .post(
+          "http://localhost:5000/api/owner/productServices/newInventory",
+          {
+            productId: productId,
+            stock: stock,
+            buyingPrice: buyingPrice,
+            supplierId: product.supplierID,
+          },
+          {
+            headers: {
+              "x-access-token": accessToken,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            Swal.fire({
+              icon: "success",
+              title: "New supplies added successfully!!",
+              showConfirmButton: true,
+              confirmButtonColor: "#000000",
+            }).then(() => {
+              navigate("/inventory");
             });
+          } else {
+            toast.error("Failed to add new supplies", {
+              position: "top-right",
+              autoClose: 3500,
+            });
+            return;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status === 402) {
+            toast.error("Authentication failed", {
+              position: "top-right",
+              autoClose: 3500,
+            });
+            return;
+          } else {
+          }
+          toast.error("Failed to add new supplies", {
+            position: "top-right",
+            autoClose: 3500,
+          });
+        });
     }
   };
-  const onModelClose = () => {
-    setShowModal(false);
-    navigate("/inventory");
-  } 
-  
 
   return (
     <>
-      <Form >
+      <Form>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol>
@@ -168,6 +206,8 @@ function NewInventory() {
                             id="inputStock"
                             type="number"
                             placeholder="number of pieces adding to the stock"
+                            value={stock}
+                            onChange={(e) => setStock(e.target.value)}
                           />
                         </MDBCol>
 
@@ -177,23 +217,29 @@ function NewInventory() {
                             id="inputBuyingPrice"
                             type="number"
                             placeholder="product buying price per unit"
+                            value={buyingPrice}
+                            onChange={(e) => setBuyingPrice(e.target.value)}
                           />
                         </MDBCol>
                       </MDBRow>
 
                       <div className="d-flex justify-content-end pt-3">
-                        <Button variant="outline-dark" type="reset" style={{width:'5rem'}}>
+                        <Button
+                          variant="outline-dark"
+                          type="reset"
+                          style={{ width: "5rem" }}
+                        >
                           Clear
                         </Button>
                         &nbsp;
                         <Button
-                        type="button"
+                          type="button"
                           variant="dark"
                           onClick={handleSubmit}
                           value="Done"
-                          style={{width:'5rem'}}
+                          style={{ width: "5rem" }}
                         >
-                            Done
+                          Done
                         </Button>
                       </div>
                     </MDBCardBody>
@@ -205,17 +251,8 @@ function NewInventory() {
         </MDBContainer>
       </Form>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>New Inventory</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>New supplies added successfully!!</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onModelClose}>
-            Ok
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      
+      <ToastContainer />
     </>
   );
 }

@@ -4,6 +4,9 @@ import { Button, Table } from "react-bootstrap";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 function PurchaseHistory() {
   const [items, setItems] = useState([]);
@@ -15,14 +18,18 @@ function PurchaseHistory() {
 
   const getPurchaseHistory = () => {
     axios.get("http://localhost:5000/api/owner/productServices/purchaseHistory").then((res) => {
-      console.log(res.data);
       setItems(res.data);
+    }).catch((err) => {
+      toast.error("Failed to fetch purchase history", {
+        position: "top-right",
+        autoClose: 3500,
+      });
     });
   };
 
   const formatDate = (date) => {
     const d = new Date(date);
-    return `${d.getDate()} / ${d.getMonth()} / ${d.getFullYear()}`;
+    return `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`;
   };
 
   const handleCancelRequest = (purchaseID) => () => {
@@ -35,9 +42,14 @@ function PurchaseHistory() {
   };
 
   const cacelPurchase = () => {
+    const accessToken = localStorage.getItem("accessToken");
     axios
       .post("http://localhost:5000/api/owner/productServices/cancelPurchase", {
         purchaseID: purchaseID,
+      }, {
+        headers: {
+          "x-access-token": accessToken,
+        },
       })
       .then((res) => {
         console.log(res.data);

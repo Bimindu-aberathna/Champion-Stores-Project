@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../Server_Configuration");
 const e = require("express");
+const {validateOwnerToken} = require('../ownerJWT');
 
 router.get("/getSuppliers", (req, res) => {
     const sql = "SELECT * FROM supplier;";
@@ -13,7 +14,7 @@ router.get("/getSuppliers", (req, res) => {
     });
   });
 
- router.post("/addSupplier", (req, res) => {
+ router.post("/addSupplier",validateOwnerToken, (req, res) => {
     // Retrieve data from request body
     const supplierDetails = req.body.supplierDetails;
     const supplierName = req.body.supplierName;

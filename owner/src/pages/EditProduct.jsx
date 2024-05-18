@@ -8,10 +8,15 @@ import Modal from "react-bootstrap/Modal";
 import "./AddProducts.css";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { imgStorage } from "../config";
 import InventoryNavBar from "../Components/InventoryNavBar";
 import SideNavbar from "../Components/SideNavbar";
+import {
+  validatePrice,
+  validateIntegers,
+  nameValidation,
+} from "../functionality/validation";
 
 import {
   MDBBtn,
@@ -25,12 +30,15 @@ import {
   MDBRadio,
 } from "mdb-react-ui-kit";
 import Carousel from "react-bootstrap/Carousel";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 const regex = /^(0|[1-9]\d*)$/;
 
 function EditProduct() {
   const navigate = useNavigate();
-  const { productId } = useParams(); 
+  const { productId } = useParams();
   const [productName, setProductName] = useState("");
   const [brand, setBrand] = useState("");
   const [categories, setCategories] = useState([]);
@@ -63,7 +71,9 @@ function EditProduct() {
   useEffect(() => {
     // Fetch product data from backend using product ID
     axios
-      .get(`http://localhost:5000/api/owner/productServices/getProductData/${productId}`)
+      .get(
+        `http://localhost:5000/api/owner/productServices/getProductData/${productId}`
+      )
       .then((res) => {
         setItem(res.data[0]);
         setProductName(res.data[0].productName);
@@ -92,7 +102,6 @@ function EditProduct() {
     axios
       .get("http://localhost:5000/api/owner/supplierServices/getSuppliers")
       .then((res) => {
-        
         setSuppliers(res.data);
       })
       .catch((err) => {
@@ -115,7 +124,6 @@ function EditProduct() {
       .get("http://localhost:5000/api/owner/productServices/getCategories")
       .then((res) => {
         setCategories(res.data);
-        console.log(selectedCategoryID);
       })
       .catch((err) => {
         console.log(err);
@@ -124,11 +132,12 @@ function EditProduct() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategoryID}`)
+      .get(
+        `http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategoryID}`
+      )
       .then((res) => {
         setSubCategories(res.data);
       })
-
       .catch((err) => {
         console.log(err);
       });
@@ -157,57 +166,52 @@ function EditProduct() {
       setImage3(URL.createObjectURL(e.target.files[0]));
       setUploadIMG3(e.target.files[0]);
     } else {
-      alert("Invalid image");
+      toast.error("Error uploading image");
     }
   }
 
   function validateForm(event) {
-    setDataSending(true);
     event.preventDefault();
-    const productName = document.getElementById("inputProductName").value;
-    const brandName = document.getElementById("inputBrandName").value;
-    const category = document.getElementById("categorySelect").value;
-    const subCategory = selectedCategoryID;
-    const unitPrice = document.getElementById("inputUnitPrice").value;
-    const openingStock = document.getElementById("inputOpeningStock").value;
-    const reorderLevel = document.getElementById("inputReorderLevel").value;
-    const productDetails = document.getElementById("inputProductDetails").value;
-    const supplier = document.getElementById("inputSupplier").value;
     {
       if (
         productName === "" ||
-        brandName === "" ||
-        category === "" ||
-        subCategory === "" ||
+        brand === "" ||
         openingStock === "" ||
         reorderLevel === "" ||
-        productDetails === ""
+        productDescription === ""
       ) {
-        alert("Please fill all the fields");
+        toast.error("All fields are required");
+        return;
       } else if (
         !validateIntegers(openingStock) ||
         !validateIntegers(reorderLevel)
       ) {
-        alert("Opening stock and reorder level should be integers");
+        toast.error("Invalid input for stock and reorder level");
+        return;
+      } else if (!validatePrice(unitPrice)) {
+        toast.error("Invalid input for unit price");
+        return;
       } else {
-        //Create FormData object to send files along with form data
-
-        imageUpload();
-
-        //Send POST request using Axios
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#000000",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, Edit item!",
+          focusCancel: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            imageUpload();
+          }
+        });
       }
     }
   }
 
-  function validateIntegers(number) {
-    if (regex.test(number)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   const imageUpload = async () => {
+    setDataSending(true);
     const formData = new FormData();
     if (image1 !== "") {
       const storageRef = ref(imgStorage, uploadIMG1.name);
@@ -221,6 +225,7 @@ function EditProduct() {
         })
         .catch((error) => {
           console.error("Error uploading image 1", error);
+          toast.error("Error uploading image 1");
         });
     } else {
       formData.append("img1", img1);
@@ -235,6 +240,7 @@ function EditProduct() {
         })
         .catch((error) => {
           console.error("Error uploading image 2", error);
+          toast.error("Error uploading image 2");
         });
     } else {
       formData.append("img2", img2);
@@ -249,38 +255,41 @@ function EditProduct() {
         })
         .catch((error) => {
           console.error("Error uploading image 3", error);
+          toast.error("Error uploading image 3");
         });
     } else {
       formData.append("img3", img3);
     }
-    // setTimeout(DatabaseCall, 3000); // Delay DatabaseCall() by 3 seconds
 
-    const productName = document.getElementById("inputProductName").value;
-    const brandName = document.getElementById("inputBrandName").value;
-    const category = document.getElementById("categorySelect").value;
-    const subCategory = selectedSubcategoryID;
-    const unitPrice = document.getElementById("inputUnitPrice").value;
-    const openingStock = document.getElementById("inputOpeningStock").value;
-    const reorderLevel = document.getElementById("inputReorderLevel").value;
-    const productDetails = document.getElementById("inputProductDetails").value;
     formData.append("productId", productId);
     formData.append("productName", productName);
-    formData.append("brandName", brandName);
-    formData.append("subCategory", subCategory);
+    formData.append("brandName", brand);
+    formData.append("subCategory", selectedSubcategoryID);
     formData.append("openingStock", openingStock);
     formData.append("reorderLevel", reorderLevel);
     formData.append("unitPrice", unitPrice);
-    formData.append("productDetails", productDetails);
+    formData.append("productDetails", productDescription);
     formData.append("supplierID", selectedSupplierID);
     console.log("Calling database");
+    const accessToken = localStorage.getItem("accessToken");
     axios
-      .post("http://localhost:5000/api/owner/productServices/updateProductInfo", formData)
+      .post(
+        "http://localhost:5000/api/owner/productServices/updateProductInfo",
+        formData,
+        {
+          headers: {
+            "x-access-token": accessToken,
+          },
+        }
+      )
       .then((res) => {
         console.log("Product Edited", res);
+        toast.success("Product edited successfully");
       })
       .catch((err) => {
         // Handle error response
         console.error("Error adding product", err);
+        toast.error("Error editing product");
       });
 
     setDataSending(false);
@@ -298,33 +307,45 @@ function EditProduct() {
 
   // Function to handle deleting the product
   const handleDeleteProduct = () => {
-   // Send DELETE request to your backend API
-  axios.delete(`http://localhost:5000/api/owner/productServices/deleteProduct/${productId}`)
-  .then((res) => {
-    navigate('/inventory', { replace: true });
-    console.log("Product deleted successfully", res);
-    
-  })
-  .catch((error) => {
-    console.error("Error deleting product", error);
-    // Handle error response, if any
-  });
+    // Send DELETE request to your backend API
+    const accessToken = localStorage.getItem("accessToken");
+    axios
+      .delete(
+        `http://localhost:5000/api/owner/productServices/deleteProduct/${productId}`,
+        { headers: { "x-access-token": accessToken } }
+      )
+      .then((res) => {
+        navigate("/inventory", { replace: true });
+        console.log("Product deleted successfully", res);
+      })
+      .catch((error) => {
+        console.error("Error deleting product", error);
+        toast.error("Error deleting product");
+      });
 
-// Close the modal after successful deletion
-handleCloseDeleteModal();
+    // Close the modal after successful deletion
+    handleCloseDeleteModal();
     handleCloseDeleteModal();
   };
 
   return (
     <>
-    <SideNavbar/>
-    <InventoryNavBar/>
+      <SideNavbar />
+      <InventoryNavBar />
       <Form onSubmit={validateForm}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol>
               <MDBCard className="my-4">
-                <MDBRow className="g-0" style={{width:"90%",display:"flex",alignSelf:"center",zIndex:"800"}}>
+                <MDBRow
+                  className="g-0"
+                  style={{
+                    width: "90%",
+                    display: "flex",
+                    alignSelf: "center",
+                    zIndex: "800",
+                  }}
+                >
                   <MDBCol
                     md="6"
                     className="d-none d-md-block "
@@ -392,7 +413,6 @@ handleCloseDeleteModal();
                         </Carousel.Caption>
                       </Carousel.Item>
                     </Carousel>
-                    {/* ----------------------------------------------------------------------------------------- */}
 
                     <div style={{ margin: "1rem" }}>
                       <Form.Label>Select image 1</Form.Label>
@@ -420,18 +440,27 @@ handleCloseDeleteModal();
 
                   <MDBCol md="6">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
-                      <div style={{display:'flex'}}>
-                      <h3 className="mb-5 text-uppercase fw-bold">
-                        Change product info
-                      </h3>
-                      <Link to={`/newinventory/${productId}`} key={productId} style={{marginLeft:'auto'}}>
-                      <Button
-                          variant="outline-dark"
-                          type="button"
-                          style={{ marginLeft: "auto" ,height:'fit-content',fontWeight:'bold',border:'solid 2px black'}}
+                      <div style={{ display: "flex" }}>
+                        <h3 className="mb-5 text-uppercase fw-bold">
+                          Change product info
+                        </h3>
+                        <Link
+                          to={`/newinventory/${productId}`}
+                          key={productId}
+                          style={{ marginLeft: "auto" }}
                         >
-                          Add Inventory
-                        </Button>
+                          <Button
+                            variant="outline-dark"
+                            type="button"
+                            style={{
+                              marginLeft: "auto",
+                              height: "fit-content",
+                              fontWeight: "bold",
+                              border: "solid 2px black",
+                            }}
+                          >
+                            Add Inventory
+                          </Button>
                         </Link>
                       </div>
 
@@ -471,8 +500,9 @@ handleCloseDeleteModal();
                             onChange={handleCategoryChange}
                             value={selectedCategoryID}
                           >
-
-                            <option disabled value={item.categoryID}>{item.categoryName}</option>
+                            <option disabled value={item.categoryID}>
+                              {item.categoryName}
+                            </option>
                             {categories.map((category) => (
                               <option
                                 key={category.categoryID}
@@ -493,7 +523,9 @@ handleCloseDeleteModal();
                             onChange={handleSubcategoryChange}
                             value={selectedSubcategoryID}
                           >
-                            <option disabled value={item.subCategoryID}>{item.subCategoryName}</option>
+                            <option disabled value="">
+                              Select a subcategory
+                            </option>
                             {subCategories.map((item) => (
                               <option
                                 key={item.subCategoryID}
@@ -542,24 +574,15 @@ handleCloseDeleteModal();
                           <Form.Label>Unit price</Form.Label>
                           <Form.Control
                             id="inputUnitPrice"
-                            type="number"
+                            type="text"
                             placeholder="product buying price per unit"
                             value={unitPrice}
-                            min="0" // Enforce a minimum value of 1
+                            min="0"
                             onChange={(e) => setUnitPrice(e.target.value)}
                           />
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
 
-                        {/* <MDBCol md="6">
-                          <Form.Label>Supplier</Form.Label>
-                          <Form.Control
-                            id="inputSupplier"
-                            type="text"
-                            placeholder="Supplier name"
-                          />
-                          <Form.Text className="text-muted"></Form.Text>
-                        </MDBCol> */}
                         <MDBCol md="6">
                           <Form.Label htmlFor="disabledSelect">
                             Supplier
@@ -570,7 +593,7 @@ handleCloseDeleteModal();
                             value={selectedSupplierID}
                           >
                             {/* Default option with the selected supplier */}
-                            <option disabled >
+                            <option disabled>
                               {supplier}
                               {console.log(
                                 "Supplier data",
@@ -645,13 +668,14 @@ handleCloseDeleteModal();
 
       <div
         className="cover"
-        style={{ display: dataSending ? "block" : "none" }}
+        style={{ display: dataSending ? "block" : "none", zIndex: "1000" }}
       >
         <div className="innerCover">
           <Spinner animation="grow" variant="light" />;
           <h4 style={{ color: "snow" }}>Database Updating</h4>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

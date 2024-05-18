@@ -4,8 +4,8 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
-// import { imgDB } from "../firebase";
-import { imgStorage } from "../config";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   MDBBtn,
@@ -18,38 +18,36 @@ import {
   MDBInput,
   MDBRadio,
 } from "mdb-react-ui-kit";
-import Carousel from "react-bootstrap/Carousel";
 import axios from "axios";
 
 
 
 
 
-function addSupplier() {
+function AddSupplier() {
+  const [supplierName, setSupplierName] = useState("");
+  const [supplierEmail, setSupplierEmail] = useState("");
+  const [phone1, setPhone1] = useState("");
+  const [phone2, setPhone2] = useState("");
+  const [supplierDetails, setSupplierDetails] = useState("");
 
   const validateData = (e) => {
     e.preventDefault();
-    const supplierNameInput = document.getElementById("supplierName");
-    const supplierEmailInput = document.getElementById("supplierEmail");
-    const phone1Input = document.getElementById("phone1");
-    const phone2Input = document.getElementById("phone2");
-  
-    const supplierName = supplierNameInput.value;
-    const supplierEmail = supplierEmailInput.value;
-    const phone1 = phone1Input.value;
-    const phone2 = phone2Input.value;
   
     // Validate Supplier Name
     if (!validateName(supplierName)) {
-      return alert("Invalid supplier name");
+      toast.error("Invalid supplier name");
+      return;
     } else {
       if (!validateEmail(supplierEmail)) {
-        return alert("Invalid email address");
+        toast.error("Invalid email");
+        return;
       } else {
         if (!validateMobile(phone1)||!validateMobile(phone2)) {
-          return alert("Invalid phone number");
+          toast.error("Invalid mobile number");
+          return;
         } else {
-          addSupplierToDB(supplierName, supplierEmail, phone1, phone2);
+          addSupplierToDB();
         }
       }
     }
@@ -57,17 +55,6 @@ function addSupplier() {
   }
   
   function addSupplierToDB() {
-      const supplierDetails = document.getElementById("supplierDetails").value;
-      const supplierName = document.getElementById("supplierName").value;
-      const supplierEmail = document.getElementById("supplierEmail").value;
-      const phone1 = document.getElementById("phone1").value;
-      const phone2 = document.getElementById("phone2").value;
-      console.log(supplierName);
-      console.log(supplierEmail);
-      console.log(phone1);
-      console.log(phone2);
-      console.log(supplierDetails);
-      
       const data = {
         supplierDetails: supplierDetails,
         supplierName: supplierName,
@@ -75,17 +62,20 @@ function addSupplier() {
         phone1: phone1,
         phone2: phone2
       };
-    
-      axios
-        .post("http://localhost:5000/api/owner/supplierServices/addSupplier", data)
-        .then((res) => {
-          // Handle success response
-          console.log("Supplier added", res);
-        })
-        .catch((err) => {
-          // Handle error response
-          console.error("Error adding supplier", err);
-        });
+    const accessToken = localStorage.getItem("accessToken");
+    axios.post("http://localhost:5000/api/owner/supplierServices/addSupplier", data, {
+      headers: {
+        "x-access-token": accessToken,
+      },
+    }).then((res) => {
+      // Handle success response
+      console.log("Supplier added", res);
+      toast.success("Supplier added successfully");
+    }).catch((err) => {
+      // Handle error response
+      console.error("Error adding supplier", err);
+      toast.error("Error adding supplier");
+    });
     }
   
   
@@ -141,6 +131,9 @@ function addSupplier() {
                       type="text"
                       placeholder="new supplier name....."
                       pattern="^[a-zA-Z]+(?: [a-zA-Z]+)*$"
+                      onChange={(e) => {
+                        setSupplierName(e.target.value);
+                      }}
                     />
                     <Form.Text className="text-muted"></Form.Text>
                   </MDBCol>
@@ -152,6 +145,9 @@ function addSupplier() {
                       type="text"
                       placeholder="email address....."
                       pattern="^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$"
+                      onChange={(e) => {
+                        setSupplierEmail(e.target.value);
+                      }}
                     />
                     <Form.Text className="text-muted"></Form.Text>
                   </MDBCol>
@@ -164,6 +160,9 @@ function addSupplier() {
                       type="text"
                       placeholder="new supplier mobile number....."
                       pattern="^0\d{9}$"
+                      onChange={(e) => {
+                        setPhone1(e.target.value);
+                      }}
                     />
                     <Form.Text className="text-muted"></Form.Text>
                   </MDBCol>
@@ -175,6 +174,9 @@ function addSupplier() {
                       type="text"
                       placeholder="new supplier mobile number....."
                       pattern="^0\d{9}$"
+                      onChange={(e) => {
+                        setPhone2(e.target.value);
+                      }}
                     />
                     <Form.Text className="text-muted"></Form.Text>
                   </MDBCol>
@@ -187,6 +189,9 @@ function addSupplier() {
                   placeholder="new supplier details....."
                   as={"textarea"}
                   style={{ height: "100px" }}
+                  onChange={(e) => {
+                    setSupplierDetails(e.target.value);
+                  }}
                 />
                 <Form.Text className="text-muted"></Form.Text>
 
@@ -210,9 +215,10 @@ function addSupplier() {
     </MDBRow>
   </MDBContainer>
 </Form>
+<ToastContainer />
 
     </div>
   )
 }
 
-export default addSupplier
+export default AddSupplier
