@@ -36,7 +36,7 @@ const db = require("./Server_Configuration");
 
 app.get("/listProducts", getItemList);
 
-// Use the customer services route handler for the /api/customerServices route
+// Use the customer services route handler for the /api/customerServices route.
 app.use("/api/customerServices", customerServicesRouter);
 app.use("/api/ProductServices", productServicesRouter);
 app.use("/api/owner/productServices",ownerProductServicesRouter);

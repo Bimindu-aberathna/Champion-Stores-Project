@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import SideNavbar from "../Components/SideNavbar";
+import InventoryNavBar from "../Components/InventoryNavBar"
 import { Button, Table } from "react-bootstrap";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -7,6 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import './PurchaseHistory.css';
 
 function PurchaseHistory() {
   const [items, setItems] = useState([]);
@@ -17,14 +19,17 @@ function PurchaseHistory() {
   }, []);
 
   const getPurchaseHistory = () => {
-    axios.get("http://localhost:5000/api/owner/productServices/purchaseHistory").then((res) => {
-      setItems(res.data);
-    }).catch((err) => {
-      toast.error("Failed to fetch purchase history", {
-        position: "top-right",
-        autoClose: 3500,
+    axios
+      .get("http://localhost:5000/api/owner/productServices/purchaseHistory")
+      .then((res) => {
+        setItems(res.data);
+      })
+      .catch((err) => {
+        toast.error("Failed to fetch purchase history", {
+          position: "top-right",
+          autoClose: 3500,
+        });
       });
-    });
   };
 
   const formatDate = (date) => {
@@ -44,13 +49,17 @@ function PurchaseHistory() {
   const cacelPurchase = () => {
     const accessToken = localStorage.getItem("accessToken");
     axios
-      .post("http://localhost:5000/api/owner/productServices/cancelPurchase", {
-        purchaseID: purchaseID,
-      }, {
-        headers: {
-          "x-access-token": accessToken,
+      .post(
+        "http://localhost:5000/api/owner/productServices/cancelPurchase",
+        {
+          purchaseID: purchaseID,
         },
-      })
+        {
+          headers: {
+            "x-access-token": accessToken,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
         setItems((prevItems) =>
@@ -69,17 +78,14 @@ function PurchaseHistory() {
   return (
     <>
       <div
-        style={{
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-        }}
+        className="main-container"
       >
         <div
           style={{
-            marginLeft: "7%",
             marginTop: "1rem",
-            flex: "1",
+            width: "91%",
+            marginLeft: "auto",
+            marginRight: "auto",
           }}
         >
           <h1>Purchase history</h1>
@@ -131,7 +137,8 @@ function PurchaseHistory() {
         </div>
       </div>
 
-      <SideNavbar />
+      <SideNavbar selected="Inventory" />
+      <InventoryNavBar />
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
@@ -139,7 +146,9 @@ function PurchaseHistory() {
         </Modal.Header>
         <Modal.Body>Do you want to cancel this purchase!!</Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-dark" onClick={onModelClose}>Cancel</Button>
+          <Button variant="outline-dark" onClick={onModelClose}>
+            Cancel
+          </Button>
           <Button variant="danger" onClick={cacelPurchase}>
             Ok
           </Button>

@@ -10,7 +10,6 @@ import Modal from "react-bootstrap/Modal";
 import "./TransactionProductList.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from "sweetalert2";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -41,10 +40,6 @@ function Transaction() {
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Failed to fetch products.", {
-          position: "top-right",
-          autoClose: 3500,
-        });
       });
   }, []);
 
@@ -100,24 +95,12 @@ function Transaction() {
   };
 
   const clearList = () => {
-    Swal.fire({
-      title: "Abort Transaction ?",
-      text: "This transaction will be cleared !",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#000000",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, abort this!",
-      focusCancel: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setItems([]);
-        toast.success("New Transaction", {
-          position: "top-right",
-          autoClose: 1500,
-        });
-      }
-    });
+    const result = window.confirm(
+      "New Transaction!!\nAre you sure you want to proceed?"
+    );
+    if (result) {
+      setItems([]);
+    }
   };
 
   const handleProceed = () => {
@@ -229,13 +212,10 @@ function Transaction() {
       .catch((error) => {
         toast.error(error.response.data.message, {
           position: "top-right",
-          autoClose: 2500,
+          autoClose: 3500,
         });
         console.error("Error occurred during transaction:", error);
-        toast.error("Transaction failed", {
-          position: "top-right",
-          autoClose: 2000,
-        });
+        // Optionally, you can handle error response here
       });
   };
 
@@ -250,6 +230,7 @@ function Transaction() {
             addItem(product);
           }
           setBarcode("");
+          
         }
       } else {
         setBarcode((prev) => prev + event.key);
@@ -282,7 +263,7 @@ function Transaction() {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6} md={8}>
-            <div style={{ paddingTop: "1rem", paddingLeft: "13rem" }}>
+            <div style={{ paddingTop: "1rem", paddingLeft: "10rem" }}>
               <div
                 style={{ display: "flex", alignItems: "center", width: "90%" }}
               >
@@ -468,13 +449,8 @@ function Transaction() {
                 <Boot_Card.Body>
                   <Boot_Card.Text>
                     <div style={{ display: "flex" }}>
-                      <div className="barCode" style={{ marginRight: "3rem" }}>
-                        <Button
-                          onClick={barcodeReader}
-                          variant={isScanning ? "dark" : "outline-dark"}
-                        >
-                          {isScanning ? "Scanning" : "Scan Barcode"}
-                        </Button>
+                      <div className="barCode" style={{marginRight:'3rem',width:'5rem'}}>
+                        <Button onClick={barcodeReader} variant={isScanning?"dark":"outline-dark"}>{isScanning?'Scanning':"Scan Barcode"}</Button>
                       </div>
                       <h3>Total</h3>
                       <div

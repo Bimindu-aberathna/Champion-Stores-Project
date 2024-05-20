@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { IoLogoHtml5 } from "react-icons/io";
 import axios from "axios";
+import SideNavbar from "../Components/SideNavbar";
+import InventoryNavBar from "../Components/InventoryNavBar"
 import {
   MDBContainer,
   MDBCard,
@@ -237,11 +238,13 @@ function AlterCategories() {
 
   return (
     <div>
+      <InventoryNavBar />
+      <SideNavbar selected="Inventory" />
       <Form>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol>
-              <MDBCard className="my-4">
+              <MDBCard className="my-4" style={{display:'flex', width: "92%",marginLeft: "auto",marginRight: "auto"}}>
               <h1 style={{margin:'1rem',marginLeft:'2rem'}}>Alter Categories</h1>
                 <MDBRow className="g-0">
                   <MDBCol md="6">

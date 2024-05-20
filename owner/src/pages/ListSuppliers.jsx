@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { IoLogoHtml5 } from 'react-icons/io';
 import axios from 'axios';
 import {
   MDBContainer,
@@ -10,6 +9,8 @@ import {
   MDBRow,
   MDBCol,
 } from 'mdb-react-ui-kit';
+import SideNavbar from "../Components/SideNavbar";
+import InventoryNavBar from "../Components/InventoryNavBar";
 import { Link } from 'react-router-dom';
 
 function ListSuppliers() {
@@ -30,7 +31,7 @@ function ListSuppliers() {
   }, []);
 
   const handleSupplierChange = (event) => {
-    const selectedSupplierID = parseInt(event.target.value); // Ensure the ID is parsed as an integer
+    const selectedSupplierID = parseInt(event.target.value); 
     const foundSupplier = suppliers.find(supplier => supplier.supplierID === selectedSupplierID);
     setSelectedSupplier(foundSupplier);
     console.log(foundSupplier);
@@ -41,11 +42,13 @@ function ListSuppliers() {
 
   return (
     <div>
+      <InventoryNavBar />
+      <SideNavbar selected="Inventory" />
       <Form >
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
-            <MDBCol>
-              <MDBCard className="my-4">
+            <MDBCol style={{paddingRight:'1rem'}}>
+              <MDBCard className="my-4" style={{display:'flex', width: "91%",marginLeft: "auto",marginRight: "auto"}}>
                 <MDBRow className="g-0">
                   <MDBCol md="6">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-centertext-black d-flex flex-column justify-content-center align-items-center">

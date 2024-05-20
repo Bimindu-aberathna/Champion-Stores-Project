@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { validateIntegers } from "../functionality/validation";
-
+import SideNavbar from "../Components/SideNavbar";
+import InventoryNavBar from "../Components/InventoryNavBar";
 import {
   MDBContainer,
   MDBCard,
@@ -34,7 +35,7 @@ function HandleExpiredProducts() {
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Error fetching data",{
+        toast.error("Error fetching data", {
           position: "top-right",
           autoClose: 2500,
         });
@@ -57,7 +58,7 @@ function HandleExpiredProducts() {
         })
         .catch((err) => {
           console.log(err);
-          toast.error("Error fetching data",{
+          toast.error("Error fetching data", {
             position: "top-right",
             autoClose: 2500,
           });
@@ -77,7 +78,7 @@ function HandleExpiredProducts() {
         })
         .catch((err) => {
           console.log(err);
-          toast.error("Error fetching data",{
+          toast.error("Error fetching data", {
             position: "top-right",
             autoClose: 2500,
           });
@@ -145,14 +146,23 @@ function HandleExpiredProducts() {
 
   return (
     <div>
+      <InventoryNavBar />
+      <SideNavbar selected="Inventory" />
       <Form onSubmit={handleSubmit}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
-            <MDBCol>
-              <MDBCard className="my-4">
+            <MDBCol style={{ paddingRight: "1rem" }}>
+              <MDBCard
+                className="my-4"
+                style={{
+                  display: "flex",
+                  width: "91%",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              >
                 <MDBRow className="g-0 justify-content-center">
                   {" "}
-                  {/* Added justify-content-center class here */}
                   <MDBCol md="6">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
                       <h3 className="mb-5 text-uppercase fw-bold">
