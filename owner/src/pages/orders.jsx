@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import SideNavbar from "../Components/SideNavbar";
 import { Modal, Button } from "react-bootstrap";
-import { FaRegTrashAlt, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import TitleBar from "../Components/TitleBar";
 import axios from "axios";
 import Card from "react-bootstrap/Card";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./orders.css";
+import zIndex from "@mui/material/styles/zIndex";
 
 function Orders() {
   const [items, setItems] = useState([]);
@@ -163,6 +164,8 @@ function Orders() {
             maxWidth: "32%",
             marginLeft: "auto",
             overflowY: "auto",
+            zIndex: 100,
+            paddingTop: "2.5rem",
           }}
         >
           <Card.Body>

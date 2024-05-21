@@ -146,7 +146,7 @@ function HandleExpiredProducts() {
 
   return (
     <div>
-      <InventoryNavBar />
+      <InventoryNavBar selected="handleexpiredproducts"/>
       <SideNavbar selected="Inventory" />
       <Form onSubmit={handleSubmit}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
@@ -159,6 +159,7 @@ function HandleExpiredProducts() {
                   width: "91%",
                   marginLeft: "auto",
                   marginRight: "auto",
+                  zIndex: "800",
                 }}
               >
                 <MDBRow className="g-0 justify-content-center">

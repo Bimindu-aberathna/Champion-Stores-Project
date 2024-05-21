@@ -8,9 +8,9 @@ import { CiSquareRemove } from "react-icons/ci";
 import { VscHistory } from "react-icons/vsc";
 import { PiTreeStructureLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
-import './InventoryNavBar.css';
+import "./InventoryNavBar.css";
 
-function SideNavbar() {
+function SideNavbar({ selected }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -34,13 +34,12 @@ function SideNavbar() {
           transition: "transform 0.5s",
         }}
       >
-       
         <div
           style={{
             color: "white",
             top: "5rem",
             position: "absolute",
-            marginLeft:open?"15px":"-15px",
+            marginLeft: open ? "15px" : "-15px",
           }}
         >
           <IoIosArrowDropleftCircle
@@ -58,7 +57,10 @@ function SideNavbar() {
         </div>
 
         <br />
-        <ul className="d-flex flex-column justify-content-center" id="optionList">
+        <ul
+          className="d-flex flex-column justify-content-center"
+          id="optionList"
+        >
           <Link to="/altercategories">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
@@ -66,6 +68,8 @@ function SideNavbar() {
                 paddingTop: "1rem",
                 cursor: "pointer",
                 marginLeft: "-1rem",
+                backgroundColor:
+                  selected === "altercategories" ? "#474747" : "",
               }}
             >
               <PiTreeStructureLight
@@ -85,7 +89,12 @@ function SideNavbar() {
           <Link to="/addProduct">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
-              style={{ paddingTop: "1rem", cursor: "pointer",marginLeft: "-1rem" }}
+              style={{
+                paddingTop: "1rem",
+                cursor: "pointer",
+                marginLeft: "-1rem",
+                backgroundColor: selected === "addProduct" ? "#474747" : "",
+              }}
             >
               <CiSquarePlus
                 className="w-12 h-12"
@@ -104,7 +113,13 @@ function SideNavbar() {
           <Link to="/purchasehistory">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
-              style={{ paddingTop: "1rem", cursor: "pointer",marginLeft: "-1rem" }}
+              style={{
+                paddingTop: "1rem",
+                cursor: "pointer",
+                marginLeft: "-1rem",
+                backgroundColor:
+                  selected === "purchasehistory" ? "#474747" : "",
+              }}
             >
               <VscHistory className="w-12 h-12" style={{ fontSize: "36px" }} />
               &nbsp;&nbsp;
@@ -120,7 +135,12 @@ function SideNavbar() {
           <Link to="/listsuppliers">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
-              style={{ paddingTop: "1rem", cursor: "pointer",marginLeft: "-1rem" }}
+              style={{
+                paddingTop: "1rem",
+                cursor: "pointer",
+                marginLeft: "-1rem",
+                backgroundColor: selected === "listsuppliers" ? "#474747" : "",
+              }}
             >
               <LiaUserCircle
                 className="w-12 h-12"
@@ -133,7 +153,13 @@ function SideNavbar() {
           <Link to="/handleexpiredproducts">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
-              style={{ paddingTop: "1rem", cursor: "pointer",marginLeft: "-1rem" }}
+              style={{
+                paddingTop: "1rem",
+                cursor: "pointer",
+                marginLeft: "-1rem",
+                backgroundColor:
+                  selected === "handleexpiredproducts" ? "#474747" : "",
+              }}
             >
               <CiSquareRemove
                 className="w-12 h-12"

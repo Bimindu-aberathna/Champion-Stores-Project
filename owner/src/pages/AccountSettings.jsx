@@ -17,10 +17,15 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import { MdVisibility } from "react-icons/md";
 import { MdVisibilityOff } from "react-icons/md";
-import { getEmail, ChangeEmail,verifyPassword,changePassword } from "../Services/AccountServices";
+import {
+  getEmail,
+  ChangeEmail,
+  verifyPassword,
+  changePassword,
+} from "../Services/AccountServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { validateEmail,validatePassword } from "../functionality/validation";
+import { validateEmail, validatePassword } from "../functionality/validation";
 import Swal from "sweetalert2";
 import "./AccountSettings.css";
 
@@ -118,97 +123,100 @@ function AccountSetings() {
             .catch((err) => {
               console.error(err);
             });
-        }else{
-            setNewMail("");
-            setShowMailChange(false);
+        } else {
+          setNewMail("");
+          setShowMailChange(false);
         }
       });
     }
   };
   const verifyCurrentPassword = () => {
-    if(currentPassword === ""){
+    if (currentPassword === "") {
       toast.error("Please enter your password", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
-    }else{
-        verifyPassword(currentPassword)
+    } else {
+      verifyPassword(currentPassword)
         .then((res) => {
-            if(res.status === 200){
-                toast.success("Password Verified", {
-                    position: "top-right",
-                    autoClose: 3500,
-                });
-                setVerified(true);
-                setCurrentPassword("");
-            }else{
-                toast.error(res.message, {
-                    position: "top-right",
-                    autoClose: 3500,
-                });
-            }
-        }).catch((err) => {
-            console.error(err);
-        }
-        );
+          if (res.status === 200) {
+            toast.success("Password Verified", {
+              position: "top-right",
+              autoClose: 3500,
+            });
+            setVerified(true);
+            setCurrentPassword("");
+          } else {
+            toast.error(res.message, {
+              position: "top-right",
+              autoClose: 3500,
+            });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
   };
 
   const changeOwnerPassword = () => {
-    if(newPassword==="" || confirmPassword===""){
+    if (newPassword === "" || confirmPassword === "") {
       toast.error("Please enter your new password", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
-    }else if(newPassword !== confirmPassword){
+    } else if (newPassword !== confirmPassword) {
       toast.error("Passwords do not match", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
-    }else if(!validatePassword(newPassword)){
-      toast.error("Password must contain at least 7 characters, including 1 letter, 1 number and 1 Symbol", {
-        position: "top-right",
-        autoClose: 3500,
-      });
+    } else if (!validatePassword(newPassword)) {
+      toast.error(
+        "Password must contain at least 7 characters, including 1 letter, 1 number and 1 Symbol",
+        {
+          position: "top-right",
+          autoClose: 3500,
+        }
+      );
       return;
-    }else{
-        Swal.fire({
-          title: "Are you sure?",
-          text: "Your logging password will be changed!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#050505",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, change it!",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            changePassword(newPassword)
-              .then((res) => {
-                if (res.status === 200) {
-                  toast.success("Password Changed Successfully!", {
-                    position: "top-right",
-                    autoClose: 3500,
-                  });
-                  setCurrentPassword("");
-                  setNewPassword("");
-                  setConfirmPassword("");
-                    setVerified(false);
-                } else {
-                  toast.error(res.message, {
-                    position: "top-right",
-                    autoClose: 3500,
-                  });
-                }
-              })
-              .catch((err) => {
-                console.error(err);
-              });
-          }
-        });
-      }
+    } else {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Your logging password will be changed!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#050505",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, change it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          changePassword(newPassword)
+            .then((res) => {
+              if (res.status === 200) {
+                toast.success("Password Changed Successfully!", {
+                  position: "top-right",
+                  autoClose: 3500,
+                });
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+                setVerified(false);
+              } else {
+                toast.error(res.message, {
+                  position: "top-right",
+                  autoClose: 3500,
+                });
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        }
+      });
+    }
   };
 
   return (
@@ -239,6 +247,7 @@ function AccountSetings() {
           <Card
             style={{
               width: "55%",
+              Index: "888"
             }}
           >
             <Card.Body className="d-flex justify-content-center align-items-center">
@@ -313,7 +322,7 @@ function AccountSetings() {
                     <div className="currentPassword">
                       {" "}
                       <h5>Change Password</h5>
-                      <div style={{display:verified?"none":""}}>
+                      <div style={{ display: verified ? "none" : "" }}>
                         <p>Please verify your current password to change it.</p>
                         <FormControl
                           sx={{ m: 1, width: "60%" }}
@@ -346,19 +355,22 @@ function AccountSetings() {
                           />
                         </FormControl>
                         <div className="verifyBTN">
-                        <Button
-                          style={{ width: "6rem", marginLeft: "0.75rem" }}
-                          variant="outline-dark"
-                          type="button"
-                          onClick={verifyCurrentPassword}
-                        >
-                          Verify Me
-                        </Button>
+                          <Button
+                            style={{ width: "6rem", marginLeft: "0.75rem" }}
+                            variant="outline-dark"
+                            type="button"
+                            onClick={verifyCurrentPassword}
+                          >
+                            Verify Me
+                          </Button>
                         </div>
-                       </div>
-                   {/* -----------------------------------------------------------------------     */}
-                      <div className="changePassword" style={{display:!verified?"none":""}}>
-                      <FormControl
+                      </div>
+                      {/* -----------------------------------------------------------------------     */}
+                      <div
+                        className="changePassword"
+                        style={{ display: !verified ? "none" : "" }}
+                      >
+                        <FormControl
                           sx={{ m: 1, width: "60%" }}
                           variant="filled"
                         >
@@ -419,18 +431,17 @@ function AccountSetings() {
                           />
                         </FormControl>
                         <div className="changePwdBtn">
-                        <Button
-                          style={{ width: "6rem", marginLeft: "0.75rem" }}
-                          variant="dark"
-                          type="button"
-                          onClick={changeOwnerPassword}
-                        >
-                          Change
-                        </Button>
+                          <Button
+                            style={{ width: "6rem", marginLeft: "0.75rem" }}
+                            variant="dark"
+                            type="button"
+                            onClick={changeOwnerPassword}
+                          >
+                            Change
+                          </Button>
                         </div>
-                      </div> 
+                      </div>
                     </div>
-                    
                   </Form.Group>
                 </Form>
               </div>

@@ -238,13 +238,13 @@ function AlterCategories() {
 
   return (
     <div>
-      <InventoryNavBar />
+      <InventoryNavBar selected="altercategories"/>
       <SideNavbar selected="Inventory" />
-      <Form>
+      <Form >
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
-          <MDBRow className="d-flex justify-content-center align-items-center h-100">
+          <MDBRow className="d-flex justify-content-center align-items-center h-100" > 
             <MDBCol>
-              <MDBCard className="my-4" style={{display:'flex', width: "92%",marginLeft: "auto",marginRight: "auto"}}>
+              <MDBCard className="my-4" style={{display:'flex', width: "92%",marginLeft: "auto",marginRight: "auto",zIndex:'888'}}>
               <h1 style={{margin:'1rem',marginLeft:'2rem'}}>Alter Categories</h1>
                 <MDBRow className="g-0">
                   <MDBCol md="6">

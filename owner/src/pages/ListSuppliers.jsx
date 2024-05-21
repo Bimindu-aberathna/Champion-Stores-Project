@@ -42,13 +42,13 @@ function ListSuppliers() {
 
   return (
     <div>
-      <InventoryNavBar />
+      <InventoryNavBar selected="listsuppliers"/>
       <SideNavbar selected="Inventory" />
       <Form >
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol style={{paddingRight:'1rem'}}>
-              <MDBCard className="my-4" style={{display:'flex', width: "91%",marginLeft: "auto",marginRight: "auto"}}>
+              <MDBCard className="my-4" style={{display:'flex', width: "91%",marginLeft: "auto",marginRight: "auto",zIndex:'888'}}>
                 <MDBRow className="g-0">
                   <MDBCol md="6">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-centertext-black d-flex flex-column justify-content-center align-items-center">

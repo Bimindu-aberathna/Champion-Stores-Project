@@ -47,9 +47,9 @@ function formatSalesWeekly(data) {
     data.forEach((sale) => {
         const week = moment(sale.dateTime).week();
         if (sales[week]) {
-            sales[week] += sale.total;
+            sales[week] += sale.total/1000;
         } else {
-            sales[week] = sale.total;
+            sales[week] = sale.total/1000;
         }
     });
     return sales;

@@ -157,7 +157,6 @@ function ProductReturn() {
             <Card.Body className="d-flex justify-content-center align-items-center">
               <div style={{ width: "85%" }}>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  {/* Render the SearchBar component */}
                   <SearchBar items={items} onItemSelect={handleItemSelect} />
                 </div>
                 <Form style={{ marginTop: "6rem" }}>
@@ -212,7 +211,6 @@ function ProductReturn() {
         </div>
       </div>
 
-      {/* Rest of your component */}
       <Modal show={showConfirmation} onHide={handleCloseConfirmation}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm</Modal.Title>

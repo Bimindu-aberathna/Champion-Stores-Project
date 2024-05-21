@@ -124,7 +124,7 @@ function PurchaseHistory() {
                         variant="dark"
                         size="sm"
                         disabled={!item.ableToCancel}
-                        onClick={handleCancelRequest(item.purchaseID)} // Pass a function to onClick
+                        onClick={handleCancelRequest(item.purchaseID)} 
                       >
                         Cancel
                       </Button>
@@ -138,7 +138,7 @@ function PurchaseHistory() {
       </div>
 
       <SideNavbar selected="Inventory" />
-      <InventoryNavBar />
+      <InventoryNavBar selected="purchasehistory"/>
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>

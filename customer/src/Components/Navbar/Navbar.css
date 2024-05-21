@@ -3,6 +3,7 @@
     justify-content: space-around;
     padding: 16px;
     box-shadow: 0 1px 3px -2px black;
+    background-color: rgba(0, 0, 0, 0.838);
     padding: 0 2rem 0 2rem !important;
 }
 
@@ -16,6 +17,7 @@
     color: #171717;
     font-size: 18px;
     font-weight: 600;
+    color: white;
 }
 .navbar_menu{
     display: flex;
@@ -119,6 +121,9 @@
     }
     .mobileDropdown{
         display: none;
+    }
+    ul li{
+        color: white;
     }
 }
 

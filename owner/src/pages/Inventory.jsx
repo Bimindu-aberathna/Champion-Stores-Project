@@ -15,7 +15,8 @@ import Popper from "@mui/material/Popper";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import {convertToPriceFormat} from "../functionality/validation";
+import { convertToPriceFormat } from "../functionality/validation";
+import TitleBar from "../Components/TitleBar";
 import "./Inventory.css";
 
 function Inventory() {
@@ -109,106 +110,122 @@ function Inventory() {
               {item}
             </Button>
           ))}
-          <div className="searchDiv" style={{ marginLeft: "1rem" }}>
-            <Form inline style={{ zIndex: "777" }}>
-              <Row>
-                <Col xs="auto">
-                  <Form.Control
-                    type="text"
-                    placeholder="Search"
-                    className=" mr-sm-2"
-                    onChange={handleSearch}
-                  />
-                </Col>
-                <Col xs="auto" style={{ marginLeft: "-15px" }}>
-                  <Button type="submit">Submit</Button>
-                </Col>
-              </Row>
-            </Form>
-          </div>
+          
         </div>
       </div>
-<div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-      <div className="productGrid" >
-        <Grid item xs={12}>
-          <Grid container  spacing={2}>
-            {searchResults.map((product) => (
-              <Grid key={product.productID} item style={{ zIndex: "888" }}>
-                <Link
-                  to={`/editproduct/${product.productID}`}
-                  key={product.productID}
-                >
-                  <Card
-                    sx={{ width: 130, height: 190 }}
-                    onMouseEnter={(e) =>
-                      handlePopoverOpen(e, product.productName)
-                    }
-                    onMouseLeave={handlePopoverClose}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <CardMedia
-                      sx={{ height: 120 }}
-                      image={product.image1}
-                      title="Product"
+      <div className="flex-container" style={{display:'flex',justifyContent:'center'}}>
+            <div className="searchDiv" style={{marginLeft:"",marginTop:'-5.9rem',zIndex:'905'}}>
+              <Form inline style={{ zIndex: "777" }}>
+                <Row>
+                  <Col xs="auto">
+                    <Form.Control
+                      type="text"
+                      placeholder="Search"
+                      className="mr-sm-2"
+                      onChange={handleSearch}
                     />
-                    <CardContent>
-                      <Typography variant="body2" className="two-line-text">
-                        {product.productName}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Rs. {convertToPriceFormat(product.unitPrice)}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </Grid>
-            ))}
-          </Grid>
-          <Popper
-            open={popperOpen}
-            anchorEl={anchorEl}
-            placement="top-start"
-            style={{
-              zIndex: 889,
-              width: "120px",
-            }}
-            modifiers={[
-              {
-                name: "flip",
-                enabled: false,
-              },
-              {
-                name: "preventOverflow",
-                options: {
-                  altAxis: true,
-                  tether: false,
-                  altBoundary: true,
-                  rootBoundary: "viewport",
-                  padding: 8,
-                },
-              },
-              {
-                name: "offset",
-                options: {
-                  offset: [0, 0],
-                },
-              },
-            ]}
-          >
-            <Paper
-              sx={{
-                padding: 1,
-                backgroundColor: "rgba(0, 0, 0, 0.7)",
-                color: "white",
-                transformOrigin: "top left",
+                  </Col>
+                  <Col xs="auto" style={{ marginLeft: "-15px" }}>
+                    <Button type="submit">Submit</Button>
+                  </Col>
+                </Row>
+              </Form>
+            </div>
+          </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div className="productGrid">
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              {searchResults.map((product) => (
+                <Grid key={product.productID} item style={{ zIndex: "888" }}>
+                  <Link
+                    to={`/editproduct/${product.productID}`}
+                    key={product.productID}
+                  >
+                    <Card
+                      sx={{ width: 130, height: 190 }}
+                      onMouseEnter={(e) =>
+                        handlePopoverOpen(e, product.productName)
+                      }
+                      onMouseLeave={handlePopoverClose}
+                      style={{
+                        cursor: "pointer",
+                        boxShadow: "0 0 10px 0 rgba(0,0,0,0.1)",
+                      }}
+                    >
+                      <CardMedia
+                        sx={{ height: 120 }}
+                        image={product.image1}
+                        title="Product"
+                      />
+                      <CardContent className="cardDetails">
+                        <Typography variant="body2" className="two-line-text">
+                          {product.productName}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          className="cardPrice"
+                        >
+                          Rs. {convertToPriceFormat(product.unitPrice)}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
+            <Popper
+              open={popperOpen}
+              anchorEl={anchorEl}
+              placement="top-start"
+              style={{
+                zIndex: 910,
+                width: "120px",
               }}
+              modifiers={[
+                {
+                  name: "flip",
+                  enabled: false,
+                },
+                {
+                  name: "preventOverflow",
+                  options: {
+                    altAxis: true,
+                    tether: false,
+                    altBoundary: true,
+                    rootBoundary: "viewport",
+                    padding: 8,
+                  },
+                },
+                {
+                  name: "offset",
+                  options: {
+                    offset: [0, 0],
+                  },
+                },
+              ]}
             >
-              <Typography variant="body2">{popperContent}</Typography>
-            </Paper>
-          </Popper>
-        </Grid>
+              <Paper
+                sx={{
+                  padding: 1,
+                  backgroundColor: "rgba(0, 0, 0, 0.7)",
+                  color: "white",
+                  transformOrigin: "top left",
+                }}
+              >
+                <Typography variant="body2">{popperContent}</Typography>
+              </Paper>
+            </Popper>
+          </Grid>
+        </div>
       </div>
-    </div>
     </div>
   );
 }

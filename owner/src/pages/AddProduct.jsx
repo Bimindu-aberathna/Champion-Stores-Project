@@ -361,14 +361,14 @@ function AddProduct() {
 
   return (
     <>
-      <InventoryNavBar />
+      <InventoryNavBar selected="addProduct"/>
       <SideNavbar selected="Inventory" />
       <Form onSubmit={validateForm}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100" style={{width:'100%'}}>
             <MDBCol>
-              <MDBCard className="my-4" id="pageCard">
-                <MDBRow className="g-0" >
+              <MDBCard className="my-4" id="pageCard" style={{zIndex: "888"}}>
+                <MDBRow className="g-0"  >
                   <MDBCol
                     md="6"
                     className="d-none d-md-block "

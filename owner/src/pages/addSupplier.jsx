@@ -108,11 +108,11 @@ function AddSupplier() {
 
   return (
     <div>
-      <InventoryNavBar />
+      <InventoryNavBar selected="listsuppliers"/>
       <SideNavbar selected="Inventory" />
       <Form onSubmit={validateData}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
-          <MDBRow className="d-flex justify-content-center align-items-center h-100">
+          <MDBRow className="d-flex justify-content-center align-items-center h-100" style={{zIndex: "800"}}>
             <MDBCol style={{ paddingRight: "1rem" }}>
               <MDBCard
                 className="my-4"
@@ -121,6 +121,7 @@ function AddSupplier() {
                   width: "91%",
                   marginLeft: "auto",
                   marginRight: "auto",
+                  zIndex: "880",
                 }}
               >
                 <MDBRow className="g-0 justify-content-center">

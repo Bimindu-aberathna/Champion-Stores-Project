@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
+import SideNavbar from "../Components/SideNavbar";
+import InventoryNavBar from "../Components/InventoryNavBar";
 import {
   MDBBtn,
   MDBContainer,
@@ -114,11 +116,13 @@ function NewInventory() {
 
   return (
     <>
+      <InventoryNavBar/>
+      <SideNavbar selected="Inventory" />
       <Form>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
-            <MDBCol>
-              <MDBCard className="my-4">
+            <MDBCol style={{display:'flex',justifyContent:'center',marginRight:'1rem'}}>
+              <MDBCard className="my-4" style={{zIndex: "888",width:'91%'}}>
                 <MDBRow
                   className="g-0"
                   style={{ display: "flex", justifyContent: "center" }}
@@ -127,7 +131,7 @@ function NewInventory() {
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
                       <div style={{ display: "flex" }}>
                         <h3 className="mb-5 text-uppercase fw-bold">
-                          Change product info
+                          New Inventory
                         </h3>
                       </div>
 
