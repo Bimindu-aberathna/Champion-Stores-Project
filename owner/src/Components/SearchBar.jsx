@@ -37,7 +37,7 @@ const SearchBar = ({ items, onItemSelect }) => {
   }, []);
 
   return (
-    <div style={{ position: "fixed",width:'30%'}}>
+    <div style={{ position: "absolute",width:'30%'}}>
       <InputGroup className="mb-3">
         <Form.Control
           aria-label="Amount (to the nearest dollar)"

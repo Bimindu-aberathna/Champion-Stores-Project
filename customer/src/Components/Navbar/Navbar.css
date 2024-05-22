@@ -3,6 +3,7 @@
     justify-content: space-around;
     padding: 16px;
     box-shadow: 0 1px 3px -2px black;
+    background-color: rgba(0, 0, 0, 0.838);
     padding: 0 2rem 0 2rem !important;
 }
 
@@ -16,6 +17,7 @@
     color: #171717;
     font-size: 18px;
     font-weight: 600;
+    color: white;
 }
 .navbar_menu{
     display: flex;
@@ -51,17 +53,17 @@
     padding: 10px 20px;
     border: none;
     border-radius: 25px;
-    color: #ff0000;
     border: 1px solid #ff0000;
-    background: white;
+    background: #ff0000;
+    color: white;
     font-size: 18px;
     font-weight: 500;
     cursor: pointer;
 }
 
 .navbar_login_cart button:active{
-    background: #ff0000;
-    color: white;
+    color: #ff0000;
+    background: white;
 }
 .navbar_cart_count{
     width: 22px;
@@ -108,10 +110,16 @@
     border-radius: 10px;
     cursor: pointer;
     padding: 5px;
+    color: white;
 }
 .userAccount:hover{
-    box-shadow: 0 2px 3px -2px black;
+    box-shadow: 0 2px 3px -2px rgb(255, 255, 255);
 }
+.cartIcon{
+    font-size: 2rem;
+    color: white;
+}
+
 /* Styles for PC */
 @media screen and (min-width: 768px) {
     .navbar {
@@ -119,6 +127,9 @@
     }
     .mobileDropdown{
         display: none;
+    }
+    ul li{
+        color: white;
     }
 }
 

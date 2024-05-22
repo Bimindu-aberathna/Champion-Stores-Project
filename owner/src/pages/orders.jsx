@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import SideNavbar from "../Components/SideNavbar";
 import { Modal, Button } from "react-bootstrap";
-import { FaRegTrashAlt, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import TitleBar from "../Components/TitleBar";
 import axios from "axios";
 import Card from "react-bootstrap/Card";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./orders.css";
+import zIndex from "@mui/material/styles/zIndex";
 
 function Orders() {
   const [items, setItems] = useState([]);
@@ -163,6 +164,8 @@ function Orders() {
             maxWidth: "32%",
             marginLeft: "auto",
             overflowY: "auto",
+            zIndex: 100,
+            paddingTop: "2.5rem",
           }}
         >
           <Card.Body>
@@ -206,17 +209,6 @@ function Orders() {
             </Button>
           </Card.Body>
         </Card>
-        {/* <Card>
-          <Card.Header><h3>Order number: {selectedOrder?.orderNumber}</h3></Card.Header>
-          <Card.Body>
-            <Card.Title>Special title treatment</Card.Title>
-            <Card.Text>
-              With supporting text below as a natural lead-in to additional
-              content.
-            </Card.Text>
-            <Button variant="primary">Go somewhere</Button>
-          </Card.Body>
-        </Card> */}
       </div>
 
       <Modal show={showConfirmation} onHide={handleCloseConfirmation}>

@@ -70,6 +70,14 @@
 .showPasswordIcon{
     position: absolute;
     top: 50%;
-    right: 10px; /* Adjust as needed */
+    right: 10px;
     transform: translateY(-100%);
+}
+.loginShowPasswordIcon{
+    position: absolute;
+    top: 83%;
+    right: 15px;
+    transform: translateY(-100%);
+    font-size: larger;
+    color: rgb(105, 105, 105);
 }

@@ -11,7 +11,7 @@ import './Footer.css';
 export default function Footer() {
   return (
     <MDBFooter bgColor='light' className='text-center text-lg-start text-muted'>
-      <section className='d-flex justify-content-center justify-content-lg-between p-4 border-bottom'>
+      <section className='d-flex justify-content-center justify-content-lg-between p-4 border-bottom'id='footerHead'>
         <div className='me-5 d-none d-lg-block'>
           <span>Get connected with us on social networks:</span>
         </div>
@@ -113,7 +113,7 @@ export default function Footer() {
         </MDBContainer>
       </section>
 
-      <div className='text-center p-4' style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
+      <div className='text-center p-4' id='footerBottom'>
         © 2024 Copyright:
         <a className='text-reset fw-bold' href='https://mdbootstrap.com/'>
           ChampionStores SriLanka.com

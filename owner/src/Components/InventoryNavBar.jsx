@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { FiChevronsLeft } from "react-icons/fi";
+import { IoIosArrowDropleftCircle } from "react-icons/io";
 import { BsFillCaretRightFill } from "react-icons/bs";
 import { BiSolidCategoryAlt } from "react-icons/bi";
-import { LuPackagePlus } from "react-icons/lu";
-import { RiAccountCircleFill } from "react-icons/ri";
-import { TbPackageOff } from "react-icons/tb";
-import { GrHistory } from "react-icons/gr";
+import { CiSquarePlus } from "react-icons/ci";
+import { LiaUserCircle } from "react-icons/lia";
+import { CiSquareRemove } from "react-icons/ci";
+import { VscHistory } from "react-icons/vsc";
+import { PiTreeStructureLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
+import "./InventoryNavBar.css";
 
-function SideNavbar() {
+function SideNavbar({ selected }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -32,33 +34,45 @@ function SideNavbar() {
           transition: "transform 0.5s",
         }}
       >
-        <FiChevronsLeft
-          className={`position-absolute cursor-pointer rounded-circle start-0 border-2 border-dark`}
+        <div
           style={{
             color: "white",
             top: "5rem",
-            fontSize: "2rem",
-            border: "1px solid #474747",
-            borderRadius: "25px",
-            backgroundColor: "snow",
-            color:"#474747",
-            transform: open ? "rotate(180deg)" : "none",
-
+            position: "absolute",
+            marginLeft: open ? "15px" : "-15px",
           }}
-          onClick={() => setOpen(!open)}
-        />
+        >
+          <IoIosArrowDropleftCircle
+            style={{
+              fontSize: "2rem",
+              border: "1px solid black",
+              borderRadius: "25px",
+              zIndex: 1000,
+              backgroundColor: "#474747",
+              transform: open ? "rotate(180deg)" : "none",
+              cursor: "pointer",
+            }}
+            onClick={() => setOpen(!open)}
+          />
+        </div>
+
         <br />
-        <ul className="d-flex flex-column justify-content-center">
+        <ul
+          className="d-flex flex-column justify-content-center"
+          id="optionList"
+        >
           <Link to="/altercategories">
             <li
-              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white"
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
               style={{
                 paddingTop: "1rem",
                 cursor: "pointer",
-                marginRight: "1rem",
+                marginLeft: "-1rem",
+                backgroundColor:
+                  selected === "altercategories" ? "#474747" : "",
               }}
             >
-              <BiSolidCategoryAlt
+              <PiTreeStructureLight
                 className="w-12 h-12"
                 style={{ fontSize: "36px" }}
               />
@@ -74,10 +88,15 @@ function SideNavbar() {
           </Link>
           <Link to="/addProduct">
             <li
-              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white"
-              style={{ paddingTop: "1rem", cursor: "pointer" }}
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
+              style={{
+                paddingTop: "1rem",
+                cursor: "pointer",
+                marginLeft: "-1rem",
+                backgroundColor: selected === "addProduct" ? "#474747" : "",
+              }}
             >
-              <LuPackagePlus
+              <CiSquarePlus
                 className="w-12 h-12"
                 style={{ fontSize: "36px" }}
               />
@@ -93,10 +112,16 @@ function SideNavbar() {
           </Link>
           <Link to="/purchasehistory">
             <li
-              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white"
-              style={{ paddingTop: "1rem", cursor: "pointer" }}
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
+              style={{
+                paddingTop: "1rem",
+                cursor: "pointer",
+                marginLeft: "-1rem",
+                backgroundColor:
+                  selected === "purchasehistory" ? "#474747" : "",
+              }}
             >
-              <GrHistory className="w-12 h-12" style={{ fontSize: "36px" }} />
+              <VscHistory className="w-12 h-12" style={{ fontSize: "36px" }} />
               &nbsp;&nbsp;
               {open && (
                 <span>
@@ -109,10 +134,15 @@ function SideNavbar() {
           </Link>
           <Link to="/listsuppliers">
             <li
-              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white"
-              style={{ paddingTop: "1rem", cursor: "pointer" }}
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
+              style={{
+                paddingTop: "1rem",
+                cursor: "pointer",
+                marginLeft: "-1rem",
+                backgroundColor: selected === "listsuppliers" ? "#474747" : "",
+              }}
             >
-              <RiAccountCircleFill
+              <LiaUserCircle
                 className="w-12 h-12"
                 style={{ fontSize: "36px" }}
               />
@@ -122,10 +152,16 @@ function SideNavbar() {
           </Link>
           <Link to="/handleexpiredproducts">
             <li
-              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 border-top border-bottom border-white"
-              style={{ paddingTop: "1rem", cursor: "pointer" }}
+              className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
+              style={{
+                paddingTop: "1rem",
+                cursor: "pointer",
+                marginLeft: "-1rem",
+                backgroundColor:
+                  selected === "handleexpiredproducts" ? "#474747" : "",
+              }}
             >
-              <TbPackageOff
+              <CiSquareRemove
                 className="w-12 h-12"
                 style={{ fontSize: "36px" }}
               />

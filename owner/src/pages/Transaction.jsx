@@ -10,10 +10,9 @@ import Modal from "react-bootstrap/Modal";
 import "./TransactionProductList.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
+import TitleBar from "../Components/TitleBar";
 import axios from "axios";
 
 function Transaction() {
@@ -259,11 +258,10 @@ function Transaction() {
   return (
     <>
       <SideNavbar selected="Transaction" />
-
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6} md={8}>
-            <div style={{ paddingTop: "1rem", paddingLeft: "13rem" }}>
+            <div style={{ paddingTop: "1rem", paddingLeft: "10rem" }}>
               <div
                 style={{ display: "flex", alignItems: "center", width: "90%" }}
               >
@@ -277,7 +275,7 @@ function Transaction() {
                     {item}
                   </Button>
                 ))}
-                <Form inline style={{ marginLeft: "0.3rem", zIndex: "777" }}>
+                <Form inline className="searchForm" >
                   <Row>
                     <Col xs="auto">
                       <Form.Control
@@ -287,7 +285,7 @@ function Transaction() {
                         onChange={handleSearch}
                       />
                     </Col>
-                    <Col xs="auto">
+                    <Col xs="auto" style={{marginLeft:'-1rem'}}>
                       <Button type="submit">Submit</Button>
                     </Col>
                   </Row>
@@ -319,7 +317,7 @@ function Transaction() {
                           <p>
                             <b>{product.name}</b>
                           </p>
-                          <p>
+                          <p className="productPrice">
                             Rs. {product.price} &nbsp;
                             {product.quantity <= 0 && (
                               <LuPackageX style={{ color: "red" }} />
@@ -330,16 +328,6 @@ function Transaction() {
                     </div>
                     <div
                       className="popup"
-                      style={{
-                        display: "none",
-                        position: "absolute",
-                        top: "0",
-                        left: "0",
-                        backgroundColor: "rgba(0, 0, 0, 0.7)",
-                        color: "#ffffff",
-                        padding: "10px",
-                        zIndex: "999",
-                      }}
                     >
                       {product.name}
                     </div>
@@ -352,7 +340,7 @@ function Transaction() {
             <div
               style={{
                 position: "fixed",
-                top: 0,
+                top: 45,
                 left: 0,
                 right: 0,
                 bottom: "20%",
@@ -360,13 +348,14 @@ function Transaction() {
                 marginLeft: "auto",
                 overflowY: "auto",
                 boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+                
               }}
             >
               <div className="d-grid gap-2">
                 <Button
                   variant="secondary"
                   size="lg"
-                  style={{ backgroundColor: "grey", margin: "1rem" }}
+                  style={{ backgroundColor: "grey", margin: "1rem",paddingTop:'0.15rem',paddingBottom:'0.15rem' }}
                   onClick={clearList}
                 >
                   New Transaction
@@ -374,10 +363,9 @@ function Transaction() {
               </div>
 
               <div ref={listRef}>
-                <Boot_Card className="w-95">
                   <ul
                     className="list-group"
-                    style={{ display: "block", width: "100%", margin: "1rem" }}
+                    style={{ display: "block", width: "100%", margin: "1rem",fontSize:"13px",marginTop:0}}
                   >
                     {items.map((item) => (
                       <li
@@ -397,7 +385,7 @@ function Transaction() {
                             marginLeft: "auto",
                           }}
                         >
-                          <span style={{ marginRight: "1rem" }}>
+                          <span style={{ marginRight: "1rem",fontSize:"14px",fontWeight:'bold' }}>
                             x{item.quantity}
                           </span>
 
@@ -429,31 +417,20 @@ function Transaction() {
                       </li>
                     ))}
                   </ul>
-                </Boot_Card>
               </div>
             </div>
             <div
-              style={{
-                position: "fixed",
-                top: "78%",
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 1000,
-                maxWidth: "32%",
-                marginLeft: "auto",
-                backgroundColor: "white",
-              }}
-            >
+            className="transactionFooter">
               <Boot_Card style={{ width: "100%" }}>
                 <Boot_Card.Body>
                   <Boot_Card.Text>
                     <div style={{ display: "flex" }}>
-                      <div className="barCode" style={{marginRight:'3rem'}}>
-                        <Button onClick={barcodeReader} variant={isScanning?"dark":"outline-dark"}>{isScanning?'Scanning':"Scan Barcode"}</Button>
+                      <div className="barCode" style={{marginRight:'3rem',width:'5rem'}}>
+                        <Button onClick={barcodeReader} variant={isScanning?"dark":"outline-dark"} style={{fontSize:'16px'}}>{isScanning?'Scanning':"Scan Barcode"}</Button>
                       </div>
                       <h3>Total</h3>
                       <div
+                      className="totalPriceBox"
                         style={{
                           backgroundColor: "#B7B7B7",
                           marginLeft: "auto",

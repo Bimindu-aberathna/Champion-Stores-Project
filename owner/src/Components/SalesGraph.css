@@ -9,8 +9,9 @@
   .y-axis-label {
     position: absolute;
     top: 50%;
-    left: 2rem;
+    left: 2.5rem;
     justify-content: center;
+    text-align: center;
     display: flex;
     font-weight: bold;
     transform: translateY(-50%) rotate(-90deg);

@@ -8,3 +8,7 @@
 .footerDescription{
     font-family: cursive;
 }
+#footerHead,#footerBottom{
+    background-color: rgba(0, 0, 0, 0.838);
+    color: snow;
+}

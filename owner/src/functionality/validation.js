@@ -43,3 +43,7 @@ export function validatePassword(password) {
         return false;
     }
 }
+
+export function convertToPriceFormat(price) {
+    return price.toFixed(2);
+}

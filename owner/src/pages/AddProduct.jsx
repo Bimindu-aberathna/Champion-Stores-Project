@@ -7,7 +7,7 @@ import "./AddProducts.css";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
 import SideNavbar from "../Components/SideNavbar";
-// import { imgDB } from "../firebase";
+import InventoryNavBar from "../Components/InventoryNavBar";
 import { imgStorage } from "../config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -64,8 +64,11 @@ function AddProduct() {
   const [productDetails, setProductDetails] = useState("");
 
   useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
     axios
-      .get("http://localhost:5000/api/owner/productServices/getCategories")
+      .get("http://localhost:5000/api/owner/productServices/getCategories", {
+        headers: { "x-access-token": accessToken },
+      })
       .then((res) => {
         setCategories(res.data);
         setSelectedCategoryID(res.data[0].categoryID);
@@ -73,10 +76,18 @@ function AddProduct() {
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Error fetching categories", {
+        if(err.response.data.status === 402){
+        toast.error(err.response.data.message, {
           position: "top-right",
           autoClose: 2000,
         });
+        return;
+      }else{
+          toast.error("Error fetching categories", {
+            position: "top-right",
+            autoClose: 2000,
+          });
+        }
       });
   }, []);
 
@@ -292,11 +303,11 @@ function AddProduct() {
       formData.append("barcode", scannedCode);
     }
     console.log("Calling database");
-    axios
-      .post(
-        "http://localhost:5000/api/owner/productServices/addProduct",
-        formData
-      )
+    
+    const accessToken = localStorage.getItem("accessToken");
+    axios.post("http://localhost:5000/api/owner/productServices/addProduct", formData, {
+      headers: { "x-access-token": accessToken },
+    })
       .then((res) => {
         // Handle success response
         toast.success("Product added successfully", {
@@ -350,12 +361,14 @@ function AddProduct() {
 
   return (
     <>
+      <InventoryNavBar selected="addProduct"/>
+      <SideNavbar selected="Inventory" />
       <Form onSubmit={validateForm}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
-          <MDBRow className="d-flex justify-content-center align-items-center h-100">
+          <MDBRow className="d-flex justify-content-center align-items-center h-100" style={{width:'100%'}}>
             <MDBCol>
-              <MDBCard className="my-4">
-                <MDBRow className="g-0">
+              <MDBCard className="my-4" id="pageCard" style={{zIndex: "888"}}>
+                <MDBRow className="g-0"  >
                   <MDBCol
                     md="6"
                     className="d-none d-md-block "

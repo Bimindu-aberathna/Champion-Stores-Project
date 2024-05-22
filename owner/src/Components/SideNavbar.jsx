@@ -9,6 +9,11 @@ function SideNavbar({ selected }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    try {
+      localStorage.removeItem("accessToken");
+    } catch (error) {
+      console.log(error);
+    }
     navigate("/", { replace: true });
   };
 
@@ -36,13 +41,14 @@ function SideNavbar({ selected }) {
           justifyContent: "left",
         }}
       >
-        {open && (
+        {/* {open && (
           <img
             src={require("../assets/logo.png")}
             alt="profile"
             style={{ width: "auto", height: "10%", display: "flex" }}
           />
-        )}
+        )} */}
+        <div style={{ height: "15%" }}></div>
 
         <div
           style={{
@@ -93,9 +99,9 @@ function SideNavbar({ selected }) {
                 src={require("../assets/credit-card-machine.png")}
                 alt="profile"
                 className="navBarIcon"
-                style={{ width: open ? "25%" : "90%" }}
+                style={{ width: open ? "24%" : "90%" }}
               />
-              {open && <span>Transaction</span>}
+              {open && <span className="iconDescription">Transaction</span>}
             </li>
           </Link>
           <Link to="/orders" className="text-decoration-none text-white">
@@ -109,9 +115,9 @@ function SideNavbar({ selected }) {
                 src={require("../assets/logistics.png")}
                 alt="profile"
                 className="navBarIcon"
-                style={{ width: open ? "25%" : "90%" }}
+                style={{ width: open ? "24%" : "90%" }}
               />
-              {open && <span>Orders</span>}
+              {open && <span className="iconDescription">Orders</span>}
             </li>
           </Link>
           <Link to="/inventory" className="text-decoration-none text-white">
@@ -125,9 +131,9 @@ function SideNavbar({ selected }) {
                 src={require("../assets/checklists.png")}
                 alt="profile"
                 className="navBarIcon"
-                style={{ width: open ? "25%" : "90%" }}
+                style={{ width: open ? "24%" : "90%" }}
               />
-              {open && <span>Inventory</span>}
+              {open && <span className="iconDescription">Inventory</span>}
             </li>
           </Link>
           <Link to="/lowstock" className="text-decoration-none text-white">
@@ -141,9 +147,9 @@ function SideNavbar({ selected }) {
                 src={require("../assets/delivery-cancelled.png")}
                 alt="profile"
                 className="navBarIcon"
-                style={{ width: open ? "25%" : "90%" }}
+                style={{ width: open ? "24%" : "90%" }}
               />
-              {open && <span>Low Stocks</span>}
+              {open && <span className="iconDescription">Low Stocks</span>}
             </li>
           </Link>
           <Link to="/reports" className="text-decoration-none text-white">
@@ -157,9 +163,9 @@ function SideNavbar({ selected }) {
                 src={require("../assets/report.png")}
                 alt="profile"
                 className="navBarIcon"
-                style={{ width: open ? "25%" : "90%" }}
+                style={{ width: open ? "24%" : "90%" }}
               />
-              {open && <span>Reports</span>}
+              {open && <span className="iconDescription">Reports</span>}
             </li>
           </Link>
           <Link to="/productreturn" className="text-decoration-none text-white">
@@ -174,12 +180,14 @@ function SideNavbar({ selected }) {
                 src={require("../assets/return.png")}
                 alt="Return"
                 className="navBarIcon"
-                style={{ width: open ? "25%" : "90%" }}
+                style={{ width: open ? "24%" : "90%" }}
               />
-              {open && <span>Product Returns</span>}
+              {open && <span className="iconDescription">Product Returns</span>}
             </li>
           </Link>
-          <li></li><li></li><li></li>
+          <li></li>
+          <li></li>
+          <li></li>
 
           <li
             className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
@@ -189,9 +197,9 @@ function SideNavbar({ selected }) {
               src={require("../assets/logout.png")}
               alt="profile"
               className="navBarIcon"
-              style={{ width: open ? "25%" : "90%" }}
+              style={{ width: open ? "24%" : "90%" }}
             />
-            {open && <span>Log Out</span>}
+            {open && <span className="iconDescription">Log Out</span>}
           </li>
           <Link
             to="/accountsettings"
@@ -208,9 +216,11 @@ function SideNavbar({ selected }) {
                 src={require("../assets/user.png")}
                 alt="Settings"
                 className="navBarIcon"
-                style={{ width: open ? "25%" : "90%" }}
+                style={{ width: open ? "24%" : "90%" }}
               />
-              {open && <span>Account Settings</span>}
+              {open && (
+                <span className="iconDescription">Account Settings</span>
+              )}
             </li>
           </Link>
         </ul>

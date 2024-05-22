@@ -60,7 +60,7 @@ export default function PastOrderModel({order, show = false}) {
         <MDBModalDialog scrollable>
           <MDBModalContent>
             <MDBModalHeader>
-              <MDBModalTitle>Modal title</MDBModalTitle>
+              <MDBModalTitle>Order</MDBModalTitle>
               <MDBBtn
                 className="btn-close"
                 color="none"

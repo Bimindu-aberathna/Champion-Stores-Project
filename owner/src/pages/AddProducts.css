@@ -29,3 +29,9 @@
 #inputBarcodeBtn:active{
     transform: scale(0.9);
 }
+#pageCard{
+    display: flex;
+    width: 92%;
+    margin-left: auto;
+    margin-right: auto;
+}

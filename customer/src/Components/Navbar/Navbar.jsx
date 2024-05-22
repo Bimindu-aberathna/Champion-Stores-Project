@@ -8,7 +8,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
 import { CiSearch } from "react-icons/ci";
-import { FaRegUser } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import { Link,useNavigate } from "react-router-dom";
 import {
   MDBDropdown,
@@ -52,7 +52,8 @@ function Navbar({ onSearch,setIsAuthenticated  }) {
       <div className="navbar">
         <div className="navbar_logo">
           <Link to={"/"}>
-            <img src={logo} alt="logo" style={{ width: "10rem" }} />
+            <img src={logo} alt="logo" style={{ width: "10rem",borderRadius:'12px',border:'1.5px solid #f2f2f2'
+             }} />
           </Link>
           <p className="greeting">Welcome</p>
           <div className="mobileDropdown">
@@ -87,7 +88,7 @@ function Navbar({ onSearch,setIsAuthenticated  }) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               endAdornment={
-                <InputAdornment position="end">
+                <InputAdornment position="end" style={{fontSize:'20px!important'}}>
                   <CiSearch />
                 </InputAdornment>
               }
@@ -142,18 +143,18 @@ function Navbar({ onSearch,setIsAuthenticated  }) {
           {loggedIn ? (
             <Link to={"/cart"}>
               {" "}
-              <MdOutlineShoppingCart style={{ fontSize: "2rem" }} />
+              <MdOutlineShoppingCart className="cartIcon" />
             </Link>
           ) : (
-            <MdOutlineShoppingCart style={{ fontSize: "2rem" }} />
+            <MdOutlineShoppingCart className="cartIcon"/>
           )}
           <div className="navbar_cart_count">{itemCount}</div>
           {loggedIn ? (
             <Link to={"/profile"}>
               <div className="userAccount">
                 <p>
-                  <FaRegUser
-                    style={{ fontSize: "1.8rem", marginTop: "10px" }}
+                  <FaUserCircle
+                    style={{ fontSize: "2.1rem", marginTop: "15px" }}
                   />
                 </p>
                 <div>

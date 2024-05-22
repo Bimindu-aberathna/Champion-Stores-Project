@@ -9,8 +9,10 @@ import {
   MDBCheckbox,
 } from "mdb-react-ui-kit";
 import storeIMG from "../Assets/store.png";
+import { IoMdEyeOff } from "react-icons/io";
+import { IoMdEye } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { loginUser } from "../Services/userServices";
 import { Navigate } from "react-router-dom";
@@ -19,6 +21,7 @@ import "./Login.css";
 function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (event) => {
@@ -34,7 +37,6 @@ function Login({ setIsAuthenticated }) {
           setIsAuthenticated(true);
           navigate("/");
           //window.location.href = "/";
-
         } else {
           toast.error("Invalid credentials!", {
             position: "top-right",
@@ -43,11 +45,12 @@ function Login({ setIsAuthenticated }) {
         }
       })
       .catch((error) => {
-        if(error.response.status === 401){
+        if (error.response.status === 401) {
           toast.error("Invalid credentials!", {
             position: "top-right",
             autoClose: 3500,
-          });}
+          });
+        }
         console.log(error);
       });
   };
@@ -69,7 +72,6 @@ function Login({ setIsAuthenticated }) {
               <h1>Log in</h1>
             </div>
             <form className="loginForm" onSubmit={handleLogin}>
-
               <MDBInput
                 wrapperClass="mb-4"
                 label="Email address"
@@ -78,14 +80,23 @@ function Login({ setIsAuthenticated }) {
                 size="lg"
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Password"
-                id="formControlLg"
-                type="password"
-                size="lg"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              
+              <div style={{ position: "relative", width: "100%" }}>
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="Password"
+                  id="formControlLg"
+                  type={showPassword ? "text" : "password"}
+                  size="lg"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <div
+                  className="loginShowPasswordIcon"
+                  onClick={(e) => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <IoMdEye /> : <IoMdEyeOff />}
+                </div>
+              </div>
 
               <div className="d-flex justify-content-between mx-4 mb-4">
                 <a href="!#">Forgot password?</a>

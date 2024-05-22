@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { IoLogoHtml5 } from "react-icons/io";
 import axios from "axios";
+import SideNavbar from "../Components/SideNavbar";
+import InventoryNavBar from "../Components/InventoryNavBar"
 import {
   MDBContainer,
   MDBCard,
@@ -12,6 +13,9 @@ import {
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import { nameValidation } from "../functionality/validation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 function AlterCategories() {
   const [categories, setCategories] = useState([]);
@@ -49,128 +53,198 @@ function AlterCategories() {
   }, [selectedCategory]);
 
   function addNewCategory() {
+
     const newCategory = document.getElementById("newCategoryName").value;
-    if (nameValidation(newCategory)) {
-      const confirm = window.confirm(
-        "Are you sure you want to add this category?"
-      );
-      if (!confirm) {
-        return;
-      } else {
-        axios
-          .post("http://localhost:5000/api/owner/productServices/addNewCategory", {
-            categoryName: newCategory,
-          })
-          .then((res) => {
-            console.log(res);
-            alert("Category added successfully");
-          })
-          .catch((err) => {
-            console.log(err);
-            alert("Category could not be added");
-          });
+    categories.map((category) => {
+      if (category.categoryName === newCategory) {
+        toast.error("Category name already exists");
       }
+      return;
+    });
+    if (nameValidation(newCategory)) {
+      Swal.fire({
+        title: "Are you sure you want to add this category?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#000000",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, add it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const accessToken = localStorage.getItem("accessToken");
+          axios
+            .post("http://localhost:5000/api/owner/productServices/addNewCategory", {
+              categoryName: newCategory,
+            }, {
+              headers: {
+                "x-access-token": accessToken,
+              },
+            })
+            .then((res) => {
+              console.log(res);
+              toast.success("Category added successfully");
+            })
+            .catch((err) => {
+              console.log(err);
+              toast.error("Category could not be added");
+            });
+        }else{
+          return;
+        }
+      });
+      
     } else {
-      alert("Invalid category name");
+      toast.error("Invalid category name");
     }
   }
   const renameCategory = () => {
     const newCategoryName = document.getElementById("categoryNewName").value;
+    categories.map((category) => {
+      if (category.categoryName === newCategoryName) {
+        toast.error("Category name already exists");
+      }
+      return;
+    });
     if (!nameValidation(newCategoryName)) {
-      alert("Invalid category name");
+      toast.error("Invalid category name");
       return;
     } else {
-      const confirm = window.confirm(
-        "Are you sure you want to rename this category?"
-      );
-      if (!confirm) {
-        return;
-      } else {
-        axios
-          .post("http://localhost:5000/api/owner/productServices/renameCategory", {
-            categoryNewName: newCategoryName,
-            categoryID: selectedCategory.categoryID,
-          })
-          .then((res) => {
-            console.log(res);
-            alert("Category renamed successfully");
-            window.location.reload();
-          })
-          .catch((err) => {
-            console.log(err);
-            alert("Category could not be renamed");
-          });
-      }
+      Swal.fire({
+        title: "Are you sure?",
+        text: "This category name will be changed!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#000000",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, rename it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const accessToken = localStorage.getItem("accessToken");
+          axios
+            .post("http://localhost:5000/api/owner/productServices/renameCategory", {
+              categoryNewName: newCategoryName,
+              categoryID: selectedCategory.categoryID,
+            }, {
+              headers: {
+                "x-access-token": accessToken,
+              },
+            })
+            .then((res) => {
+              console.log(res);
+              toast.success("Category renamed successfully");
+            })
+            .catch((err) => {
+              console.log(err);
+              toast.error("Category could not be renamed");
+            });
+        }else{
+          return;
+        }
+      });
+      
     }
   };
 
   const renameSubCategory = () => {
     const newSubCategoryName = document.getElementById("renameSubCategory").value;
+    subCategories.map((subCategory) => {
+      if (subCategory.subCategoryName === newSubCategoryName) {
+        toast.error("Sub-Category name already exists");
+      }
+      return;
+    });
+      
     if (!nameValidation(newSubCategoryName)) {
-      alert("Invalid Sub-category name");
+      toast.error("Invalid Sub-Category name");
       return;
     } else {
-      const confirm = window.confirm(
-        "Are you sure you want to rename this Sub-category?"
-      );
-      if (!confirm) {
-        return;
-      } else {
-        axios
-          .post("http://localhost:5000/api/owner/productServices/renameSubCategory", {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "This sub-category name will be changed!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#000000",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, rename it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const accessToken = localStorage.getItem("accessToken");
+          axios.post("http://localhost:5000/api/owner/productServices/renameSubCategory", {
             subCategoryNewName: newSubCategoryName,
             subCategoryID: selectedSubCategory.subCategoryID,
-          })
-          .then((res) => {
+          }, {
+            headers: {
+              "x-access-token": accessToken,
+            },
+          }).then((res) => {
             console.log(res);
-            alert("Sub-Category renamed successfully");
-            window.location.reload();
-          })
-          .catch((err) => {
+            toast.success("Sub-Category renamed successfully");
+          }).catch((err) => {
             console.log(err);
-            alert("Sub-Category could not be renamed");
+            toast.error("Sub-Category could not be renamed");
           });
-      }
+        }
+      });
+      
     }
   };
 
   const addNewSubCategory = () => {
     const newSubCategoryName = document.getElementById("newSubCategoryName").value;
+    subCategories.map((subCategory) => {
+      if (subCategory.subCategoryName === newSubCategoryName) {
+        toast.error("Sub-Category name already exists");
+      }
+      return;
+    });
     if(!nameValidation(newSubCategoryName)){
-      alert("Invalid sub-category name");
+      toast.error("Invalid Sub-Category name");
       return;
     } else {
-      const confirm = window.confirm(
-        "Are you sure you want to add this sub-category?"
-      );
-      if (!confirm) {
-        return;
-      } else {
-        axios
-          .post("http://localhost:5000/api/owner/productServices/addNewSubCategory", {
-            subCategoryName: newSubCategoryName,
-            categoryID: selectedCategory.categoryID,
-          })
-          .then((res) => {
-            console.log(res);
-            alert("Sub-Category added successfully");
-            window.location.reload();
-          })
-          .catch((err) => {
-            console.log(err);
-            alert("Sub-Category could not be added");
-          });
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#000000",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, add it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const accessToken = localStorage.getItem("accessToken");
+          axios
+            .post("http://localhost:5000/api/owner/productServices/addNewSubCategory", {
+              subCategoryName: newSubCategoryName,
+              categoryID: selectedCategory.categoryID,
+            }, {
+              headers: {
+                "x-access-token": accessToken,
+              },
+            })
+            .then((res) => {
+              console.log(res);
+              toast.success("Sub-Category added successfully");
+            })
+            .catch((err) => {
+              console.log(err);
+              toast.error("Sub-Category could not be added");
+            });
         }
+      });
+      
     }
   };
 
   return (
     <div>
-      <Form>
+      <InventoryNavBar selected="altercategories"/>
+      <SideNavbar selected="Inventory" />
+      <Form >
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
-          <MDBRow className="d-flex justify-content-center align-items-center h-100">
+          <MDBRow className="d-flex justify-content-center align-items-center h-100" > 
             <MDBCol>
-              <MDBCard className="my-4">
+              <MDBCard className="my-4" style={{display:'flex', width: "92%",marginLeft: "auto",marginRight: "auto",zIndex:'888'}}>
               <h1 style={{margin:'1rem',marginLeft:'2rem'}}>Alter Categories</h1>
                 <MDBRow className="g-0">
                   <MDBCol md="6">
@@ -227,7 +301,7 @@ function AlterCategories() {
                           <br />
                           <Button
                             variant="dark"
-                            type="submit"
+                            type="button"
                             style={{ display: "flex", marginLeft: "auto" }}
                             onClick={addNewCategory}
                           >
@@ -243,7 +317,6 @@ function AlterCategories() {
                       <h5>Change sub-category data</h5>
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
-                        <h6>Rename sub-categories</h6>
                         <MDBCol md="6">
                           <Form.Label>Select category</Form.Label>
                           <Form.Select
@@ -302,7 +375,7 @@ function AlterCategories() {
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>New sub-category name</Form.Label>
+                          <Form.Label>Rename sub-category</Form.Label>
                           <Form.Control id="renameSubCategory" 
                           type="text"
                           placeholder="Enter new sub-category name for selected sub-category"
@@ -329,7 +402,7 @@ function AlterCategories() {
                           <br />
                           <Button
                             variant="dark"
-                            type="submit"
+                            type="button"
                             style={{ display: "flex", marginLeft: "auto" }}
                             onClick={addNewSubCategory}
                           >
@@ -345,6 +418,7 @@ function AlterCategories() {
           </MDBRow>
         </MDBContainer>
       </Form>
+      <ToastContainer />
     </div>
   );
 }
