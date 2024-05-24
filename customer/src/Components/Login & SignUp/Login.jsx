@@ -11,6 +11,7 @@ import {
 import storeIMG from "../Assets/store.png";
 import { IoMdEyeOff } from "react-icons/io";
 import { IoMdEye } from "react-icons/io";
+import loginImage from "../Assets/loginImage.webp";
 import { ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
@@ -57,11 +58,11 @@ function Login({ setIsAuthenticated }) {
 
   return (
     <MDBContainer fluid className="p-3 my-5" id="loginPage">
-      <MDBRow>
+      <MDBRow className="loginRow">
         <MDBCol col="10" md="6">
-          <img
-            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-            class="img-fluid"
+        <img
+            src={loginImage}
+            className="img-fluid"
             alt="Phone image"
           />
         </MDBCol>

@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../Server_Configuration");
 const e = require("express");
+const { validateOwnerToken } = require("../ownerJWT");
 
 router.get("/getSuppliers", (req, res) => {
     const sql = "SELECT * FROM supplier;";
@@ -13,7 +14,7 @@ router.get("/getSuppliers", (req, res) => {
     });
   });
 
- router.post("/addSupplier", (req, res) => {
+ router.post("/addSupplier",validateOwnerToken, (req, res) => {
     // Retrieve data from request body
     const supplierDetails = req.body.supplierDetails;
     const supplierName = req.body.supplierName;
@@ -34,5 +35,18 @@ router.get("/getSuppliers", (req, res) => {
       res.status(200).json({ message: "Supplier added successfully" });
     });
   });  
+
+  router.put("/updateSupplier",validateOwnerToken, (req, res) => {//update supplier details
+    const{supplierID, details, email, phone1, phone2} = req.body;
+    const sql = "UPDATE supplier SET details = ?, email = ?, phone1 = ?, phone2 = ? WHERE supplierID = ?";
+    const values = [details, email, phone1, phone2, supplierID];
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        console.error("Error updating supplier", err);
+        return res.status(500).json({ message: "Server error occurred" });
+      }
+      res.status(200).json({ message: "Supplier updated successfully" });
+    });
+  });
 
 module.exports = router;

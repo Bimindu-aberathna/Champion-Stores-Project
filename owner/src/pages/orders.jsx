@@ -141,7 +141,7 @@ function Orders() {
                   >
                     {order.dateTime}
                   </div>
-                  <div className="listGroupItem">Rs.{order.total}.00</div>
+                  <div className="listGroupItem">Rs.{order.totalAmount}.00</div>
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -181,7 +181,7 @@ function Orders() {
               <b>Mobile:</b> {selectedOrder?.receiverTelephone}
             </p>
             <p>
-              <b>Total: Rs.</b> {selectedOrder?.total}
+              <b>Total: Rs.</b> {selectedOrder?.totalAmount}
             </p>
             <p>
               <b>Date:</b> {selectedOrder?.dateTime}

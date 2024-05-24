@@ -112,12 +112,11 @@ function Cart() {
     setCart_Items((prevItems) => {
       return prevItems.map((item) => {
         if (item.cart_itemID === id) {
-          item.quantity += change;
-          changeQuantityInDb(id, change);
-
-          if (item.quantity < 1) {
-            item.quantity = 1;
-            changeQuantityInDb(id, 0);
+          if (item.quantity <= 1 && change === -1) {
+            return item;
+          } else {
+            item.quantity += change;
+            changeQuantityInDb(id, change);
           }
         }
         return item;
@@ -340,12 +339,12 @@ function Cart() {
                     </MDBRow>
                   </MDBContainer>
                 </MDBCardBody>
-              ):
-              <MDBCardBody className="detailCardBody">
-                <h5>Order Details</h5>
-                <h4>No items in cart</h4>
-              </MDBCardBody>
-              }
+              ) : (
+                <MDBCardBody className="detailCardBody">
+                  <h5>Order Details</h5>
+                  <h4>No items in cart</h4>
+                </MDBCardBody>
+              )}
             </MDBCard>
           </div>
         </div>

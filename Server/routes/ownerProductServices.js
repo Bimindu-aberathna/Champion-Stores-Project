@@ -7,6 +7,18 @@ const upload = multer();
 const { validateOwnerToken } = require("../ownerJWT");
 
 
+router.get("/listProducts", (req, res) => {
+  const sql = "CALL GetOwnerProductData()";
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      res.status(200).json(result[0]);
+    }
+  });
+});
+
 router.get("/getProductData/:productId", (req, res) => {
   const productId = req.params.productId;
   const sql = `

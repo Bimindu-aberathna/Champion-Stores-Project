@@ -87,7 +87,6 @@ function ProductPage() {
           <Carousel className="productCarousel">
             <div>
               <img src={product.image1} alt="Image 1" />
-              <p className="legend">Image 1</p>
             </div>
             <div>
               {product.image2 === "null" ? (
@@ -98,7 +97,6 @@ function ProductPage() {
               ) : (
                 <img src={product.image2} alt="Image 2" />
               )}
-              <p className="legend">Image 2</p>
             </div>
             <div>
               {product.image3 === "null" ? (
@@ -109,62 +107,65 @@ function ProductPage() {
               ) : (
                 <img src={product.image3} alt="Image 3" />
               )}
-              <p className="legend">Image 3</p>
             </div>
           </Carousel>
         </MDBCol>
 
         <MDBCol col="4" md="6">
-          <dev className="productNameDiv">{product.productName}</dev>
-          <div className="brand-category-div">
-            <dev className="productBrandDiv">
-              <p className="attributeLabel">Brand: </p>
-              {product.brandName}
-            </dev>
-            <dev className="productCategoryDiv">
-              <p className="attributeLabel">Category: </p>
-              {product.subCategoryName}
-            </dev>
-          </div>
-          <div className="productPriceDiv">
-            <p className="attributeLabel">Price: Rs. {product.unitPrice}</p>
-          </div>
-          <div className="productQuantityDiv">
+          <div className="productDataContainer">
+            <div className="productNameDiv">{product.productName}</div>
+            <div className="brand-category-div">
+              <dev className="productBrandDiv">
+                <p className="attributeLabel">Brand: </p>
+                {product.brandName}
+              </dev>
+              <dev className="productCategoryDiv">
+                <p className="attributeLabel">Category: </p>
+                {product.subCategoryName}
+              </dev>
+            </div>
+            <div className="productPriceDiv">
+              <p className="attributeLabel">Price: Rs. {product.unitPrice}</p>
+            </div>
             <p className="attributeLabel">Quantity:</p>
+            <div className="productQuantityDiv">
+              <div
+                className="changeQTY"
+                onClick={() => handleQuantityChange("minus")}
+              >
+                <IoIosRemoveCircleOutline />
+              </div>
+              <div className="quantityInput">
+                <MDBInput
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </div>
 
-            <div
-              className="changeQTY"
-              onClick={() => handleQuantityChange("minus")}
-            >
-              <IoIosRemoveCircleOutline />
+              <div
+                className="changeQTY"
+                onClick={() => handleQuantityChange("add")}
+              >
+                <IoIosAddCircleOutline />
+              </div>
             </div>
-            <div className="quantityInput">
-              <MDBInput
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-              />
+            <div className="productButtonDiv">
+              {product.currentStock >= 15 ? (
+                <div className="addBtnContainer">
+                <MDBBtn color="primary" onClick={handleAddCart}>
+                  Add to Cart
+                </MDBBtn>
+                <p className="productStatus" style={{marginTop:'1rem'}}>In Stock</p>
+                </div>
+              ) : (
+                <MDBBtn color="danger">Out of Stock</MDBBtn>
+              )}
             </div>
-
-            <div
-              className="changeQTY"
-              onClick={() => handleQuantityChange("add")}
-            >
-              <IoIosAddCircleOutline />
+            <div className="productDescriptionDiv">
+              <p className="attributeLabel">Description:</p>
+              <p>{product.details}</p>
             </div>
-          </div>
-          <div className="productButtonDiv">
-            {product.currentStock >= 15 ? (
-              <MDBBtn color="primary" onClick={handleAddCart}>
-                Add to Cart
-              </MDBBtn>
-            ) : (
-              <MDBBtn color="danger">Out of Stock</MDBBtn>
-            )}
-          </div>
-          <div className="productDescriptionDiv">
-            <p className="attributeLabel">Description:</p>
-            <p>{product.details}</p>
           </div>
         </MDBCol>
       </MDBRow>

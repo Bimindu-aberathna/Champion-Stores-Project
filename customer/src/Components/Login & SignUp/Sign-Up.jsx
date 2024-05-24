@@ -12,6 +12,7 @@ import storeIMG from "../Assets/store.png";
 import { IoMdEyeOff } from "react-icons/io";
 import { IoMdEye } from "react-icons/io";
 import EYEicon from "../Assets/eye.png";
+import loginImage from "../Assets/loginImage.webp";
 import { signUpUser } from "../Services/userServices";
 import Swal from 'sweetalert2';
 import Confetti from "react-confetti";
@@ -130,10 +131,10 @@ function SignUp() {
 
   return (
     <MDBContainer fluid className="p-3 my-5" id="signupPage">
-      <MDBRow>
-        <MDBCol col="10" md="6">
+      <MDBRow className="signUpRow">
+        <MDBCol col="10" md="6" className="imageCol">
           <img
-            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
+            src={loginImage}
             className="img-fluid"
             alt="Phone image"
           />

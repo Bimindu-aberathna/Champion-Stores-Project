@@ -19,6 +19,7 @@ import {
   MDBRadio,
 } from "mdb-react-ui-kit";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 function AddSupplier() {
   const [supplierName, setSupplierName] = useState("");
@@ -26,6 +27,8 @@ function AddSupplier() {
   const [phone1, setPhone1] = useState("");
   const [phone2, setPhone2] = useState("");
   const [supplierDetails, setSupplierDetails] = useState("");
+
+  const navigate = useNavigate();
 
   const validateData = (e) => {
     e.preventDefault();
@@ -39,11 +42,16 @@ function AddSupplier() {
         toast.error("Invalid email");
         return;
       } else {
-        if (!validateMobile(phone1) || !validateMobile(phone2)) {
+        if (!validateMobile(phone1)) {
           toast.error("Invalid mobile number");
           return;
         } else {
-          addSupplierToDB();
+          if (phone2 !== "" && !validateMobile(phone2)) {
+            toast.error("Invalid mobile number");
+            return;
+          } else {
+            addSupplierToDB();
+          }
         }
       }
     }
@@ -72,6 +80,9 @@ function AddSupplier() {
         // Handle success response
         console.log("Supplier added", res);
         toast.success("Supplier added successfully");
+        setTimeout(() => {
+          navigate('/listsuppliers');
+        }, 1800);
       })
       .catch((err) => {
         // Handle error response
@@ -108,11 +119,14 @@ function AddSupplier() {
 
   return (
     <div>
-      <InventoryNavBar selected="listsuppliers"/>
+      <InventoryNavBar selected="listsuppliers" />
       <SideNavbar selected="Inventory" />
       <Form onSubmit={validateData}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
-          <MDBRow className="d-flex justify-content-center align-items-center h-100" style={{zIndex: "800"}}>
+          <MDBRow
+            className="d-flex justify-content-center align-items-center h-100"
+            style={{ zIndex: "800" }}
+          >
             <MDBCol style={{ paddingRight: "1rem" }}>
               <MDBCard
                 className="my-4"
