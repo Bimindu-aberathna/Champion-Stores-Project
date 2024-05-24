@@ -12,7 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import TitleBar from "../Components/TitleBar";
+import Receipt from "../Components/Receipt";
 import axios from "axios";
 
 function Transaction() {
@@ -28,23 +28,36 @@ function Transaction() {
   const [isScanning, setIsScanning] = useState(false);
   const [barcode, setBarcode] = useState("");
   const [scannedCode, setScannedCode] = useState("");
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [distinctSubCategories, setDistinctSubCategories] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/listProducts")
+      .get("http://localhost:5000/api/owner/productServices/listProducts")
       .then((res) => {
         const mappedData = mapProductData(res.data);
         setProductData(mappedData);
         setFilteredData(mappedData);
+        const subCategoryNames = [
+          ...new Set(res.data.map((item) => item.subCategoryName)),
+        ];
+        setDistinctSubCategories(subCategoryNames);
       })
       .catch((err) => {
         console.log(err);
+        toast.error("Error occurred while fetching products", {
+          position: "top-right",
+          autoClose: 2000,
+        });
       });
   }, []);
 
   useEffect(() => {
-    const filtered = productData.filter((product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = productData.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.subCategory.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(filtered);
   }, [searchTerm, productData]);
@@ -118,6 +131,11 @@ function Transaction() {
     setShowConfirmation(false);
   };
 
+  const handleCloseReceipt = () => {
+    setShowReceipt(false);
+    setItems([]);
+  };
+
   const cancelTransaction = () => {
     setItems([]);
   };
@@ -171,15 +189,7 @@ function Transaction() {
     }
   };
 
-  const quicksearch = ["Soap", "Face Cream", "Face Wash", "Lipstick", "Toys"];
-
   const proceedTransaction = () => {
-    console.log("proceeding transaction");
-    console.log("Total: ", total);
-    console.log("Discount: ", discount);
-    console.log("Subtotal: ", total - discount);
-    console.log("Items: ", items);
-
     // Prepare the data to be sent to the backend
     const transactionData = {
       total: total,
@@ -202,7 +212,8 @@ function Transaction() {
       .then((response) => {
         console.log("Transaction successful:", response.data);
         setShowConfirmation(false);
-        setItems([]);
+        setShowReceipt(true);
+
         toast.success("Transaction successful", {
           position: "top-right",
           autoClose: 1500,
@@ -229,7 +240,6 @@ function Transaction() {
             addItem(product);
           }
           setBarcode("");
-          
         }
       } else {
         setBarcode((prev) => prev + event.key);
@@ -261,31 +271,45 @@ function Transaction() {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6} md={8}>
-            <div style={{ paddingTop: "1rem", paddingLeft: "10rem" }}>
-              <div
-                style={{ display: "flex", alignItems: "center", width: "90%" }}
-              >
-                {quicksearch.map((item) => (
+            <div className="quickSearchContainer">
+              <div className="quickSearchDiv">
+                <Button
+                  variant="outline-dark"
+                  size="sm"
+                  style={{ marginLeft: "0.3rem", zIndex: "950" }}
+                  onClick={() => setSearchTerm("")}
+                >
+                  All
+                </Button>
+                {distinctSubCategories.map((item) => (
                   <Button
                     key={item}
                     variant="outline-dark"
                     size="sm"
-                    style={{ marginLeft: "0.3rem", zIndex: "777" }}
+                    style={{ marginLeft: "0.3rem", zIndex: "905" }}
+                    onClick={() => setSearchTerm(item)}
                   >
                     {item}
                   </Button>
                 ))}
-                <Form inline className="searchForm" >
+              </div>
+            </div>
+            <div className="flex-container">
+              <div
+                className="searchDiv"
+                style={{ marginLeft: "", marginTop: "-5.9rem", zIndex: "900" }}
+              >
+                <Form inline style={{ zIndex: "777" }}>
                   <Row>
                     <Col xs="auto">
                       <Form.Control
                         type="text"
                         placeholder="Search"
-                        className=" mr-sm-2"
+                        className="mr-sm-2"
                         onChange={handleSearch}
                       />
                     </Col>
-                    <Col xs="auto" style={{marginLeft:'-1rem'}}>
+                    <Col xs="auto" style={{ marginLeft: "-15px" }}>
                       <Button type="submit">Submit</Button>
                     </Col>
                   </Row>
@@ -293,7 +317,7 @@ function Transaction() {
               </div>
             </div>
 
-            <div className="container" style={{ width: "95%" }}>
+            <div className="container">
               {filteredData.map((product, index) => {
                 return (
                   <div
@@ -302,7 +326,7 @@ function Transaction() {
                     onMouseOver={handleMouseOver}
                     onMouseOut={handleMouseOut}
                     onClick={() => addItem(product)}
-                    style={{ zIndex: "888" }}
+                    style={{ zIndex: "888", width: "13.7%" }}
                   >
                     <div className="contant">
                       <div className="img-box">
@@ -326,11 +350,7 @@ function Transaction() {
                         </div>
                       </div>
                     </div>
-                    <div
-                      className="popup"
-                    >
-                      {product.name}
-                    </div>
+                    <div className="popup">{product.name}</div>
                   </div>
                 );
               })}
@@ -348,14 +368,18 @@ function Transaction() {
                 marginLeft: "auto",
                 overflowY: "auto",
                 boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-                
               }}
             >
               <div className="d-grid gap-2">
                 <Button
                   variant="secondary"
                   size="lg"
-                  style={{ backgroundColor: "grey", margin: "1rem",paddingTop:'0.15rem',paddingBottom:'0.15rem' }}
+                  style={{
+                    backgroundColor: "grey",
+                    margin: "1rem",
+                    paddingTop: "0.15rem",
+                    paddingBottom: "0.15rem",
+                  }}
                   onClick={clearList}
                 >
                   New Transaction
@@ -363,74 +387,94 @@ function Transaction() {
               </div>
 
               <div ref={listRef}>
-                  <ul
-                    className="list-group"
-                    style={{ display: "block", width: "100%", margin: "1rem",fontSize:"13px",marginTop:0}}
-                  >
-                    {items.map((item) => (
-                      <li
-                        className="list-group-item"
-                        key={item.id}
+                <ul
+                  className="list-group"
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    margin: "1rem",
+                    fontSize: "13px",
+                    marginTop: 0,
+                  }}
+                >
+                  {items.map((item) => (
+                    <li
+                      className="list-group-item"
+                      key={item.id}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span>{item.name}</span>
+                      <div
                         style={{
                           display: "flex",
-                          justifyContent: "space-between",
                           alignItems: "center",
+                          marginLeft: "auto",
                         }}
                       >
-                        <span>{item.name}</span>
-                        <div
+                        <span
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginLeft: "auto",
+                            marginRight: "1rem",
+                            fontSize: "14px",
+                            fontWeight: "bold",
                           }}
                         >
-                          <span style={{ marginRight: "1rem",fontSize:"14px",fontWeight:'bold' }}>
-                            x{item.quantity}
-                          </span>
+                          x{item.quantity}
+                        </span>
 
-                          <Button
-                            variant="outline-dark"
-                            size="sm"
-                            onClick={() => changeQuantity(item.id, -1)}
-                            style={{ marginRight: "0.2rem" }}
-                          >
-                            <FaMinusCircle />
-                          </Button>
-                          <Button
-                            variant="outline-dark"
-                            size="sm"
-                            onClick={() => changeQuantity(item.id, 1)}
-                            style={{ marginRight: "0.2rem" }}
-                          >
-                            <FaPlusCircle />
-                          </Button>
-                          <Button
-                            variant="outline-dark"
-                            size="sm"
-                            onClick={() => removeItem(item.id)}
-                            style={{ marginRight: "0.2rem" }}
-                          >
-                            <FaRegTrashAlt />
-                          </Button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                        <Button
+                          variant="outline-dark"
+                          size="sm"
+                          onClick={() => changeQuantity(item.id, -1)}
+                          style={{ marginRight: "0.2rem" }}
+                        >
+                          <FaMinusCircle />
+                        </Button>
+                        <Button
+                          variant="outline-dark"
+                          size="sm"
+                          onClick={() => changeQuantity(item.id, 1)}
+                          style={{ marginRight: "0.2rem" }}
+                        >
+                          <FaPlusCircle />
+                        </Button>
+                        <Button
+                          variant="outline-dark"
+                          size="sm"
+                          onClick={() => removeItem(item.id)}
+                          style={{ marginRight: "0.2rem" }}
+                        >
+                          <FaRegTrashAlt />
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-            <div
-            className="transactionFooter">
+            <div className="transactionFooter">
               <Boot_Card style={{ width: "100%" }}>
                 <Boot_Card.Body>
                   <Boot_Card.Text>
                     <div style={{ display: "flex" }}>
-                      <div className="barCode" style={{marginRight:'3rem',width:'5rem'}}>
-                        <Button onClick={barcodeReader} variant={isScanning?"dark":"outline-dark"} style={{fontSize:'16px'}}>{isScanning?'Scanning':"Scan Barcode"}</Button>
+                      <div
+                        className="barCode"
+                        style={{ marginRight: "3rem", width: "5rem" }}
+                      >
+                        <Button
+                          onClick={barcodeReader}
+                          variant={isScanning ? "dark" : "outline-dark"}
+                          style={{ fontSize: "16px" }}
+                        >
+                          {isScanning ? "Scanning" : "Scan Barcode"}
+                        </Button>
                       </div>
                       <h3>Total</h3>
                       <div
-                      className="totalPriceBox"
+                        className="totalPriceBox"
                         style={{
                           backgroundColor: "#B7B7B7",
                           marginLeft: "auto",
@@ -483,8 +527,10 @@ function Transaction() {
               min="0"
               placeholder="Amount (to the nearest dollar)"
               aria-label="Amount (to the nearest dollar)"
+              value={discount}
               onChange={(e) => {
-                setDiscount(e.target.value);
+                let value = parseFloat(e.target.value);
+                setDiscount(value.toFixed(2));
               }}
             />
           </InputGroup>
@@ -512,6 +558,14 @@ function Transaction() {
           </div>
         </Modal.Footer>
       </Modal>
+      <Modal show={showReceipt} onHide={handleCloseReceipt}>
+        <Modal.Header closeButton>
+          <Modal.Title>Receipt</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Receipt items={items} discount={discount} />
+        </Modal.Body>
+      </Modal>
 
       <ToastContainer />
     </>
@@ -525,6 +579,8 @@ function mapProductData(apiData) {
   const mappedData = apiData.map((item) => ({
     id: item.productID,
     name: item.productName,
+    category: item.categoryName,
+    subCategory: item.subCategoryName,
     image: item.image1,
     price: item.unitPrice,
     quantity: item.currentStock,

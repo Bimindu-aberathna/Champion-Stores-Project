@@ -64,7 +64,7 @@ const SearchBar = ({ items, onItemSelect }) => {
                 event.target.style.backgroundColor = "";
                 event.target.style.color = "";
               }}
-              onClick={() => handleItemSelect(item)} // Call handleItemSelect when item is clicked
+              onClick={() => handleItemSelect(item)} 
             >
               {item.productName}
             </li>

@@ -81,3 +81,21 @@
     font-size: larger;
     color: rgb(105, 105, 105);
 }
+.imageCol{
+    border-radius: 12px;
+    
+}
+.img-fluid{
+    border-radius: 15px;
+}
+
+@media only screen and (min-width: 1024px) {
+    .signUpRow{
+        transform: scale(0.9);
+        border-radius: 12px;
+    }
+    .loginRow{
+        transform: scale(0.9);
+        border-radius: 12px;
+    }
+}

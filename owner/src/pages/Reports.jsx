@@ -81,7 +81,7 @@ function Reports() {
           <Col  sm={4}>
             <div className="reportGenerationDiv">
               <h3>Generate Reports</h3>
-              <Card style={{ width: "97%" }}>
+              <Card style={{ width: "100%" }}>
                 <Card.Body>
                   <Card.Title>Inventory Report</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted">
@@ -103,7 +103,7 @@ function Reports() {
                   </div>
                 </Card.Body>
               </Card>
-              <Card style={{ width: "97%" }}>
+              <Card style={{ width: "100%" }}>
                 <Card.Body>
                   <Card.Title>Sales Report</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted">

@@ -41,13 +41,7 @@ function SideNavbar({ selected }) {
           justifyContent: "left",
         }}
       >
-        {/* {open && (
-          <img
-            src={require("../assets/logo.png")}
-            alt="profile"
-            style={{ width: "auto", height: "10%", display: "flex" }}
-          />
-        )} */}
+        
         <div style={{ height: "15%" }}></div>
 
         <div
@@ -191,6 +185,7 @@ function SideNavbar({ selected }) {
 
           <li
             className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
+            style={{ backgroundColor: "#474747",borderRadius:"10px",margin:'5px',cursor:'pointer'  }}
             onClick={handleLogout}
           >
             <img

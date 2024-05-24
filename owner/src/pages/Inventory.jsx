@@ -16,7 +16,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { convertToPriceFormat } from "../functionality/validation";
-import TitleBar from "../Components/TitleBar";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Inventory.css";
 
 function Inventory() {
@@ -26,22 +27,34 @@ function Inventory() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [popperOpen, setPopperOpen] = useState(false);
   const [popperContent, setPopperContent] = useState("");
+  const [distinctSubCategories, setDistinctSubCategories] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/listProducts")
+      .get("http://localhost:5000/api/owner/productServices/listProducts")
       .then((res) => {
         setItems(res.data);
         setSearchResults(res.data);
+        const subCategoryNames = [
+          ...new Set(res.data.map((item) => item.subCategoryName)),
+        ];
+        setDistinctSubCategories(subCategoryNames);
       })
       .catch((err) => {
         console.log(err);
+        toast.error("Server Error Occurred", {
+          position: "top-right",
+          autoClose: 3000,
+        });
       });
   }, []);
 
   useEffect(() => {
-    const results = items.filter((item) =>
-      item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+    const results = items.filter(
+      (item) =>
+        item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.categoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.subCategoryName.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSearchResults(results);
   }, [searchTerm, items]);
@@ -51,7 +64,6 @@ function Inventory() {
   };
 
   const handleMouseOver = (event) => {
-    // Add blur effect to the tile when mouse is over
     event.target.closest(".box").style.filter = "blur(0px)";
 
     // Show the popup banner
@@ -100,38 +112,53 @@ function Inventory() {
             justifyContent: "center",
           }}
         >
-          {quicksearch.map((item) => (
+          <Button
+            variant="outline-dark"
+            size="sm"
+            style={{ marginLeft: "0.3rem", zIndex: "950" }}
+            onClick={() => setSearchTerm("")}
+          > 
+            All
+          </Button>  
+          
+          {distinctSubCategories.map((item) => (
             <Button
               key={item}
               variant="outline-dark"
               size="sm"
-              style={{ marginLeft: "0.3rem", zIndex: "777" }}
+              style={{ marginLeft: "0.3rem", zIndex: "950" }}
+              onClick={() => setSearchTerm(item)}
             >
               {item}
             </Button>
           ))}
-          
         </div>
       </div>
-      <div className="flex-container" style={{display:'flex',justifyContent:'center'}}>
-            <div className="searchDiv" style={{marginLeft:"",marginTop:'-5.9rem',zIndex:'905'}}>
-              <Form inline style={{ zIndex: "777" }}>
-                <Row>
-                  <Col xs="auto">
-                    <Form.Control
-                      type="text"
-                      placeholder="Search"
-                      className="mr-sm-2"
-                      onChange={handleSearch}
-                    />
-                  </Col>
-                  <Col xs="auto" style={{ marginLeft: "-15px" }}>
-                    <Button type="submit">Submit</Button>
-                  </Col>
-                </Row>
-              </Form>
-            </div>
-          </div>
+      <div
+        className="flex-container"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <div
+          className="searchDiv"
+          style={{ marginLeft: "", marginTop: "-5.9rem", zIndex: "905" }}
+        >
+          <Form inline style={{ zIndex: "777" }}>
+            <Row>
+              <Col xs="auto">
+                <Form.Control
+                  type="text"
+                  placeholder="Search"
+                  className="mr-sm-2"
+                  onChange={handleSearch}
+                />
+              </Col>
+              <Col xs="auto" style={{ marginLeft: "-15px" }}>
+                <Button type="submit">Submit</Button>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+      </div>
       <div
         style={{
           display: "flex",
