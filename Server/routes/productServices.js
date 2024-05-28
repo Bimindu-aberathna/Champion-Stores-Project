@@ -79,4 +79,12 @@ function callStoredProcedure(res) {
   });
 }
 
+router.get("/getCategories", (req, res) => {
+  const sql = "SELECT * FROM category";
+  db.query(sql, (err, result) => {
+    if (err) res.status(500).json({ message: "Server error occurred" });
+    res.status(200).json(result);
+  });
+});
+
 module.exports = router;

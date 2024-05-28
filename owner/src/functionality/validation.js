@@ -58,3 +58,10 @@ export function validatePhoneNumber(phoneNumber) {
         return false;
     }
   }
+export function validateWeight(weight){//allows only positive integers or decimal numbers exept 0
+    var regex = /^(0|[1-9]\d*)(\.\d+)?$/;
+    if (!regex.test(weight)) {
+        return false;
+    }
+    return true;
+}

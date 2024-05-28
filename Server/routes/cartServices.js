@@ -58,16 +58,7 @@ router.post("/addToCart", validateToken, (req, res) => {
   });
 });
 
-// router.post("/loginUser", (req, res) => {
-//     // Extract the request body
-//     const { email, password } = req.body;
-//     console.log(email, password);
-//     const sql = `SELECT * FROM customer WHERE email = '${email}'`;
-//     db.query(sql, (err, result) => {
 
-//     });
-
-// });
 
 router.get("/getCart", validateToken, (req, res) => {
   const customerID = req.customerID;
@@ -79,7 +70,7 @@ router.get("/getCart", validateToken, (req, res) => {
     } else {
       if (result.length > 0) {
         //res.status(200).json({message:"working"});
-        const sql2 = `SELECT CI.*,p.productName FROM cart_item CI INNER JOIN product p on CI.productID=p.productID WHERE cartID = ${result[0].cartID}`;
+        const sql2 = `SELECT CI.*,p.productName,p.unitWeight FROM cart_item CI INNER JOIN product p on CI.productID=p.productID WHERE cartID = ${result[0].cartID}`;
         db.query(sql2, (err, result) => {
           if (err) {
             console.log(err);
@@ -161,6 +152,31 @@ router.post("/checkout", validateToken, (req, res) => {
         });
       } else {
         res.json({ status:404, message: "Cart not found" });
+      }
+    }
+  });
+});
+
+router.get("/getReceiverDetails", validateToken, (req, res) => {
+  const customerID = req.customerID;
+  const sql1 =  `SELECT receiverName, receiverTelephone, deliveryAddress FROM cart WHERE customerID = ${customerID} AND paymentStatus = false`;
+  db.query(sql1, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status:500, message: "Internal server error" });
+    } else {
+      if (result.length > 0) {
+        res.status(200).json(result[0]);
+      } else {
+        sql2 = `SELECT CONCAT(firstName, ' ', lastName) AS receiverName, telephone AS receiverTelephone, address AS deliveryAddress FROM customer WHERE customerID = ${customerID}`;
+        db.query(sql2, (err, result) => {
+          if (err) {
+            console.log(err);
+            res.json({ status:500, message: "Internal server error" });
+          } else {
+            res.status(200).json(result[0]);
+          }
+        });
       }
     }
   });

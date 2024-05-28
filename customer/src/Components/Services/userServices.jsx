@@ -21,19 +21,6 @@ export const loginUser = async(loginData) => {
     return response.status;
 }
 
-
-
-// export async function getCustomerDetails(){
-//   console.log("Front end service ***************************** ");
-//   const accessToken = localStorage.getItem("accessToken");
-
-//   const response = await axios.post(customerServicesEndpoint + "/getCustomerDetails", {
-//     headers: {
-//       "x-access-token": accessToken,
-//     },
-//   });
-//   return response.data;
-// }
 export const getCustomerDetails = async () => {
   try {
     const accessToken = localStorage.getItem("accessToken");

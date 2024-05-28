@@ -30,70 +30,91 @@ import "./Login.css";
 
 
 function SignUp() {
-  const [firstName, setFirstName] = useState("");
-  const [firstNameError, setFirstNameError] = useState(false);
-  const [lastName, setLastName] = useState("");
-  const [lastNameError, setLastNameError] = useState(false);
-  const [PhoneNumber, setPhoneNumber] = useState("");
-  const [phoneNumberError, setPhoneNumberError] = useState(false);
-  const [address, setAddress] = useState("");
-  const [addressError, setAddressError] = useState(false);
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState(false);
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
+  const [firstName, setFirstName] = useState(""); // State variable for first name
+  const [firstNameError, setFirstNameError] = useState(false); // State variable for first name error
+  const [lastName, setLastName] = useState(""); // State variable for last name
+  const [lastNameError, setLastNameError] = useState(false); // State variable for last name error
+  const [PhoneNumber, setPhoneNumber] = useState(""); // State variable for phone number
+  const [phoneNumberError, setPhoneNumberError] = useState(false); // State variable for phone number error
+  const [address, setAddress] = useState(""); // State variable for address
+  const [addressError, setAddressError] = useState(false); // State variable for address error
+  const [email, setEmail] = useState(""); // State variable for email
+  const [emailError, setEmailError] = useState(false); // State variable for email error
+  const [password, setPassword] = useState(""); // State variable for password
+  const [passwordError, setPasswordError] = useState(false);  // State variable for password error
+  const [confirmPassword, setConfirmPassword] = useState(""); // State variable for confirm password
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false); // State variable for confirm password error
+  const [showPassword, setShowPassword] = useState(false); // State variable to show password
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State variable to show confirm password
+  const [showConfetti, setShowConfetti] = useState(false); // State variable to show confetti
   
-  const handleSignUp = async (event) => {
+  const handleSignUp = async (event) => { // Function to handle sign up
     event.preventDefault();
-    const firstNameValidation = validateName(firstName);
-    const lastNameValidation = validateName(lastName);
-    const phoneNumberValidation = validatePhoneNumber(PhoneNumber);
-    const addressValidation = validateAddress(address);
-    const emailValidation = validateEmail(email);
-    const passwordValidation = validatePassword(password);
+    const firstNameValidation = validateName(firstName); // Validate first name
+    const lastNameValidation = validateName(lastName); // Validate last name
+    const phoneNumberValidation = validatePhoneNumber(PhoneNumber); // Validate phone number
+    const addressValidation = validateAddress(address); // Validate address
+    const emailValidation = validateEmail(email); // Validate email 
+    const passwordValidation = validatePassword(password);  // Validate password
   
-    if (!firstNameValidation.isValid) {
+    if (!firstNameValidation.isValid) { // Check if first name is valid
       setFirstNameError(true);
-      alert(firstNameValidation.errorMessage);
+      toast.error(firstNameValidation.errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
       return;
     }
-    if (!lastNameValidation.isValid) {
+    if (!lastNameValidation.isValid) { // Check if last name is valid
       setLastNameError(true);
-      alert(lastNameValidation.errorMessage);
+      toast.error(lastNameValidation.errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
       return;
     }
-    if (!phoneNumberValidation.isValid) {
+    if (!phoneNumberValidation.isValid) { // Check if phone number is valid
       setPhoneNumberError(true);
-      alert(phoneNumberValidation.errorMessage);
+      toast.error(phoneNumberValidation.errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
       return;
     }
-    if (!addressValidation.isValid) {
+    if (!addressValidation.isValid) { // Check if address is valid
       setAddressError(true);
-      alert(addressValidation.errorMessage);
+      toast.error(addressValidation.errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
       return;
     }
-    if (!emailValidation.isValid) {
+    if (!emailValidation.isValid) { // Check if email is valid
       setEmailError(true);
-      alert(emailValidation.errorMessage);
+      toast.error(emailValidation.errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
       return;
     }
-    if (!passwordValidation.isValid) {
-      setPasswordError(true);
-      alert(passwordValidation.errorMessage);
+    if (!passwordValidation.isValid) { // Check if password is valid
+      setPasswordError(true); 
+      toast.error(passwordValidation.errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
       return;
     }
-    if (password !== confirmPassword) {
+    if (password !== confirmPassword) { // Check if password and confirm password match
       setConfirmPasswordError(true);
       setPasswordError(true);
-      alert("Passwords do not match");
+      toast.error("Passwords do not match!", {
+        position: "top-right",
+        autoClose: 2500,
+      });
       return;
     }
-  
+    // Create user data object
     const userData = {
       firstName: firstName,
       lastName: lastName,
@@ -103,7 +124,7 @@ function SignUp() {
       password: password,
     };
   
-    try {
+    try {// Call sign up user service
       const response = await signUpUser(userData);
       // Handle success response
       if(response === 200){
@@ -145,9 +166,10 @@ function SignUp() {
             <div id="signupHeader">
               <h1>Sign Up</h1>
             </div>
+            {/* user sign up form */}
             <form className="signupForm" onSubmit={handleSignUp}>
               <div className="userNameDiv">
-                <MDBInput
+                <MDBInput // First name input field
                   wrapperClass="mb-4"
                   className="firstNameInput"
                   label="First name"
@@ -162,7 +184,7 @@ function SignUp() {
                   }}
                 />
 
-                <MDBInput
+                <MDBInput // Last name input field
                   wrapperClass="mb-4"
                   label="Last name"
                   id="formControlLg"
@@ -176,7 +198,7 @@ function SignUp() {
                   }}
                 />
               </div>
-              <MDBInput
+              <MDBInput // Email input field
                 wrapperClass="mb-4"
                 label="Email address"
                 id="formControlLg"
@@ -187,7 +209,7 @@ function SignUp() {
                   backgroundColor: emailError ? "rgb(255,0,0,.15)" : "none",
                 }}
               />
-              <MDBInput
+              <MDBInput  // Address input field
                 wrapperClass="mb-4"
                 label="Home address"
                 id="formControlLg"
@@ -198,7 +220,7 @@ function SignUp() {
                   backgroundColor: addressError ? "rgb(255,0,0,.15)" : "none",
                 }}
               />
-              <MDBInput
+              <MDBInput // Phone number input field
                 wrapperClass="mb-4"
                 label="Phone number"
                 id="formControlLg"
@@ -213,7 +235,7 @@ function SignUp() {
               />
               <div className="userPasswordDiv">
                 <div style={{ position: "relative", width: "100%" }}>
-                  <MDBInput
+                  <MDBInput // Password input field
                     wrapperClass="mb-4"
                     label="Password"
                     id="formControlLg"
@@ -235,7 +257,7 @@ function SignUp() {
                 </div>
 
                 <div style={{ position: "relative", width: "100%" }}>
-                  <MDBInput
+                  <MDBInput // Confirm password input field
                     wrapperClass="mb-4"
                     label="Confirm password"
                     id="formControlLg"

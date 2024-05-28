@@ -22,28 +22,22 @@ import "./CustomerProfile.css";
 import "./OrderHistory.css";
 
 function OrderHistory({customerName, customerEmail}) {
-  const [enableEdit, setEnableEdit] = useState(false);
-  const [orderHistory, setOrderHistory] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState({});
-
-  useEffect(() => {
+  const [enableEdit, setEnableEdit] = useState(false);//state for enable edit
+  const [orderHistory, setOrderHistory] = useState([]);//state for order history
+  useEffect(() => { //use effect to fetch order history
     fetchOrderHistory();
   }, []);
 
-  const fetchOrderHistory = async () => {
+  const fetchOrderHistory = async () => { //function to fetch order history
     try {
-      const response = await getOrderHistory();
+      const response = await getOrderHistory(); //get order history
       setOrderHistory(response.data);
-      console.log("Order History:", response.data);
     } catch (error) {
       console.error("Error fetching order history:", error);
     }
   };
 
-  const handleEdit = () => {
-    setEnableEdit(!enableEdit);
-  };
+  
 
   return (
     <MDBContainer fluid className="p-3 my-5">
@@ -67,11 +61,11 @@ function OrderHistory({customerName, customerEmail}) {
             <div>
               <h1>Order History</h1>
             </div>
-
+            {/* Display Order History */}
             <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
               <MDBTable>
                 <MDBTableHead>
-                  <tr>
+                  <tr>{/* Table Headers */}
                     <th scope="col">
                       <p
                         className="tblHeaders"
@@ -106,21 +100,21 @@ function OrderHistory({customerName, customerEmail}) {
                     </th>
                   </tr>
                 </MDBTableHead>
-                <MDBTableBody>
-                  {orderHistory.map((order) => (
+                <MDBTableBody>{/* Table Body */}
+                  {orderHistory.map((order) => (//map through order history
                     <tr style={{ cursor: "pointer" }}>
                       <td>
-                        <p className="tblBody">{order.dateTime}</p>
+                        <p className="tblBody">{order.dateTime}</p>{/* Order Date */}
                       </td>
                       <td>
                         <div>
-                          {order.deliveryStatus === 0 ? (
+                          {order.deliveryStatus === 0 ? (//if the order is not delivered
                             <div style={{ textAlign: "center" }}>
                               <MDBBadge color="success" pill>
                                 Proccessing
                               </MDBBadge>
                             </div>
-                          ) : (
+                          ) : (//if the order is delivered
                             <div style={{ textAlign: "center" }}>
                               <MDBBadge color="danger" pill>
                                 Delivered
@@ -131,14 +125,13 @@ function OrderHistory({customerName, customerEmail}) {
                       </td>
 
                       <td>
-                        <p className="tblBody">
+                        <p className="tblBody">{/* Total Amount */}
                           Rs.{order.totalAmount}.00 + <TbTruckDelivery />
                         </p>
                       </td>
                       <td>
-                        <PastOrderModel
+                        <PastOrderModel //pass order to PastOrderModel
                           order={order}
-                          fetchOrderHistory={true}
                         />
                       </td>
                     </tr>

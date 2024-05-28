@@ -12,6 +12,7 @@ import { imgStorage } from "../config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getBarcodes } from "../Services/productServices";
+import { validateWeight } from "../functionality/validation";
 
 import {
   MDBBtn,
@@ -62,6 +63,7 @@ function AddProduct() {
   const [openingStock, setOpeningStock] = useState("");
   const [reorderLevel, setReorderLevel] = useState("");
   const [productDetails, setProductDetails] = useState("");
+  const [productWeight, setProductWeight] = useState(0);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -76,13 +78,13 @@ function AddProduct() {
       })
       .catch((err) => {
         console.log(err);
-        if(err.response.data.status === 402){
-        toast.error(err.response.data.message, {
-          position: "top-right",
-          autoClose: 2000,
-        });
-        return;
-      }else{
+        if (err.response.data.status === 402) {
+          toast.error(err.response.data.message, {
+            position: "top-right",
+            autoClose: 2000,
+          });
+          return;
+        } else {
           toast.error("Error fetching categories", {
             position: "top-right",
             autoClose: 2000,
@@ -208,6 +210,13 @@ function AddProduct() {
           position: "top-right",
           autoClose: 2000,
         });
+        return;
+      } else if (!validateWeight(productWeight)) {
+        toast.error("Weight should be a positive number", {
+          position: "top-right",
+          autoClose: 2000,
+        });
+        return;
       } else {
         //Create FormData object to send files along with form data
         setDataSending(true);
@@ -297,17 +306,23 @@ function AddProduct() {
     formData.append("unitPrice", unitPrice);
     formData.append("productDetails", productDetails);
     formData.append("supplierID", selectedSupplierID);
+    formData.append("productWeight", productWeight);
     if (scannedCode === "") {
       formData.append("barcode", "null");
     } else {
       formData.append("barcode", scannedCode);
     }
     console.log("Calling database");
-    
+
     const accessToken = localStorage.getItem("accessToken");
-    axios.post("http://localhost:5000/api/owner/productServices/addProduct", formData, {
-      headers: { "x-access-token": accessToken },
-    })
+    axios
+      .post(
+        "http://localhost:5000/api/owner/productServices/addProduct",
+        formData,
+        {
+          headers: { "x-access-token": accessToken },
+        }
+      )
       .then((res) => {
         // Handle success response
         toast.success("Product added successfully", {
@@ -361,20 +376,22 @@ function AddProduct() {
 
   return (
     <>
-      <InventoryNavBar selected="addProduct"/>
+      <InventoryNavBar selected="addProduct" />
       <SideNavbar selected="Inventory" />
       <Form onSubmit={validateForm}>
         <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
-          <MDBRow className="d-flex justify-content-center align-items-center h-100" style={{width:'100%'}}>
+          <MDBRow
+            className="d-flex justify-content-center align-items-center h-100"
+            style={{ width: "100%" }}
+          >
             <MDBCol>
-              <MDBCard className="my-4" id="pageCard" style={{zIndex: "888"}}>
-                <MDBRow className="g-0"  >
+              <MDBCard className="my-4" id="pageCard" style={{ zIndex: "888" }}>
+                <MDBRow className="g-0">
                   <MDBCol
                     md="6"
                     className="d-none d-md-block "
                     style={{ marginTop: "1rem" }}
                   >
-
                     <Carousel
                       interval={5000}
                       activeIndex={index}
@@ -429,13 +446,7 @@ function AddProduct() {
                         </Carousel.Caption>
                       </Carousel.Item>
                     </Carousel>
-                    {/* ----------------------------------------------------------------------------------------- */}
 
-                    {/* <div className="App">
-                  <h4>Add Image 1:</h4>
-                  <input type="file" onChange={{}} />
-                  <img src={image1} />
-                </div> */}
                     <div style={{ margin: "1rem" }}>
                       <Form.Label>Select image 1</Form.Label>
                       <Form.Control
@@ -587,15 +598,6 @@ function AddProduct() {
                         </MDBCol>
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
-                        {/* <MDBCol md="6">
-                          <Form.Label>Supplier</Form.Label>
-                          <Form.Control
-                            id="inputSupplier"
-                            type="text"
-                            placeholder="Supplier name"
-                          />
-                          <Form.Text className="text-muted"></Form.Text>
-                        </MDBCol> */}
                         <MDBCol md="6">
                           <Form.Label htmlFor="disabledSelect">
                             Supplier
@@ -615,6 +617,25 @@ function AddProduct() {
                             ))}
                           </Form.Select>
                         </MDBCol>
+                        <MDBCol md="6">
+                          <Form.Label>Unit Weight</Form.Label>
+                          <InputGroup className="mb-3">
+                            <Form.Control
+                              placeholder="Unit weight"
+                              aria-label="Username"
+                              aria-describedby="basic-addon1"
+                              type="number"
+                              value={productWeight}
+                              onChange={(e) => setProductWeight(e.target.value)}
+                              title="Enter precise weight of the delivery calculation."
+                            />
+                            <InputGroup.Text id="basic-addon1">
+                              grams
+                            </InputGroup.Text>
+                          </InputGroup>
+                        </MDBCol>
+                      </MDBRow>
+                      <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
                           <Form.Label htmlFor="disabledSelect">
                             Barcode
@@ -697,15 +718,26 @@ function AddProduct() {
         </MDBContainer>
       </Form>
 
-      <div
-        className="cover"
-        style={{ display: dataSending ? "block" : "none" }}
+      
+      <Modal
+        show={dataSending}
+        onHide={(e) => setDataSending(false)}
+        backdrop="static"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        keyboard={false}
       >
-        <div className="innerCover">
-          <Spinner animation="grow" variant="light" />;
-          <h4 style={{ color: "snow" }}>Database Updating</h4>
-        </div>
-      </div>
+        <Modal.Body className="modalBody">
+          <Spinner
+            animation="grow"
+            variant="success"
+            style={{ marginBottom: "2rem" }}
+          />
+          <h4 style={{ color: "black" }}>Database Updating</h4>
+          <h6 style={{ color: "black" }}>This may take few seconds.</h6>
+          <h6 style={{ color: "black" }}>Please wait...</h6>
+        </Modal.Body>
+      </Modal>
       <ToastContainer />
     </>
   );

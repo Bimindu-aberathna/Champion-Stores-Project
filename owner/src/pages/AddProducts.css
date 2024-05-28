@@ -7,22 +7,30 @@
     background-color: rgb(17, 17, 17); /* Change indicator color to red */
 }
 .cover{
-    background-color: rgba(0, 0, 0, 0.666); /* Change cover color to red */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
     height: 100%;
+    background-color:rgba(0, 0, 0, 0.797);
+    z-index: 1000;
+    position:absolute;
+    width:100%;
+    top:0;
+    left:0;
     display: flex;
     justify-content: center;
     align-items: center;
+    
+}
+.modalBody{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 20rem;
 }
 .innerCover{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;  
-    background-color: rgba(0, 0, 0, 0.808);
     padding: 2rem;  
     border-radius: 20px;
 }

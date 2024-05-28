@@ -1,74 +1,37 @@
-import { getProductsEndpoint,getProduceDetailsEndpoint } from "../apiCalls";
+import { getProductsEndpoint,getProduceDetailsEndpoint,getCategoriesEndpoint } from "../apiCalls";
 import { React, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-const categories = [
-  {
-    id: 1,
-    name: "cosmetics",
-    subcategories: [
-      {
-        id: 1,
-        name: "lipstick",
-      },
-      {
-        id: 2,
-        name: "eyeshadow",
-      },
-      {
-        id: 3,
-        name: "foundation",
-      },
-      {
-        id: 4,
-        name: "mascara",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "toys",
-    subcategories: [
-      {
-        id: 1,
-        name: "action figures",
-      },
-      {
-        id: 2,
-        name: "dolls",
-      },
-      {
-        id: 3,
-        name: "legos",
-      },
-      {
-        id: 4,
-        name: "board games",
-      },
-    ],
-  },
-];
+
+const categories = [];
 
 export const getProducts = async () => {
   const response = await axios.get(getProductsEndpoint);
   return response.data;
 };
 
-function getCategories() {
-  const returnItems = categories.map((category) => {
-    return { id: category.id, name: category.name };
-  });
-  return returnItems;
+async function getCategories() {
+  try {
+    const response = await axios.get(getCategoriesEndpoint);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    toast.error(error.message, {
+      position: "top-right",
+      autoClose: 2500,
+    });
+    throw error;
+  }
 }
 
+
+
+
+
 function getSubcategories(categoryId) {
-  const category = categories.find((category) => category.id === categoryId);
-  return category.subcategories.map((subcategory) => {
-    return {
-      id: subcategory.id,
-      name: subcategory.name,
-    };
-  });
+  return null;
 }
 
 async function getProductDetails(productId) {

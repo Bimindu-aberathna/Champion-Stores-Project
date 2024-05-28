@@ -103,16 +103,18 @@ router.post("/addProduct", upload.none(), (req, res) => {
     openingStock,
     reorderLevel,
     unitPrice,
+    buyingPrice,
     productDetails,
     supplierID,
     img1,
     img2,
     img3,
     barcode,
+    productWeight,
   } = req.body;
   console.log(req.body);
   const sql =
-    "INSERT INTO product (subCategoryID, productName, brandName, details, unitPrice, preorderLevel, currentStock, supplierID, barcode,";
+    "INSERT INTO product (subCategoryID, productName, brandName, details, unitPrice, preorderLevel, currentStock, supplierID, barcode,unitWeight,";
 
   // Create placeholders for images based on the number of images being passed
   const placeholders = ["image1", "image2", "image3"]
@@ -123,7 +125,7 @@ router.post("/addProduct", upload.none(), (req, res) => {
   const placeholdersString = placeholders.join(",");
 
   // Complete the SQL query
-  const finalSql = `${sql}${placeholdersString}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,${placeholders
+  const finalSql = `${sql}${placeholdersString}) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?, ?,${placeholders
     .fill("?")
     .join(",")} );`;
 
@@ -138,6 +140,7 @@ router.post("/addProduct", upload.none(), (req, res) => {
     openingStock,
     supplierID,
     barcode,
+    productWeight,
   ];
 
   // Add image values to the values array
@@ -162,8 +165,8 @@ router.post("/addProduct", upload.none(), (req, res) => {
       const formattedDate = `${year}-${month}-${day}`;
 
       const sql2 =
-        "INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`) VALUES (?, ?, ?);";
-      const values2 = [result.insertId, formattedDate, unitPrice];
+        "INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`, `itemCount`, `supplierID`) VALUES (?, ?, ?,?,?);";
+      const values2 = [result.insertId, formattedDate, buyingPrice, openingStock, supplierID];
       db.query(sql2, values2, (err, result) => {
         if (err) {
           console.error("Error adding product", err);
@@ -188,13 +191,14 @@ router.post("/updateProductInfo", upload.none(), (req, res) => {
     unitPrice,
     productDetails,
     supplierID,
+    unitWeight,
     img1,
     img2,
     img3,
   } = req.body;
 
   const sql =
-    "UPDATE product SET productName = ?, brandName = ?, subCategoryID = ?, details = ?, unitPrice = ?, preorderLevel = ?, currentStock = ?, supplierID = ?, image1 = ?, image2 = ?, image3 = ? WHERE productID = ?";
+    "UPDATE product SET productName = ?, brandName = ?, subCategoryID = ?, details = ?, unitPrice = ?, preorderLevel = ?, currentStock = ?, supplierID = ?,unitWeight= ?, image1 = ?, image2 = ?, image3 = ? WHERE productID = ?";
 
   const values = [
     productName,
@@ -205,6 +209,7 @@ router.post("/updateProductInfo", upload.none(), (req, res) => {
     reorderLevel,
     openingStock,
     supplierID,
+    unitWeight,
     img1,
     img2,
     img3,

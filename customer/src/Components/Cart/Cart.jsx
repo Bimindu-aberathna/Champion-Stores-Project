@@ -6,14 +6,6 @@ import {
   MDBCard,
   MDBCardBody,
   MDBBtn,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
-  MDBModalBody,
-  MDBModalFooter,
-  MDBInput,
 } from "mdb-react-ui-kit";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useEffect, useState } from "react";
@@ -32,32 +24,31 @@ import {
   changeDeliveryInfo,
   changeCartItemQuantity,
   removeCartItem,
+  getReceiverDetails,
 } from "../Services/cartServices";
-import { getCustomerDetails } from "../Services/userServices";
 import "./Cart.css";
 
 function Cart() {
-  const [loggedIn, setLoggedIn] = useState(
+  const [loggedIn, setLoggedIn] = useState(// To be used for conditional rendering
     localStorage.getItem("logged") || false
   );
-  const customerID = localStorage.getItem("customerID") || "";
-  const total = 1564;
-  const deliveryCharge = 250;
-  const [editable, setEditable] = useState(false);
-  const [cartID, setCartID] = useState("");
-  const [receiverName, setReceiverName] = useState("");
+  const [editable, setEditable] = useState(false);// To be used for conditional rendering of edit button
+  const [cartID, setCartID] = useState("");// To be used for updating cart items
+  const [receiverName, setReceiverName] = useState("");// To be used for updating receiver details
   const [mobile, setMobile] = useState("");
   const [address, setAddress] = useState("");
-  const [cart_Items, setCart_Items] = useState([]);
-  const [subTotal, setSubTotal] = useState(0);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  useEffect(() => {
+  const [cart_Items, setCart_Items] = useState([]);// To store cart items
+  const [subTotal, setSubTotal] = useState(0);// To store subtotal of cart items
+  const [deliveryCharge, setDeliveryCharge] = useState(0);// To store delivery charge
+
+
+  useEffect(() => {// To fetch cart items
     getCartDetails();
   }, []);
 
-  function getCartDetails() {
+  function getCartDetails() {// To fetch cart items
     if (loggedIn) {
-      getCart(customerID)
+      getCart()
         .then((data) => {
           setCart_Items(data);
           setCartID(data[0].cartID);
@@ -70,28 +61,25 @@ function Cart() {
     }
   }
 
-  useEffect(() => {
+  useEffect(() => {// To fetch receiver details
     if (loggedIn) {
-      getCustomerDetails()
-        .then((response) => {
-          setReceiverName(
-            response.data.firstName + " " + response.data.lastName
-          );
-          setAddress(response.data.address);
-          setMobile(response.data.telephone);
+      getReceiverDetails()
+        .then((data) => {
+          setReceiverName(data.receiverName);
+          setMobile(data.receiverTelephone);
+          setAddress(data.deliveryAddress);
         })
         .catch((err) => {
-          console.error("Error fetching customer details:", err);
+          console.error("Error fetching receiver details:", err);
         });
     }
   }, []);
 
-  /////add to cart handle krpn
-
-  const changeQuantityInDb = async (id, quantity) => {
+  
+  const changeQuantityInDb = async (id, quantity) => {// To update quantity of cart items
     try {
-      const response = await changeCartItemQuantity(id, quantity);
-      if (response && response.status === 200) {
+      const response = await changeCartItemQuantity(id, quantity);//Call to changeCartItemQuantity function
+      if (response && response.status === 200) {// If response is successful
         getCartDetails();
       } else {
         toast.error(response.message, {
@@ -108,7 +96,7 @@ function Cart() {
     }
   };
 
-  const handleQuantityChange = (id, change) => {
+  const handleQuantityChange = (id, change) => {// To handle quantity change of cart items
     setCart_Items((prevItems) => {
       return prevItems.map((item) => {
         if (item.cart_itemID === id) {
@@ -124,7 +112,7 @@ function Cart() {
     });
   };
 
-  const handleRemove = (id) => {
+  const handleRemove = (id) => {// To handle removal of cart items
     removeCartItem(id)
       .then((response) => {
         if (response.status === 200) {
@@ -151,10 +139,33 @@ function Cart() {
     getCartDetails();
   };
 
-  const handleDeliveryDataChange = async () => {
+  const handleDeliveryDataChange = async () => {// To handle delivery data change
+    if (!validateName(receiverName).isValid) {// If receiver name is invalid
+      toast.error(validateName(receiverName).errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
+      return;
+    }
+    if (!validatePhoneNumber(mobile).isValid) {// If mobile number is invalid
+      toast.error(validatePhoneNumber(mobile).errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
+      return;
+    }
+    if (!validateAddress(address).isValid) {// If address is invalid
+      toast.error(validateAddress(address).errorMessage, {
+        position: "top-right",
+        autoClose: 2500,
+      });
+      return;
+    }
+
+
     try {
       setEditable(false);
-      const response = await changeDeliveryInfo(receiverName, mobile, address);
+      const response = await changeDeliveryInfo(receiverName, mobile, address);// Call to changeDeliveryInfo function
       if (response.status === 200) {
         toast.success(response.message, {
           position: "top-right",
@@ -174,7 +185,7 @@ function Cart() {
       });
     }
   };
-  useEffect(() => {
+  useEffect(() => {// To calculate subtotal when cart items change
     let subTotal = 0;
     cart_Items.forEach((item) => {
       subTotal += item.unitPrice * item.quantity;
@@ -182,12 +193,30 @@ function Cart() {
     setSubTotal(subTotal);
   }, [cart_Items]);
 
+  useEffect(() => {// To calculate delivery charge when cart items change
+    setDeliveryCharge(calculateDeliveryCharge());
+  }, [cart_Items]);
+
+  function calculateDeliveryCharge() {// To calculate delivery charge
+    let weight = 0;
+    cart_Items.forEach((item) => {
+      weight += item.unitWeight * item.quantity;
+    });
+    if (weight <= 1050) {
+      return 500;
+    } else {
+      let roundedExtraWeight = Math.ceil((weight - 1050) / 1000);
+      return 500 + roundedExtraWeight * 220;
+    }
+  }
+
   return (
     <MDBContainer fluid className="p-3 my-5">
       <MDBRow className="row">
         <div col="10" className="itemsColumn">
           <h1>Cart</h1>
           <div className="cartItems">
+            {/* Display cart items */}
             {cart_Items.map((item) => (
               <MDBCard className="itemCard" key={item.cart_itemID}>
                 <MDBCardBody className="cardBody">
@@ -252,6 +281,7 @@ function Cart() {
                   )}
                 </div>
                 <div className="detailItem">
+                  {/* Get receiver name */}
                   <TextField
                     label="Receiver Name"
                     variant="standard"
@@ -264,6 +294,7 @@ function Cart() {
                   />
                 </div>
                 <div className="detailItem">
+                  {/* Get mobile number */}
                   <TextField
                     label="Mobile"
                     variant="standard"
@@ -276,6 +307,7 @@ function Cart() {
                   />
                 </div>
                 <div className="detailItem">
+                  {/* Get address */}
                   <TextField
                     label="Receiver Address"
                     variant="standard"
@@ -292,6 +324,7 @@ function Cart() {
           </div>
           <div>
             <MDBCard className="detailCard">
+              {/* Display order details */}
               {cart_Items.length !== 0 ? (
                 <MDBCardBody className="detailCardBody">
                   <h5>Order Details</h5>

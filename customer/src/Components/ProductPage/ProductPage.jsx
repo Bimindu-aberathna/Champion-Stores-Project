@@ -21,6 +21,7 @@ import {
   IoIosRemoveCircleOutline,
 } from "react-icons/io";
 import { addProductToCart } from "../Services/cartServices";
+import {transformPrice} from "../Validation"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./ProductPage.css";
@@ -28,7 +29,10 @@ function ProductPage() {
   const productID = useParams().id;
   const [product, setProduct] = useState([]);
   const [quantity, setQuantity] = useState(1);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(
+    localStorage.getItem("logged") || false
+  );
+
 
   useEffect(() => {
     getProductDetails(productID)
@@ -125,7 +129,7 @@ function ProductPage() {
               </dev>
             </div>
             <div className="productPriceDiv">
-              <p className="attributeLabel">Price: Rs. {product.unitPrice}</p>
+              <p className="attributeLabel">Price: Rs. {transformPrice(product.unitPrice)}</p>
             </div>
             <p className="attributeLabel">Quantity:</p>
             <div className="productQuantityDiv">

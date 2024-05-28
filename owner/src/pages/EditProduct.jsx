@@ -5,6 +5,7 @@ import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import InputGroup from "react-bootstrap/InputGroup";
 import "./AddProducts.css";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
@@ -16,6 +17,7 @@ import {
   validatePrice,
   validateIntegers,
   nameValidation,
+  validateWeight
 } from "../functionality/validation";
 
 import {
@@ -54,6 +56,7 @@ function EditProduct() {
   const [openingStock, setOpeningStock] = useState("");
   const [reorderLevel, setReorderLevel] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
+  const [unitWeight, setUnitWeight] = useState(0);
   const [productDescription, setProductDescription] = useState("");
   const [img1, setImg1] = useState("");
   const [img2, setImg2] = useState("");
@@ -92,6 +95,7 @@ function EditProduct() {
         setImg1(res.data[0].image1);
         setImg2(res.data[0].image2);
         setImg3(res.data[0].image3);
+        setUnitWeight(res.data[0].unitWeight);
       })
       .catch((err) => {
         console.log(err);
@@ -191,7 +195,10 @@ function EditProduct() {
       } else if (!validatePrice(unitPrice)) {
         toast.error("Invalid input for unit price");
         return;
-      } else {
+      }else if (!validateWeight(unitWeight)) {
+        toast.error("Invalid input for unit weight");
+        return;
+      }else {
         Swal.fire({
           title: "Are you sure?",
           text: "You won't be able to revert this!",
@@ -270,6 +277,7 @@ function EditProduct() {
     formData.append("unitPrice", unitPrice);
     formData.append("productDetails", productDescription);
     formData.append("supplierID", selectedSupplierID);
+    formData.append("unitWeight", unitWeight);
     console.log("Calling database");
     const accessToken = localStorage.getItem("accessToken");
     axios
@@ -615,6 +623,26 @@ function EditProduct() {
                         </MDBCol>
                       </MDBRow>
 
+                      <MDBRow style={{ marginBottom: "1rem" }}>
+                      <MDBCol md="6">
+                          <Form.Label>Unit Weight</Form.Label>
+                          <InputGroup className="mb-3">
+                            <Form.Control
+                              placeholder="Unit weight"
+                              aria-label="Username"
+                              aria-describedby="basic-addon1"
+                              type="number"
+                              value={unitWeight}
+                              onChange={(e) => setUnitWeight(e.target.value)}
+                              title="Enter precise weight of the delivery calculation."
+                            />
+                            <InputGroup.Text id="basic-addon1">
+                              grams
+                            </InputGroup.Text>
+                          </InputGroup>
+                        </MDBCol>
+                      </MDBRow>
+
                       <Form.Label>Product details</Form.Label>
                       <Form.Control
                         id="inputProductDetails"
@@ -666,15 +694,25 @@ function EditProduct() {
         </Modal.Footer>
       </Modal>
 
-      <div
-        className="cover"
-        style={{ display: dataSending ? "block" : "none", zIndex: "1000" }}
+      <Modal
+        show={dataSending}
+        onHide={(e) => setDataSending(false)}
+        backdrop="static"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        keyboard={false}
       >
-        <div className="innerCover">
-          <Spinner animation="grow" variant="light" />;
-          <h4 style={{ color: "snow" }}>Database Updating</h4>
-        </div>
-      </div>
+        <Modal.Body className="modalBody">
+          <Spinner
+            animation="grow"
+            variant="success"
+            style={{ marginBottom: "2rem" }}
+          />
+          <h4 style={{ color: "black" }}>Database Updating</h4>
+          <h6 style={{ color: "black" }}>This may take few seconds.</h6>
+          <h6 style={{ color: "black" }}>Please wait...</h6>
+        </Modal.Body>
+      </Modal>
       <ToastContainer />
     </>
   );
