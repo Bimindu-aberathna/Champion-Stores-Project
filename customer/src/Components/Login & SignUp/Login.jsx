@@ -20,16 +20,16 @@ import { Navigate } from "react-router-dom";
 import "./Login.css";
 
 function Login({ setIsAuthenticated }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+  const [email, setEmail] = useState(""); //state for email
+  const [password, setPassword] = useState(""); //state for password 
+  const [showPassword, setShowPassword] = useState(false); //state for show password
+  const navigate = useNavigate(); //navigate to different page
 
-  const handleLogin = (event) => {
-    event.preventDefault();
-    loginUser({ email, password })
+  const handleLogin = (event) => { //function to handle login
+    event.preventDefault(); //prevent default action
+    loginUser({ email, password }) //login user
       .then((status) => {
-        if (status === 200) {
+        if (status === 200) { //if the status is successful
           console.log();
           toast.success("Login successful!", {
             position: "top-right",
@@ -38,14 +38,14 @@ function Login({ setIsAuthenticated }) {
           setIsAuthenticated(true);
           navigate("/");
           //window.location.href = "/";
-        } else {
+        } else { //if the status is not successful
           toast.error("Invalid credentials!", {
             position: "top-right",
             autoClose: 3500,
           });
         }
       })
-      .catch((error) => {
+      .catch((error) => { //if there is an error
         if (error.response.status === 401) {
           toast.error("Invalid credentials!", {
             position: "top-right",
@@ -72,8 +72,9 @@ function Login({ setIsAuthenticated }) {
             <div id="loginHeader">
               <h1>Log in</h1>
             </div>
+            {/* Login form */}
             <form className="loginForm" onSubmit={handleLogin}>
-              <MDBInput
+              <MDBInput //email input
                 wrapperClass="mb-4"
                 label="Email address"
                 id="formControlLg"
@@ -83,7 +84,7 @@ function Login({ setIsAuthenticated }) {
               />
               
               <div style={{ position: "relative", width: "100%" }}>
-                <MDBInput
+                <MDBInput //password input
                   wrapperClass="mb-4"
                   label="Password"
                   id="formControlLg"
@@ -114,7 +115,7 @@ function Login({ setIsAuthenticated }) {
               </MDBBtn>
               <div className="d-flex justify-content-between mx-4 mb-4">
                 <div></div>
-                <div>
+                <div> {/* Link to sign up page */}
                   Don't have an account?&nbsp;<Link to="/signup"> Sign up</Link>
                 </div>
               </div>

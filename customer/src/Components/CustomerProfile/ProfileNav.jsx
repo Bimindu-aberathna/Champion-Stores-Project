@@ -8,23 +8,23 @@ import { getCustomerDetails } from '../Services/userServices';
 import { IoMenu } from "react-icons/io5";
 
 export default function ProfileNav() {
-  const [display, setDisplay] = useState("CustomerProfile");
-  const [customerName, setCustomerName] = useState("User");
-  const [customerEmail, setCustomerEmail] = useState("Emil not found");
+  const [display, setDisplay] = useState("CustomerProfile");//state for display
+  const [customerName, setCustomerName] = useState("User");//state for customer name
+  const [customerEmail, setCustomerEmail] = useState("Emil not found");//state for customer email
 
-  useEffect(() => {
+  useEffect(() => {//use effect to fetch customer details
     fetchCustomerDetails();
   }, []);
 
-  function fetchCustomerDetails() {
+  function fetchCustomerDetails() {//function to fetch customer details
     
-    getCustomerDetails()
-      .then((response) => {
+    getCustomerDetails()//get customer details
+      .then((response) => {//if the details are fetched
         console.log(response.data);
         setCustomerName(response.data.firstName + " " + response.data.lastName);
         setCustomerEmail(response.data.email);
       })
-      .catch((error) => {
+      .catch((error) => {//if the details are not fetched
         console.log(error);
       });
   }

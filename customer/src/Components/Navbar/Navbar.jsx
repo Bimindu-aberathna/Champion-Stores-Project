@@ -10,34 +10,27 @@ import FormControl from "@mui/material/FormControl";
 import { CiSearch } from "react-icons/ci";
 import { FaUserCircle } from "react-icons/fa";
 import { Link,useNavigate } from "react-router-dom";
-import {
-  MDBDropdown,
-  MDBDropdownMenu,
-  MDBDropdownToggle,
-  MDBDropdownItem,
-  MDBBtn,
-} from "mdb-react-ui-kit";
-import { LuMenu } from "react-icons/lu";
+
 
 function Navbar({ onSearch,setIsAuthenticated  }) {
-  const [menu, setMenu] = useState("home");
-  const [searchTerm, setSearchTerm] = useState("");
-  const customerName = localStorage.getItem("customerName") || "Customer";
-  const itemCount = localStorage.getItem("itemCount") || 0;
-  const navigate = useNavigate();
+  const [menu, setMenu] = useState("home"); // state to manage the active menu
+  const [searchTerm, setSearchTerm] = useState(""); // state to manage the search term
+  const customerName = localStorage.getItem("customerName") || "Customer"; // get the customer name from local storage
+  const itemCount = localStorage.getItem("itemCount") || 0; // get the item count from local storage
+  const navigate = useNavigate(); // navigate to a different route
 
   const [loggedIn, setLoggedIn] = useState(
     localStorage.getItem("logged") || false
-  );
+  ); // get the logged in status from local storage
 
-  const handleSearch = () => {
+  const handleSearch = () => { // function to handle search
     onSearch(searchTerm);
   };
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
 
-  const handleLogOut = () => {
+  const handleLogOut = () => { // function to handle logout
     localStorage.removeItem("logged");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("customerName");
@@ -56,7 +49,7 @@ function Navbar({ onSearch,setIsAuthenticated  }) {
              }} />
           </Link>
           <p className="greeting">Welcome</p>
-          <div className="mobileDropdown">
+          {/* <div className="mobileDropdown">
             <MDBDropdown dropleft group>
               <MDBDropdownToggle class="custom-dropdown-toggle">
                 <LuMenu className="menuBTN" />
@@ -78,7 +71,7 @@ function Navbar({ onSearch,setIsAuthenticated  }) {
                 ) : <MDBDropdownItem link onClick={handleLogOut}>LogOut</MDBDropdownItem>}
               </MDBDropdownMenu>
             </MDBDropdown>
-          </div>
+          </div> */}
         </div>
         <div className="navbar_search">
           <FormControl sx={{ m: 1 }} variant="outlined" className="searchForm">

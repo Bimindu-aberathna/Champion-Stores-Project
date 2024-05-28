@@ -32,13 +32,13 @@ import { CompletePayment } from "../Services/cartServices";
 var creditCardType = require("credit-card-type");
 
 export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0 }) {
-  const [centredModal, setCentredModal] = useState(false);
-  const toggleOpen = () => {
+  const [centredModal, setCentredModal] = useState(false); // state for modal of payment
+  const toggleOpen = () => { // function to open and close the modal
     let currentState = centredModal;
     setCentredModal(!currentState);
   };
 
-  const [state, setState] = useState({
+  const [state, setState] = useState({// state for credit card details
     number: "",
     expiry: "",
     cvc: "",
@@ -46,52 +46,52 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
     focus: "",
   });
 
-  const handleInputChange = (evt) => {
+  const handleInputChange = (evt) => {// function to handle input change
     const { name, value } = evt.target;
 
     setState((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleInputFocus = (evt) => {
+  const handleInputFocus = (evt) => {// function to handle input focus
     setState((prev) => ({ ...prev, focus: evt.target.name }));
   };
 
-  const handlePayment = async(evt) => {
+  const handlePayment = async(evt) => {// function to handle payment
     evt.preventDefault();
-    const cardType = creditCardType(state.number);
-    if (cardType.length === 0) {
+    const cardType = creditCardType(state.number);// get the card type
+    if (cardType.length === 0) {//handle invalid card number
       toast.error("Invalid card number. Please enter a valid card number.");
       return;
-    } else if (!validateCardNumber(state.number).status) {
+    } else if (!validateCardNumber(state.number).status) {//handle invalid card number
       toast.error(validateCardNumber(state.number).message);
       return;
-    } else if (!validateCardHolderName(state.name).status) {
+    } else if (!validateCardHolderName(state.name).status) {//handle invalid card holder name
       toast.error(validateCardHolderName(state.name).message);
       return;
-    } else if (!validateExpiryDate(reorderExpiryDate(state.expiry)).status) {
+    } else if (!validateExpiryDate(reorderExpiryDate(state.expiry)).status) {//handle invalid expiry date
       toast.error(validateExpiryDate(state.expiry).message);
       return;
-    } else if (!validateCVC(state.cvc, cardType[0].type)) {
+    } else if (!validateCVC(state.cvc, cardType[0].type)) {//handle invalid cvc
       toast.error("Invalid CVC. Please enter a valid CVC.");
       return;
     }
     
-    try {
+    try {//complete payment
       const response = await CompletePayment(
       cartID,
       state.number,
       reorderExpiryDate(state.expiry),
       state.cvc
       );
-      if (response.status === 200) {
+      if (response.status === 200) {//handle success
       toast.success(response.message);
       setTimeout(() => {
         window.location.href = "/";
       }, 2000);
-      } else {
+      } else {//handle failure
       toast.error(response.message);
       }
-    } catch (error) {
+    } catch (error) {//handle error
       toast.error("An error occurred. Please try again.");
     }
 
@@ -113,22 +113,18 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
       // If not a string, convert it to a string
       expiryDate = String(expiryDate);
     }
-
     // Remove any non-numeric characters
     const numericExpiry = expiryDate.replace(/\D/g, "");
-
     // Take the first 4 digits (MMYY format)
     const mmYY = numericExpiry.slice(0, 4);
-
     // Format as MM/YY
     const reorderedExpiry = mmYY.replace(/(.{2})/, "$1/");
-
     return reorderedExpiry.trim(); // Trim any leading/trailing spaces
   };
 
   return (
     <>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2}>{/* button to open the modal */}
         <Button
           style={{ backgroundColor: "green" }}
           variant="contained"
@@ -138,7 +134,7 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
           Proceed To Checkout
         </Button>
       </Stack>
-
+      {/* Modal for payment */}
       <MDBModal
         tabIndex="-1"
         open={centredModal}
@@ -202,7 +198,8 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
 
                   <MDBRow className="gridRow">
                     <MDBCol>
-                      <MDBInput
+                      {/* Credit card details input */}
+                      <MDBInput // Card number input
                         label="Card Number"
                         type="text"
                         name="number"
@@ -215,7 +212,7 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
                   </MDBRow>
                   <MDBRow className="gridRow">
                     <MDBCol>
-                      <MDBInput
+                      <MDBInput // Card holder name input
                         label="Card Holder"
                         type="text"
                         name="name"
@@ -228,7 +225,7 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
                   </MDBRow>
                   <MDBRow className="gridRow">
                     <MDBCol size="md">
-                      <MDBInput
+                      <MDBInput // Expiry date input
                         label="Expiry Date"
                         type="text"
                         name="expiry"
@@ -240,7 +237,7 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
                     </MDBCol>
 
                     <MDBCol size="md">
-                      <MDBInput
+                      <MDBInput // CVC input
                         label="CVC"
                         type="number"
                         name="cvc"

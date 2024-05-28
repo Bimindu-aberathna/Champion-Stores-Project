@@ -3,15 +3,15 @@ import FilterOptions from "../FilterOptions/FilterOptions";
 import ProductGrid from "../productGrid/productGrid";
 
 export default function HomePage({ searchTerm }) {
-    const [minPrice, setMinPrice] = useState(0);
-    const [maxPrice, setMaxPrice] = useState(12000);
-    const [search, setSearch] = useState("");
+    const [minPrice, setMinPrice] = useState(0); //state for minimum price
+    const [maxPrice, setMaxPrice] = useState(12000); //state for maximum price
+    const [search, setSearch] = useState(""); //state for search
 
    
   
     return (
       <div>
-        <FilterOptions
+        <FilterOptions //filter options component
           minPrice={minPrice}
           setMinPrice={setMinPrice}
           maxPrice={maxPrice}
@@ -20,7 +20,7 @@ export default function HomePage({ searchTerm }) {
           setSearch={setSearch}
 
         />
-        <ProductGrid
+        <ProductGrid //product grid component
             searchTerm={searchTerm}
           minPrice={minPrice}
           maxPrice={maxPrice}

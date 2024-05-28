@@ -6,3 +6,4 @@ export const getProduceDetailsEndpoint = "http://localhost:5000/api/ProductServi
 export const cartServiceEndpoint = "http://localhost:5000/api/cartServices/";
 export const customerServicesEndpoint = "http://localhost:5000/api/customerServices";
 export const addToCartEndpoint = "http://localhost:5000/api/cartServices/addToCart";
+export const getCategoriesEndpoint = "http://localhost:5000/api/ProductServices/getCategories";

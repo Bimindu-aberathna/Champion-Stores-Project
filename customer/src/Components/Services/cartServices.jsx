@@ -3,7 +3,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-async function addProductToCart(productID, quantity = 1, unitPrice) {
+async function addProductToCart(productID, quantity = 1, unitPrice) {//add product to cart
   const accessToken = localStorage.getItem("accessToken");
 
   const response = await axios.post(
@@ -19,7 +19,7 @@ async function addProductToCart(productID, quantity = 1, unitPrice) {
   return response.status;
 }
 
-async function getCart() {
+async function getCart() {//get cart details, including products,if any
   const accessToken = localStorage.getItem("accessToken");
   try {
     const response = await axios.get(cartServiceEndpoint + "/getCart", {
@@ -67,7 +67,7 @@ export const changeCustomerDetails = async (newDetails) => {
 };
 */
 
-async function changeDeliveryInfo(receiverName, mobile, address) {
+async function changeDeliveryInfo(receiverName, mobile, address) {//change delivery info of cart receiver
   const accessToken = localStorage.getItem("accessToken");
   const response = await axios.post(
     cartServiceEndpoint + "/changeDeliveryInfo",
@@ -136,6 +136,25 @@ async function CompletePayment(cartID, cardNumber, expiryDate, cvc) {
   return response.data;
 }
 
+async function getReceiverDetails() {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.get(cartServiceEndpoint + "/getReceiverDetails", {
+      headers: {
+        "x-access-token": accessToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.message, {
+      position: "top-right",
+      autoClose: 3500,
+    });
+    console.error("Error fetching receiver details:", error);
+    throw error;
+  }
+}
+
 export {
   addProductToCart,
   getCart,
@@ -143,4 +162,5 @@ export {
   changeCartItemQuantity,
   removeCartItem,
   CompletePayment,
+  getReceiverDetails,
 };

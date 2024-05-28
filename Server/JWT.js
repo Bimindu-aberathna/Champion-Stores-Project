@@ -10,7 +10,7 @@ const validateToken = (req, res, next) => {
     const accessToken = req.headers["x-access-token"]
     if (!accessToken) {
         console.log("User not authenticated");
-        return res.status(402).json({status:402,message: "User not authenticated"});
+        return res.status(402).json({status:402,message: "User not authenticated"}); 
     }
     try {
         const validToken = verify(accessToken,"JWT_SECRET_KEY")

@@ -16,26 +16,26 @@ import 'react-toastify/dist/ReactToastify.css'
 import './CustomerProfile.css';
 
 function CustomerProfile({customerName="User", customerEmail=""}) {
-  const [enableEdit, setEnableEdit] = useState(false);
-  const [customerDetails, setCustomerDetails] = useState({});
-  const [newDetails, setNewDetails] = useState({
+  const [enableEdit, setEnableEdit] = useState(false);//state for enable edit
+  const [customerDetails, setCustomerDetails] = useState({});//state for customer details
+  const [newDetails, setNewDetails] = useState({//State to store new details
     firstName: "",
     lastName: "",
     telephone: "",
     address: "",
   });
 
-  const handleEdit = () => {
+  const handleEdit = () => {//function to handle edit
     setEnableEdit(!enableEdit);
   };
 
-  useEffect(() => {
+  useEffect(() => {//use effect to fetch customer details
     fetchCustomerDetails();
   }, []);
 
-  function fetchCustomerDetails() {
-    getCustomerDetails()
-      .then((response) => {
+  function fetchCustomerDetails() {//function to fetch customer details
+    getCustomerDetails()//get customer details
+      .then((response) => {//if the details are fetched
         setCustomerDetails(response.data);
         setNewDetails({
           firstName: response.data.firstName,
@@ -44,19 +44,19 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
           address: response.data.address
         });
       })
-      .catch((error) => {
+      .catch((error) => {//if the details are not fetched
         
         console.log(error);
       });
   }
 
-  function handleCustomerInfoChange() {
+  function handleCustomerInfoChange() {//function to handle customer info change
     changeCustomerDetails(newDetails)
-      .then((response) => {
+      .then((response) => {//if the details are changed
         fetchCustomerDetails();
         setEnableEdit(false);
       })
-      .catch((error) => {
+      .catch((error) => {//if the details are not changed
         console.log(error);
       });
   }
@@ -64,6 +64,7 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
   return (
     <MDBContainer fluid className="p-3 my-5">
       <MDBRow>
+        {/* prile info */}
         <MDBCol col="10" md="6">
           <h1 className="text-center">Customer Profile</h1>
           <div>
@@ -89,9 +90,9 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
               
                 <div className="receiverDatailNBtn">
                   <h5>Receiver Details</h5>
-                  {!enableEdit ? (
+                  {!enableEdit ? (//if the edit is not enabled
                     <MDBBtn type="button"  onClick={handleEdit}>Edit</MDBBtn>
-                  ) : (
+                  ) : (//if the edit is enabled
                     <div>
                       <MDBBtn type="button" onClick={handleCustomerInfoChange}>Save</MDBBtn>&nbsp;&nbsp;
                       <MDBBtn type="button" onClick={handleEdit}>Cancel</MDBBtn>
@@ -99,7 +100,7 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
                   )}
                 </div>
                 <div className="detailItem">
-                  <TextField
+                  <TextField // First name input
                     label="First Name"
                     variant="standard"
                     color="success"
@@ -111,7 +112,7 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
                   />
                 </div>
                 <div className="detailItem">
-                  <TextField
+                  <TextField // Last name input
                     label="Last Name"
                     variant="standard"
                     color="success"
@@ -124,7 +125,7 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
                 </div>
                 <div className="detailItem">
                   <TextField
-                    label="Phone"
+                    label="Phone" // Telephone input
                     variant="standard"
                     color="success"
                     value={newDetails.telephone}
@@ -135,7 +136,7 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
                   />
                 </div>
                 <div className="detailItem">
-                  <TextField
+                  <TextField // Address input
                     label="Receiver Address"
                     variant="standard"
                     color="success"
