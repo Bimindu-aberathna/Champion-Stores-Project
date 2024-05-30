@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import SideNavbar from "../Components/SideNavbar";
-import InventoryNavBar from "../Components/InventoryNavBar"
+import InventoryNavBar from "../Components/InventoryNavBar";
 import {
   MDBContainer,
   MDBCard,
@@ -16,6 +16,7 @@ import { nameValidation } from "../functionality/validation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import "./commonStyles.css";
 
 function AlterCategories() {
   const [categories, setCategories] = useState([]);
@@ -53,7 +54,6 @@ function AlterCategories() {
   }, [selectedCategory]);
 
   function addNewCategory() {
-
     const newCategory = document.getElementById("newCategoryName").value;
     categories.map((category) => {
       if (category.categoryName === newCategory) {
@@ -69,18 +69,22 @@ function AlterCategories() {
         showCancelButton: true,
         confirmButtonColor: "#000000",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, add it!"
+        confirmButtonText: "Yes, add it!",
       }).then((result) => {
         if (result.isConfirmed) {
           const accessToken = localStorage.getItem("accessToken");
           axios
-            .post("http://localhost:5000/api/owner/productServices/addNewCategory", {
-              categoryName: newCategory,
-            }, {
-              headers: {
-                "x-access-token": accessToken,
+            .post(
+              "http://localhost:5000/api/owner/productServices/addNewCategory",
+              {
+                categoryName: newCategory,
               },
-            })
+              {
+                headers: {
+                  "x-access-token": accessToken,
+                },
+              }
+            )
             .then((res) => {
               console.log(res);
               toast.success("Category added successfully");
@@ -89,11 +93,10 @@ function AlterCategories() {
               console.log(err);
               toast.error("Category could not be added");
             });
-        }else{
+        } else {
           return;
         }
       });
-      
     } else {
       toast.error("Invalid category name");
     }
@@ -117,19 +120,23 @@ function AlterCategories() {
         showCancelButton: true,
         confirmButtonColor: "#000000",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, rename it!"
+        confirmButtonText: "Yes, rename it!",
       }).then((result) => {
         if (result.isConfirmed) {
           const accessToken = localStorage.getItem("accessToken");
           axios
-            .post("http://localhost:5000/api/owner/productServices/renameCategory", {
-              categoryNewName: newCategoryName,
-              categoryID: selectedCategory.categoryID,
-            }, {
-              headers: {
-                "x-access-token": accessToken,
+            .post(
+              "http://localhost:5000/api/owner/productServices/renameCategory",
+              {
+                categoryNewName: newCategoryName,
+                categoryID: selectedCategory.categoryID,
               },
-            })
+              {
+                headers: {
+                  "x-access-token": accessToken,
+                },
+              }
+            )
             .then((res) => {
               console.log(res);
               toast.success("Category renamed successfully");
@@ -138,23 +145,23 @@ function AlterCategories() {
               console.log(err);
               toast.error("Category could not be renamed");
             });
-        }else{
+        } else {
           return;
         }
       });
-      
     }
   };
 
   const renameSubCategory = () => {
-    const newSubCategoryName = document.getElementById("renameSubCategory").value;
+    const newSubCategoryName =
+      document.getElementById("renameSubCategory").value;
     subCategories.map((subCategory) => {
       if (subCategory.subCategoryName === newSubCategoryName) {
         toast.error("Sub-Category name already exists");
       }
       return;
     });
-      
+
     if (!nameValidation(newSubCategoryName)) {
       toast.error("Invalid Sub-Category name");
       return;
@@ -166,39 +173,46 @@ function AlterCategories() {
         showCancelButton: true,
         confirmButtonColor: "#000000",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, rename it!"
+        confirmButtonText: "Yes, rename it!",
       }).then((result) => {
         if (result.isConfirmed) {
           const accessToken = localStorage.getItem("accessToken");
-          axios.post("http://localhost:5000/api/owner/productServices/renameSubCategory", {
-            subCategoryNewName: newSubCategoryName,
-            subCategoryID: selectedSubCategory.subCategoryID,
-          }, {
-            headers: {
-              "x-access-token": accessToken,
-            },
-          }).then((res) => {
-            console.log(res);
-            toast.success("Sub-Category renamed successfully");
-          }).catch((err) => {
-            console.log(err);
-            toast.error("Sub-Category could not be renamed");
-          });
+          axios
+            .post(
+              "http://localhost:5000/api/owner/productServices/renameSubCategory",
+              {
+                subCategoryNewName: newSubCategoryName,
+                subCategoryID: selectedSubCategory.subCategoryID,
+              },
+              {
+                headers: {
+                  "x-access-token": accessToken,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res);
+              toast.success("Sub-Category renamed successfully");
+            })
+            .catch((err) => {
+              console.log(err);
+              toast.error("Sub-Category could not be renamed");
+            });
         }
       });
-      
     }
   };
 
   const addNewSubCategory = () => {
-    const newSubCategoryName = document.getElementById("newSubCategoryName").value;
+    const newSubCategoryName =
+      document.getElementById("newSubCategoryName").value;
     subCategories.map((subCategory) => {
       if (subCategory.subCategoryName === newSubCategoryName) {
         toast.error("Sub-Category name already exists");
       }
       return;
     });
-    if(!nameValidation(newSubCategoryName)){
+    if (!nameValidation(newSubCategoryName)) {
       toast.error("Invalid Sub-Category name");
       return;
     } else {
@@ -209,19 +223,23 @@ function AlterCategories() {
         showCancelButton: true,
         confirmButtonColor: "#000000",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, add it!"
+        confirmButtonText: "Yes, add it!",
       }).then((result) => {
         if (result.isConfirmed) {
           const accessToken = localStorage.getItem("accessToken");
           axios
-            .post("http://localhost:5000/api/owner/productServices/addNewSubCategory", {
-              subCategoryName: newSubCategoryName,
-              categoryID: selectedCategory.categoryID,
-            }, {
-              headers: {
-                "x-access-token": accessToken,
+            .post(
+              "http://localhost:5000/api/owner/productServices/addNewSubCategory",
+              {
+                subCategoryName: newSubCategoryName,
+                categoryID: selectedCategory.categoryID,
               },
-            })
+              {
+                headers: {
+                  "x-access-token": accessToken,
+                },
+              }
+            )
             .then((res) => {
               console.log(res);
               toast.success("Sub-Category added successfully");
@@ -232,26 +250,31 @@ function AlterCategories() {
             });
         }
       });
-      
     }
   };
 
   return (
-    <div>
-      <InventoryNavBar selected="altercategories"/>
+    <div style={{ height: "100vh" }}>
+      <InventoryNavBar selected="altercategories" />
       <SideNavbar selected="Inventory" />
-      <Form >
-        <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
-          <MDBRow className="d-flex justify-content-center align-items-center h-100" > 
+      <h1 className="mt-3" style={{ marginLeft: "7%", marginTop: "1rem" }}>
+        Alter Categories
+      </h1>
+      <Form>
+        <MDBContainer fluid className="bg-white" style={{ height: "80vh" }}>
+          <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol>
-              <MDBCard className="my-4" style={{display:'flex', width: "92%",marginLeft: "auto",marginRight: "auto",zIndex:'888'}}>
-              <h1 style={{margin:'1rem',marginLeft:'2rem'}}>Alter Categories</h1>
+              <MDBCard className="my-4" id="alterContainerCard">
                 <MDBRow className="g-0">
                   <MDBCol md="6">
-                    <MDBCardBody className="text-black d-flex flex-column justify-content-centertext-black d-flex flex-column justify-content-center align-items-center">
-                      <MDBCol md="6">
-                        <Form.Label htmlFor="disabledSelect">
-                          <h5>Change category data</h5>
+                    <MDBCard className="alterCatCard" id="alterCatCard1">
+                    <MDBCardBody
+                      className="text-black d-flex flex-column justify-content-centertext-black d-flex flex-column justify-content-center align-items-center"
+                      style={{ width: "100%" }}
+                    >
+                      <MDBCol md="6" style={{ width: "100%"}}>
+                        <Form.Label htmlFor="disabledSelect" >
+                          <h4>Change category data</h4>
                         </Form.Label>
                         <Form.Select
                           id="categorySelect"
@@ -277,13 +300,14 @@ function AlterCategories() {
                         </Form.Select>
                       </MDBCol>
                       <br />
-                      <MDBCol md="6">
-                        <Form.Label>Rename selected category</Form.Label>
+                      <MDBCol md="6" style={{ width: "100%" }}>
+                        <Form.Label className="alterCatFormLabel">Rename selected category</Form.Label>
 
-                        <Form.Control id="categoryNewName" type="text" />
+                        <Form.Control id="categoryNewName" type="text" placeholder="Enter new category name for selected category" />
                         <Form.Text className="text-muted"></Form.Text>
                         <br />
                         <Button
+                          className="alterCatCardBtn"
                           variant="dark"
                           type="button"
                           style={{ display: "flex", marginLeft: "auto" }}
@@ -294,12 +318,13 @@ function AlterCategories() {
                       </MDBCol>
                       <br />
 
-                      <MDBCol md="6">
+                      <MDBCol md="6" style={{ width: "100%" }}>
                         <MDBCard style={{ padding: "1rem" }}>
-                          <Form.Label>Add new category</Form.Label>
-                          <Form.Control id="newCategoryName" type="text" />
+                          <Form.Label className="alterCatFormLabel">Add new category</Form.Label>
+                          <Form.Control id="newCategoryName" type="text" placeholder="Enter new category name"/>
                           <br />
                           <Button
+                            className="alterCatCardBtn"
                             variant="dark"
                             type="button"
                             style={{ display: "flex", marginLeft: "auto" }}
@@ -310,15 +335,18 @@ function AlterCategories() {
                         </MDBCard>
                       </MDBCol>
                     </MDBCardBody>
+                    </MDBCard>
                   </MDBCol>
+                  
 
                   <MDBCol md="6">
+                    <MDBCard className="alterCatCard" id="alterCatCard2">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
-                      <h5>Change sub-category data</h5>
+                      <h4>Change sub-category data</h4>
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Select category</Form.Label>
+                          <Form.Label className="alterCatFormLabel">Select category</Form.Label>
                           <Form.Select
                             id="categorySelect"
                             onChange={(e) => {
@@ -344,7 +372,7 @@ function AlterCategories() {
                         </MDBCol>
 
                         <MDBCol md="6">
-                          <Form.Label>Select sub-category</Form.Label>
+                          <Form.Label className="alterCatFormLabel">Select sub-category</Form.Label>
                           {subCategories.length > 0 ? (
                             <Form.Select
                               id="subCategorySelect"
@@ -374,18 +402,16 @@ function AlterCategories() {
                         </MDBCol>
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
-                        <MDBCol md="6">
-                          <Form.Label>Rename sub-category</Form.Label>
-                          <Form.Control id="renameSubCategory" 
-                          type="text"
-                          placeholder="Enter new sub-category name for selected sub-category"
+                        <MDBCol>
+                          <Form.Label className="alterCatFormLabel">Rename sub-category</Form.Label>
+                          <Form.Control
+                            id="renameSubCategory"
+                            type="text"
+                            placeholder="Enter new sub-category name for selected sub-category"
+                            style={{ marginBottom: "1rem" }}
                           />
-                          <Form.Text className="text-muted"></Form.Text>
-                        </MDBCol>
-
-                        <MDBCol md="6">
-                          <Form.Label>{"\n"}</Form.Label>
                           <Button
+                            className="alterCatCardBtn"
                             variant="dark"
                             type="button"
                             style={{ display: "flex", marginLeft: "auto" }}
@@ -396,21 +422,28 @@ function AlterCategories() {
                         </MDBCol>
                       </MDBRow>
 
-                        <MDBCard style={{ padding: "1rem", marginLeft:'auto', width:'100%'}}>
-                          <Form.Label>Add new Sub-Category</Form.Label>
-                          <Form.Control id="newSubCategoryName" type="text" />
-                          <br />
-                          <Button
-                            variant="dark"
-                            type="button"
-                            style={{ display: "flex", marginLeft: "auto" }}
-                            onClick={addNewSubCategory}
-                          >
-                            Add
-                          </Button>
-                        </MDBCard> 
-                     
+                      <MDBCard
+                        style={{
+                          padding: "1rem",
+                          marginLeft: "auto",
+                          width: "100%",
+                        }}
+                      >
+                        <Form.Label className="alterCatFormLabel">Add new Sub-Category</Form.Label>
+                        <Form.Control id="newSubCategoryName" type="text" placeholder="Enter new sub-category name" />
+                        <br />
+                        <Button
+                          className="alterCatCardBtn"
+                          variant="dark"
+                          type="button"
+                          style={{ display: "flex", marginLeft: "auto" }}
+                          onClick={addNewSubCategory}
+                        >
+                          Add
+                        </Button>
+                      </MDBCard>
                     </MDBCardBody>
+                    </MDBCard>
                   </MDBCol>
                 </MDBRow>
               </MDBCard>

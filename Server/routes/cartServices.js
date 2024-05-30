@@ -10,6 +10,9 @@ const cookieParser = require("cookie-parser");
 router.use(cookieParser());
 const { validateToken } = require("../JWT");
 const { verify } = require("crypto");
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const stripe = require('stripe')('sk_test_51PGG6EP2zpaVFzfpUO9yFsbLUJbLJliQ4HOBRDyxUd10r6u6i5h2ha9O8xAyiGaD3fX9NGfRQZM5SCg1WiqbzRr500XY1lxCbl');
 
 router.post("/addToCart", validateToken, (req, res) => {
   const customerID = req.customerID;
@@ -126,6 +129,27 @@ router.delete("/removeCartItem",validateToken, (req, res) => {
       res.status(200).json({ status:200, message: "Item removed from cart" });
     }
   });  
+});
+
+router.post('/charge', validateToken,async (req, res) => {
+  console.log("Charging the card");
+  try {
+    const { paymentMethodId,amount } = req.body;
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: (amount*100), // Charge amount in cents
+      currency: 'lkr',
+      payment_method: paymentMethodId,
+      confirm: true,
+      return_url: 'http://localhost:3000/', 
+    });
+
+    console.log("Payment intent is ", paymentIntent);
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ error: error.message, success: false }); // Add success: false here
+  }
 });
 
 router.post("/checkout", validateToken, (req, res) => {

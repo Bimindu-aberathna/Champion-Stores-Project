@@ -181,10 +181,7 @@ function Inventory() {
                         handlePopoverOpen(e, product.productName)
                       }
                       onMouseLeave={handlePopoverClose}
-                      style={{
-                        cursor: "pointer",
-                        boxShadow: "0 0 10px 0 rgba(0,0,0,0.1)",
-                      }}
+                      className="productCard"
                     >
                       <CardMedia
                         sx={{ height: 120 }}

@@ -20,6 +20,8 @@ import {
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import './commonStyles.css';
+
 
 function AddSupplier() {
   const [supplierName, setSupplierName] = useState("");
@@ -121,33 +123,25 @@ function AddSupplier() {
     <div>
       <InventoryNavBar selected="listsuppliers" />
       <SideNavbar selected="Inventory" />
+      <h1 className="mt-3" style={{marginLeft:"7%",marginTop:"1rem"}}>Add New Supplier</h1>
       <Form onSubmit={validateData}>
-        <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
+        <MDBContainer fluid className="bg-white" style={{ height: "80vh" }}>
           <MDBRow
             className="d-flex justify-content-center align-items-center h-100"
             style={{ zIndex: "800" }}
           >
-            <MDBCol style={{ paddingRight: "1rem" }}>
-              <MDBCard
-                className="my-4"
-                style={{
-                  display: "flex",
-                  width: "91%",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  zIndex: "880",
-                }}
-              >
+            <MDBCol style={{width:'60%' }}>
+              <MDBCard id="addSupplierCard" className="my-4">
                 <MDBRow className="g-0 justify-content-center">
-                  <MDBCol md="6">
+                  <MDBCol md="6" style={{width:'100%',padding:'1rem'}}>
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
-                      <h3 className="mb-5 text-uppercase fw-bold">
-                        New Supplier
-                      </h3>
+                      <h4 className="mb-5 text-uppercase fw-bold">
+                        New Supplier Details
+                      </h4>
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Supplier Name</Form.Label>
+                          <Form.Label className="addSupplierFormLabel">Supplier Name</Form.Label>
                           <Form.Control
                             id="supplierName"
                             type="text"
@@ -161,7 +155,7 @@ function AddSupplier() {
                         </MDBCol>
 
                         <MDBCol md="6">
-                          <Form.Label>E-mail</Form.Label>
+                          <Form.Label className="addSupplierFormLabel">E-mail</Form.Label>
                           <Form.Control
                             id="supplierEmail"
                             type="text"
@@ -176,7 +170,7 @@ function AddSupplier() {
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Phone 1</Form.Label>
+                          <Form.Label className="addSupplierFormLabel">Phone 1</Form.Label>
                           <Form.Control
                             id="phone1"
                             type="text"
@@ -190,7 +184,7 @@ function AddSupplier() {
                         </MDBCol>
 
                         <MDBCol md="6">
-                          <Form.Label>Phone 2</Form.Label>
+                          <Form.Label className="addSupplierFormLabel">Phone 2</Form.Label>
                           <Form.Control
                             id="phone2"
                             type="text"
@@ -204,7 +198,7 @@ function AddSupplier() {
                         </MDBCol>
                       </MDBRow>
 
-                      <Form.Label>Additional details</Form.Label>
+                      <Form.Label className="addSupplierFormLabel">Additional details</Form.Label>
                       <Form.Control
                         id="supplierDetails"
                         type="text"

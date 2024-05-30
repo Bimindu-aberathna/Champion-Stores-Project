@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MDBModal,
   MDBModalDialog,
@@ -8,123 +8,219 @@ import {
   MDBModalBody,
   MDBModalFooter,
   MDBBtn,
-  MDBInput,
   MDBCard,
   MDBRow,
   MDBCol,
 } from "mdb-react-ui-kit";
+import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { PiContactlessPayment } from "react-icons/pi";
-import Cards from "react-credit-cards-2";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
 import "./PaymentModal.css";
-import {
-  validateCardHolderName,
-  validateCVC,
-  validateExpiryDate,
-  validateCardNumber,
-} from "../Validation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CompletePayment } from "../Services/cartServices";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js";
+import Swal from 'sweetalert2'
 
-var creditCardType = require("credit-card-type");
+const stripePromise = loadStripe(
+  "pk_test_51PGG6EP2zpaVFzfp9y3yd5MNQ5BPFe7b5E2SuV2juQpqGb7YwwZS6sAESe3lTi9BgiQi9eZMdas8arBpeE4UNxjz00FmLqJEUu"
+);
 
-export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0 }) {
-  const [centredModal, setCentredModal] = useState(false); // state for modal of payment
-  const toggleOpen = () => { // function to open and close the modal
-    let currentState = centredModal;
-    setCentredModal(!currentState);
-  };
+const CARD_ELEMENT_OPTIONS = {
+  style: {
+    base: {
+      color: "#32325d",
+      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontSmoothing: "antialiased",
+      fontSize: "16px",
+      "::placeholder": {
+        color: "#aab7c4",
+      },
+    },
+    invalid: {
+      color: "#fa755a",
+      iconColor: "#fa755a",
+    },
+  },
+};
 
-  const [state, setState] = useState({// state for credit card details
-    number: "",
-    expiry: "",
-    cvc: "",
-    name: "",
-    focus: "",
-  });
+const CheckoutForm = ({ setCardType, toggleOpen,total,getCartDetails }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const navigate = useNavigate();
 
-  const handleInputChange = (evt) => {// function to handle input change
-    const { name, value } = evt.target;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setProcessing(true);
 
-    setState((prev) => ({ ...prev, [name]: value }));
-  };
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: "card",
+      card: elements.getElement(CardNumberElement),
+    });
 
-  const handleInputFocus = (evt) => {// function to handle input focus
-    setState((prev) => ({ ...prev, focus: evt.target.name }));
-  };
-
-  const handlePayment = async(evt) => {// function to handle payment
-    evt.preventDefault();
-    const cardType = creditCardType(state.number);// get the card type
-    if (cardType.length === 0) {//handle invalid card number
-      toast.error("Invalid card number. Please enter a valid card number.");
-      return;
-    } else if (!validateCardNumber(state.number).status) {//handle invalid card number
-      toast.error(validateCardNumber(state.number).message);
-      return;
-    } else if (!validateCardHolderName(state.name).status) {//handle invalid card holder name
-      toast.error(validateCardHolderName(state.name).message);
-      return;
-    } else if (!validateExpiryDate(reorderExpiryDate(state.expiry)).status) {//handle invalid expiry date
-      toast.error(validateExpiryDate(state.expiry).message);
-      return;
-    } else if (!validateCVC(state.cvc, cardType[0].type)) {//handle invalid cvc
-      toast.error("Invalid CVC. Please enter a valid CVC.");
-      return;
-    }
-    
-    try {//complete payment
-      const response = await CompletePayment(
-      cartID,
-      state.number,
-      reorderExpiryDate(state.expiry),
-      state.cvc
-      );
-      if (response.status === 200) {//handle success
-      toast.success(response.message);
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 2000);
-      } else {//handle failure
-      toast.error(response.message);
+    if (error) {
+      setError(error);
+      setProcessing(false);
+      toast.error("Error in payment", {
+        position: "top-right",
+        autoClose: 2500,
+        closeOnClick: true
       }
-    } catch (error) {//handle error
-      toast.error("An error occurred. Please try again.");
-    }
+      );
+    } else {
+      const response = await fetch(
+        "http://localhost:5000/api/cartServices/charge",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json",
+          "x-access-token": localStorage.getItem("accessToken")
+           },
+          body: JSON.stringify({ paymentMethodId: paymentMethod.id,amount: total}),
+        }
+      );
 
+      const data = await response.json();
+
+      if (data.error) {
+        setError(data.error);
+        toast.error("Error in payment", {
+          position: "top-right",
+          autoClose: 2500,
+          closeOnClick: true
+        }
+        );
+
+      } else {
+        toast.success("Payment Successful", {
+          position: "top-right",
+          autoClose: 1500,
+          closeOnClick: true
+        });
+        const response = await CompletePayment();
+        if (response.status === 200) {
+          Swal.fire({
+            title: "Good job!",
+            text: "Your order has been placed Successfully! It will arive in 3-4 days",
+            icon: "success"
+          }).then(() => {
+          getCartDetails();
+          toggleOpen();
+          });
+        } else {
+          toast.error("Error in payment", {
+            position: "top-right",
+            autoClose: 2500,
+            closeOnClick: true
+          });
+          toggleOpen();
+        }
+      }
+
+      setProcessing(false);
+    }
   };
 
-  const reorderCreditCardNumber = (cardNumber) => {
-    // Remove any existing spaces from the card number
-    const strippedNumber = cardNumber.replace(/\s/g, "");
-
-    // Insert a space after every 4 digits
-    const reorderedNumber = strippedNumber.replace(/(.{4})/g, "$1 ");
-
-    return reorderedNumber.trim(); // Trim any leading/trailing spaces
-  };
-
-  const reorderExpiryDate = (expiryDate) => {
-    // Check if expiryDate is a string
-    if (typeof expiryDate !== "string") {
-      // If not a string, convert it to a string
-      expiryDate = String(expiryDate);
+  const handleCardNumberChange = (event) => {
+    if (event.brand === "visa") {
+      setCardType("visa");
+    } else if (event.brand === "mastercard") {
+      setCardType("mastercard");
+    } else {
+      setCardType("");
     }
-    // Remove any non-numeric characters
-    const numericExpiry = expiryDate.replace(/\D/g, "");
-    // Take the first 4 digits (MMYY format)
-    const mmYY = numericExpiry.slice(0, 4);
-    // Format as MM/YY
-    const reorderedExpiry = mmYY.replace(/(.{2})/, "$1/");
-    return reorderedExpiry.trim(); // Trim any leading/trailing spaces
   };
 
   return (
+    <form>
+      <div className="form-group">
+        <label htmlFor="cardNumber" className="form-control-label">
+          Card Number
+        </label>
+        <CardNumberElement
+          id="cardNumber"
+          options={CARD_ELEMENT_OPTIONS}
+          className="form-control"
+          onChange={handleCardNumberChange}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="cardExpiry" className="form-control-label">
+          Expiry Date
+        </label>
+        <CardExpiryElement
+          id="cardExpiry"
+          options={CARD_ELEMENT_OPTIONS}
+          className="form-control"
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="cardCvc" className="form-control-label">
+          CVC
+        </label>
+        <CardCvcElement
+          id="cardCvc"
+          options={CARD_ELEMENT_OPTIONS}
+          className="form-control"
+        />
+      </div>
+      {/* <button
+        type="button"
+        onClick={handleSubmit}
+        disabled={!stripe || processing}
+        className="btn btn-primary"
+      >
+        Pay
+      </button> */}
+      <div className="btn-grp">
+      <MDBBtn color="secondary" type="button" onClick={toggleOpen}>
+        Close
+      </MDBBtn>
+      <Button
+        style={{ backgroundColor: "green" }}
+        type="button"
+        onClick={handleSubmit}
+        variant="contained"
+        endIcon={<PiContactlessPayment />}
+        disabled={!stripe || processing}
+        className="payButton"
+      >
+        Pay
+      </Button>
+      </div>
+      {error && <div className="error">{error.message}</div>}
+    </form>
+  );
+};
+
+export default function PaymentModal({
+  cartID,
+  subtotal = 0,
+  deliveryCharge = 0,
+  getCartDetails,
+}) {
+  const [centredModal, setCentredModal] = useState(false); // state for modal of payment
+  //const [imgSrc, setImgSrc] = useState("https://firebasestorage.googleapis.com/v0/b/champions-stores.appspot.com/o/images%2Ffile.png?alt=media&token=82798e75-5590-4fdf-81f3-aca09df5d5fa"); // state for image of card
+  const [cardType, setCardType] = useState("");
+  const toggleOpen = () => {
+    // function to open and close the modal
+    setCentredModal(!centredModal);
+  };
+  const total = subtotal + deliveryCharge;
+
+  return (
     <>
-      <Stack direction="row" spacing={2}>{/* button to open the modal */}
+      <Stack direction="row" spacing={2}>
+        {/* button to open the modal */}
         <Button
           style={{ backgroundColor: "green" }}
           variant="contained"
@@ -141,15 +237,11 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
         onClose={() => setCentredModal(false)}
       >
         <MDBModalDialog centered>
-          <form onSubmit={handlePayment}>
+          <form onSubmit={{}}>
             <MDBModalContent>
               <MDBModalHeader>
                 <MDBModalTitle>Pay Via Stripe</MDBModalTitle>
-                <MDBBtn
-                  className="btn-close"
-                  color="none"
-                  onClick={toggleOpen}
-                ></MDBBtn>
+                
               </MDBModalHeader>
               <MDBCard className="priceCard">
                 <MDBRow className="priceCardheading">
@@ -186,85 +278,43 @@ export default function PaymentModal({ cartID , subtotal = 0, deliveryCharge = 0
                 <MDBCard>
                   <MDBRow className="gridRow">
                     <MDBCol>
-                      <Cards
-                        number={state.number}
-                        expiry={state.expiry}
-                        cvc={state.cvc}
-                        name={state.name}
-                        focused={state.focus}
-                      />
+                      {cardType === "" ? (
+                        <img
+                          src="https://firebasestorage.googleapis.com/v0/b/champions-stores.appspot.com/o/images%2Ffile.png?alt=media&token=82798e75-5590-4fdf-81f3-aca09df5d5fa"
+                          alt="card"
+                          className="cardImage"
+                        />
+                      ) : null}
+                      {cardType === "visa" ? (
+                        <img
+                          src="https://firebasestorage.googleapis.com/v0/b/champions-stores.appspot.com/o/images%2FvisaCard.png?alt=media&token=d9bb8800-33ff-43d5-a3f4-54cb7ae78be6"
+                          alt="VISA card"
+                          className="cardImage"
+                        />
+                      ) : null}
+                      {cardType === "mastercard" ? (
+                        <img
+                          src="https://firebasestorage.googleapis.com/v0/b/champions-stores.appspot.com/o/images%2Fmastercard.png?alt=media&token=f7d3c692-b866-420a-980e-08446221096b"
+                          alt="MASTER card"
+                          className="cardImage"
+                        />
+                      ) : null}
                     </MDBCol>
                   </MDBRow>
-
                   <MDBRow className="gridRow">
                     <MDBCol>
-                      {/* Credit card details input */}
-                      <MDBInput // Card number input
-                        label="Card Number"
-                        type="text"
-                        name="number"
-                        value={reorderCreditCardNumber(state.number)}
-                        onChange={handleInputChange}
-                        onFocus={handleInputFocus}
-                        required
-                      />
-                    </MDBCol>
-                  </MDBRow>
-                  <MDBRow className="gridRow">
-                    <MDBCol>
-                      <MDBInput // Card holder name input
-                        label="Card Holder"
-                        type="text"
-                        name="name"
-                        value={state.name}
-                        onChange={handleInputChange}
-                        onFocus={handleInputFocus}
-                        required
-                      />
-                    </MDBCol>
-                  </MDBRow>
-                  <MDBRow className="gridRow">
-                    <MDBCol size="md">
-                      <MDBInput // Expiry date input
-                        label="Expiry Date"
-                        type="text"
-                        name="expiry"
-                        value={reorderExpiryDate(state.expiry)}
-                        onChange={handleInputChange}
-                        onFocus={handleInputFocus}
-                        required
-                      />
-                    </MDBCol>
-
-                    <MDBCol size="md">
-                      <MDBInput // CVC input
-                        label="CVC"
-                        type="number"
-                        name="cvc"
-                        value={state.cvc}
-                        onChange={handleInputChange}
-                        onFocus={handleInputFocus}
-                        required
-                      />
+                      <Elements stripe={stripePromise}>
+                        <CheckoutForm
+                          setCardType={setCardType}
+                          toggleOpen={toggleOpen}
+                          total={total}
+                          getCartDetails={getCartDetails}
+                        />
+                      </Elements>
                     </MDBCol>
                   </MDBRow>
                 </MDBCard>
               </MDBModalBody>
-              <MDBModalFooter>
-                <MDBBtn color="secondary" type="button" onClick={toggleOpen}>
-                  Close
-                </MDBBtn>
-                <Stack direction="row" spacing={2}>
-                  <Button
-                    style={{ backgroundColor: "green" }}
-                    type="submit"
-                    variant="contained"
-                    endIcon={<PiContactlessPayment />}
-                  >
-                    Pay
-                  </Button>
-                </Stack>
-              </MDBModalFooter>
             </MDBModalContent>
           </form>
         </MDBModalDialog>

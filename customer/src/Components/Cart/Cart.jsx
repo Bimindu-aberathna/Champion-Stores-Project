@@ -353,7 +353,7 @@ function Cart() {
                         <h4 style={{ display: "flex" }}>
                           Rs.{" "}
                           <h1 style={{ fontWeight: "bold" }}>
-                            {subTotal + 250}
+                            {subTotal + deliveryCharge}
                           </h1>
                           .00
                         </h4>
@@ -366,6 +366,7 @@ function Cart() {
                             cartID={cartID}
                             subtotal={subTotal}
                             deliveryCharge={deliveryCharge}
+                            getCartDetails={getCartDetails}
                           />
                         </div>
                       </MDBCol>

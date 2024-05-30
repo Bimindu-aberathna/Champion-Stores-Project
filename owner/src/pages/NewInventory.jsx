@@ -118,21 +118,22 @@ function NewInventory() {
     <>
       <InventoryNavBar/>
       <SideNavbar selected="Inventory" />
+      <h1 className="mt-3" style={{marginLeft:"7%",marginTop:"1rem"}}>New Inventory</h1>
       <Form>
-        <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
+        <MDBContainer fluid className="bg-white" style={{ height: "80vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol style={{display:'flex',justifyContent:'center',marginRight:'1rem'}}>
-              <MDBCard className="my-4" style={{zIndex: "888",width:'91%'}}>
+              <MDBCard className="my-4" style={{zIndex: "888",width:'60%',boxShadow:'0 0 15px 0 rgba(0,0,0,0.15)'}}>
                 <MDBRow
                   className="g-0"
-                  style={{ display: "flex", justifyContent: "center" }}
+                  style={{ display: "flex", justifyContent: "center",margin:'1rem' }}
                 >
-                  <MDBCol md="6">
+                  <MDBCol md="6" style={{width:'100%'}}>
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
                       <div style={{ display: "flex" }}>
-                        <h3 className="mb-5 text-uppercase fw-bold">
-                          New Inventory
-                        </h3>
+                        <h4 className="mb-5 text-uppercase fw-bold">
+                          Purchase Details
+                        </h4>
                       </div>
 
                       <MDBRow style={{ marginBottom: "1rem" }}>

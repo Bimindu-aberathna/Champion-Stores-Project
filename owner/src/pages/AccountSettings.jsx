@@ -247,7 +247,8 @@ function AccountSetings() {
           <Card
             style={{
               width: "55%",
-              Index: "888"
+              Index: "888",
+              boxShadow: "0 0 15px 0 rgba(0,0,0,0.15)",
             }}
           >
             <Card.Body className="d-flex justify-content-center align-items-center">

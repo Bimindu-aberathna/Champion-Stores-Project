@@ -1,0 +1,66 @@
+h6 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  color: #000;
+}
+.expProductFormLabel {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #000;
+}
+#alterContainerCard {
+  display: flex;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 800;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+}
+
+.alterCatCardBtn {
+  display: flex;
+  width: 6rem;
+  text-align: center;
+  justify-content: center;
+}
+.alterCatCardBtn:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  border: 1px solid #000;
+}
+.alterCatCard {
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+}
+#alterCatCard1 {
+  margin-right: 0.4rem;
+}
+#alterCatCard2 {
+  margin-left: 0.4rem;
+}
+.alterCatFormLabel {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #000;
+}
+h4{
+    margin-bottom: 1rem;
+}
+
+#addSupplierCard{
+        display: flex;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+        z-index: 880;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+}
+.addSupplierFormLabel{
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #000;
+}

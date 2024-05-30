@@ -17,3 +17,29 @@
 .priceCardheading{
     color: rgb(58, 58, 58);
 }
+.form-group{
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+}
+.form-control-label{
+    text-align: left;
+    font-size: 14px;
+}
+.cardImage{
+    width: 400px;
+    height: 400px;
+    margin-top: -6rem;
+    margin-bottom: -6rem;
+    border-radius: 5px;
+}
+.payButton{
+}
+.btn-grp{
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+}
