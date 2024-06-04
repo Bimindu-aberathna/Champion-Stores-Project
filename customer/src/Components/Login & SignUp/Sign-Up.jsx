@@ -23,7 +23,7 @@ import {
   validateEmail,
   validatePhoneNumber,
   validateAddress,
-  validatePassword,
+  validateSingnupPassword,
 } from "../Validation";
 import { Link } from "react-router-dom";
 import "./Login.css";
@@ -55,7 +55,7 @@ function SignUp() {
     const phoneNumberValidation = validatePhoneNumber(PhoneNumber); // Validate phone number
     const addressValidation = validateAddress(address); // Validate address
     const emailValidation = validateEmail(email); // Validate email 
-    const passwordValidation = validatePassword(password);  // Validate password
+    const passwordValidation = validateSingnupPassword(password);  // Validate password
   
     if (!firstNameValidation.isValid) { // Check if first name is valid
       setFirstNameError(true);

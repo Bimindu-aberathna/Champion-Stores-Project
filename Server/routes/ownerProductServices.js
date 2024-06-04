@@ -71,28 +71,60 @@ router.get("/getProductsBySubCategory/:subCategoryID", (req, res) => {
 
 router.post("/removeExpiredProducts", (req, res) => {
   const { productID, quantity } = req.body;
-  const sql1 =
-    "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
-  const values = [quantity, productID];
-
-  db.query(sql1, values, (err, result) => {
+  const sql1 = "Select currentStock from product where productID = ?;";
+  db.query(sql1, [productID], (err, result) => {
     if (err) {
       res.status(500).json({ message: "Server error occurred" });
     } else {
-      const sql2 =
-        "INSERT INTO expiredproducts (productID, date, quantity) VALUES (?, CURDATE(), ?);";
-      const values2 = [productID, quantity];
-      db.query(sql2, values2, (err2, result2) => {
-        if (err2) {
-          res.status(500).json({ message: "Server error occurred" });
-        } else {
-          res
-            .status(200)
-            .json({ message: "Expired products removed successfully" });
-        }
-      });
+      if (result[0].currentStock < quantity) {
+        res.status(400).json({ message: "Quantity exceeds current stock" });
+      } else {
+        const sql2 =
+          "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
+        const values = [quantity, productID];
+        db.query(sql2, values, (err2, result2) => {
+          if (err2) {
+            res.status(500).json({ message: "Server error occurred" });
+          } else {
+            const sql3 =
+              "INSERT INTO expiredproducts (productID, date, quantity) VALUES (?, CURDATE(), ?);";
+            const values2 = [productID, quantity];
+            db.query(sql3, values2, (err3, result3) => {
+              if (err3) {
+                res.status(500).json({ message: "Server error occurred" });
+              } else {
+                res
+                  .status(200)
+                  .json({ message: "Expired products removed successfully" });
+              }
+            });
+          }
+        });
+      }
     }
   });
+  // const sql1 =
+  //   "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
+  // const values = [quantity, productID];
+
+  // db.query(sql1, values, (err, result) => {
+  //   if (err) {
+  //     res.status(500).json({ message: "Server error occurred" });
+  //   } else {
+  //     const sql2 =
+  //       "INSERT INTO expiredproducts (productID, date, quantity) VALUES (?, CURDATE(), ?);";
+  //     const values2 = [productID, quantity];
+  //     db.query(sql2, values2, (err2, result2) => {
+  //       if (err2) {
+  //         res.status(500).json({ message: "Server error occurred" });
+  //       } else {
+  //         res
+  //           .status(200)
+  //           .json({ message: "Expired products removed successfully" });
+  //       }
+  //     });
+  //   }
+  // });
 });
 
 router.post("/addProduct", upload.none(), (req, res) => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useContext } from "react";
 import { useState } from "react";
 import "./Navbar.css";
 import logo from "../Assets/logo.png";
@@ -10,13 +10,14 @@ import FormControl from "@mui/material/FormControl";
 import { CiSearch } from "react-icons/ci";
 import { FaUserCircle } from "react-icons/fa";
 import { Link,useNavigate } from "react-router-dom";
+import CartContext from "../Services/CartContext";
 
 
 function Navbar({ onSearch,setIsAuthenticated  }) {
+  const { cartSize, updateCartSize } = useContext(CartContext); // Use cartSize from context
   const [menu, setMenu] = useState("home"); // state to manage the active menu
   const [searchTerm, setSearchTerm] = useState(""); // state to manage the search term
   const customerName = localStorage.getItem("customerName") || "Customer"; // get the customer name from local storage
-  const itemCount = localStorage.getItem("itemCount") || 0; // get the item count from local storage
   const navigate = useNavigate(); // navigate to a different route
 
   const [loggedIn, setLoggedIn] = useState(
@@ -29,6 +30,12 @@ function Navbar({ onSearch,setIsAuthenticated  }) {
   useEffect(() => {
     handleSearch();
   }, [searchTerm]);
+  
+  useEffect(() => {
+    if (loggedIn) {
+      updateCartSize();
+    }
+  }, [loggedIn, updateCartSize]);
 
   const handleLogOut = () => { // function to handle logout
     localStorage.removeItem("logged");
@@ -141,7 +148,7 @@ function Navbar({ onSearch,setIsAuthenticated  }) {
           ) : (
             <MdOutlineShoppingCart className="cartIcon"/>
           )}
-          <div className="navbar_cart_count">{itemCount}</div>
+          <div className="navbar_cart_count">{cartSize}</div>
           {loggedIn ? (
             <Link to={"/profile"}>
               <div className="userAccount">

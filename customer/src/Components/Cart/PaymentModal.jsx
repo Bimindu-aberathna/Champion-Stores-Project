@@ -52,7 +52,7 @@ const CARD_ELEMENT_OPTIONS = {
   },
 };
 
-const CheckoutForm = ({ setCardType, toggleOpen,total,getCartDetails }) => {
+const CheckoutForm = ({ setCardType, toggleOpen,total,getCartDetails,deliveryCharge }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState(null);
@@ -106,7 +106,7 @@ const CheckoutForm = ({ setCardType, toggleOpen,total,getCartDetails }) => {
           autoClose: 1500,
           closeOnClick: true
         });
-        const response = await CompletePayment();
+        const response = await CompletePayment(deliveryCharge);
         if (response.status === 200) {
           Swal.fire({
             title: "Good job!",
@@ -309,6 +309,7 @@ export default function PaymentModal({
                           toggleOpen={toggleOpen}
                           total={total}
                           getCartDetails={getCartDetails}
+                          deliveryCharge={deliveryCharge}
                         />
                       </Elements>
                     </MDBCol>

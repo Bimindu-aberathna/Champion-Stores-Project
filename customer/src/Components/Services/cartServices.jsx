@@ -85,21 +85,15 @@ async function removeCartItem(cartItemId) {
       "x-access-token": accessToken,
     },
   });
-  console.log("hello world");
-  console.log(response.data);
   return response.data;
 }
 
-async function CompletePayment(cartID, cardNumber, expiryDate, cvc) {
+async function CompletePayment(deliveryCharge) {
   const accessToken = localStorage.getItem("accessToken");
-  console.log(cartID, cardNumber, expiryDate, cvc);
   const response = await axios.post(
     cartServiceEndpoint + "/checkout",
     {
-      cartID: cartID,
-      cardNumber: cardNumber,
-      expiryDate: expiryDate,
-      cvc: cvc,
+      deliveryCharge: deliveryCharge,
     },
     {
       headers: {

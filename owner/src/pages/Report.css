@@ -21,3 +21,12 @@
   gap: 10px;
   width: 100%;
 }
+.containerCard{
+  box-shadow: 0 0 15px 0 rgba(0,0,0,0.15);
+}
+.inventoryReportCard{
+  box-shadow: 0 0 15px 0 rgba(0,0,0,0.15);
+}
+.salesReportCard{
+  box-shadow: 0 0 15px 0 rgba(0,0,0,0.15);
+}

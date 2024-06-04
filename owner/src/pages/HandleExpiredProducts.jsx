@@ -130,6 +130,7 @@ function HandleExpiredProducts() {
             .then((res) => {
               console.log(res.data);
               toast.success("Expired products removed successfully");
+              setQuantity(0);
             })
             .catch((err) => {
               console.log(err);

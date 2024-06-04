@@ -16,7 +16,6 @@ function Orders() {
   const [listHeight, setListHeight] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     fetchOrders();
@@ -30,6 +29,7 @@ function Orders() {
       })
       .then((response) => {
         setItems(response.data.data);
+        //setItems(prevOrders => [...prevOrders].reverse());
         setSelectedOrder(response.data.data[0]);
         console.log(response.data.data[0]);
       })
@@ -182,6 +182,9 @@ function Orders() {
             </p>
             <p>
               <b>Total: Rs.</b> {selectedOrder?.totalAmount}
+            </p>
+            <p>
+              <b>Delivery fee: Rs.</b>{selectedOrder?.deliveryCharge}
             </p>
             <p>
               <b>Date:</b> {selectedOrder?.dateTime}

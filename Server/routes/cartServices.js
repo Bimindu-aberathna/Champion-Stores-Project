@@ -154,8 +154,7 @@ router.post('/charge', validateToken,async (req, res) => {
 
 router.post("/checkout", validateToken, (req, res) => {
   const customerID = req.customerID;
-  const { cartID,cardNumber, expiry, cvc } = req.body;
-  console.log("Card number is ",cardNumber);
+  const { deliveryCharge } = req.body;
 
   const sql = `SELECT * FROM cart WHERE customerID = ${customerID} AND paymentStatus = false`;
   db.query(sql, (err, result) => {
@@ -164,7 +163,7 @@ router.post("/checkout", validateToken, (req, res) => {
       res.json({ status:500, message: "Internal server error" });
     } else {
       if (result.length > 0) {
-        const sql2 = `UPDATE cart SET paymentStatus = true, dateTime = CONVERT_TZ(CURRENT_TIMESTAMP, '+00:00', '+05:30') WHERE cartID = ${result[0].cartID};
+        const sql2 = `UPDATE cart SET paymentStatus = true, dateTime = CONVERT_TZ(CURRENT_TIMESTAMP, '+00:00', '+00:00'),deliveryCharge=${deliveryCharge} WHERE cartID = ${result[0].cartID};
         `;
         db.query(sql2, (err, result) => {
           if (err) {
@@ -201,6 +200,31 @@ router.get("/getReceiverDetails", validateToken, (req, res) => {
             res.status(200).json(result[0]);
           }
         });
+      }
+    }
+  });
+});
+
+router.get("/cartSize", validateToken, (req, res) => {
+  const customerID = req.customerID;
+  const sql = `SELECT cartID FROM cart WHERE customerID = ${customerID} AND paymentStatus = false`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status:500, message: "Internal server error" });
+    } else {
+      if (result.length > 0) {
+        const sql2 = `SELECT COUNT(*) AS size FROM cart_item WHERE cartID = ${result[0].cartID}`;
+        db.query(sql2, (err, result) => {
+          if (err) {
+            console.log(err);
+            res.json({ status:500, message: "Internal server error" });
+          } else {
+            res.status(200).json(size = result[0]);
+          }
+        });
+      } else {
+        res.status(200).json({ size: 0 });
       }
     }
   });
