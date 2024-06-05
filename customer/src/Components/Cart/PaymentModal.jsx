@@ -52,7 +52,7 @@ const CARD_ELEMENT_OPTIONS = {
   },
 };
 
-const CheckoutForm = ({ setCardType, toggleOpen,total,getCartDetails,deliveryCharge }) => {
+const CheckoutForm = ({ setCardType, toggleOpen,total,getCartDetails,deliveryCharge,updateCartSize }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState(null);
@@ -114,6 +114,7 @@ const CheckoutForm = ({ setCardType, toggleOpen,total,getCartDetails,deliveryCha
             icon: "success"
           }).then(() => {
           getCartDetails();
+          updateCartSize();
           toggleOpen();
           });
         } else {
@@ -207,6 +208,7 @@ export default function PaymentModal({
   subtotal = 0,
   deliveryCharge = 0,
   getCartDetails,
+  updateCartSize,
 }) {
   const [centredModal, setCentredModal] = useState(false); // state for modal of payment
   //const [imgSrc, setImgSrc] = useState("https://firebasestorage.googleapis.com/v0/b/champions-stores.appspot.com/o/images%2Ffile.png?alt=media&token=82798e75-5590-4fdf-81f3-aca09df5d5fa"); // state for image of card
@@ -310,6 +312,7 @@ export default function PaymentModal({
                           total={total}
                           getCartDetails={getCartDetails}
                           deliveryCharge={deliveryCharge}
+                          updateCartSize={updateCartSize}
                         />
                       </Elements>
                     </MDBCol>

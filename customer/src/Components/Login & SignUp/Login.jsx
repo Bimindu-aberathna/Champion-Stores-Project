@@ -13,7 +13,7 @@ import { IoMdEyeOff } from "react-icons/io";
 import { IoMdEye } from "react-icons/io";
 import loginImage from "../Assets/loginImage.webp";
 import { ToastContainer, toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { loginUser } from "../Services/userServices";
 import { Navigate } from "react-router-dom";
@@ -21,31 +21,37 @@ import "./Login.css";
 
 function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState(""); //state for email
-  const [password, setPassword] = useState(""); //state for password 
+  const [password, setPassword] = useState(""); //state for password
   const [showPassword, setShowPassword] = useState(false); //state for show password
-  const navigate = useNavigate(); //navigate to different page
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleLogin = (event) => { //function to handle login
+  const handleLogin = (event) => {
+    //function to handle login
     event.preventDefault(); //prevent default action
     loginUser({ email, password }) //login user
       .then((status) => {
-        if (status === 200) { //if the status is successful
+        if (status === 200) {
+          //if the status is successful
           console.log();
           toast.success("Login successful!", {
             position: "top-right",
             autoClose: 3500,
           });
           setIsAuthenticated(true);
-          navigate("/");
+          let { from } = location.state || { from: { pathname: "/" } };
+          navigate(from);
           //window.location.href = "/";
-        } else { //if the status is not successful
+        } else {
+          //if the status is not successful
           toast.error("Invalid credentials!", {
             position: "top-right",
             autoClose: 3500,
           });
         }
       })
-      .catch((error) => { //if there is an error
+      .catch((error) => {
+        //if there is an error
         if (error.response.status === 401) {
           toast.error("Invalid credentials!", {
             position: "top-right",
@@ -60,11 +66,7 @@ function Login({ setIsAuthenticated }) {
     <MDBContainer fluid className="p-3 my-5" id="loginPage">
       <MDBRow className="loginRow">
         <MDBCol col="10" md="6">
-        <img
-            src={loginImage}
-            className="img-fluid"
-            alt="Phone image"
-          />
+          <img src={loginImage} className="img-fluid" alt="Phone image" />
         </MDBCol>
 
         <MDBCol col="4" md="6" className="loginColumn">
@@ -82,7 +84,7 @@ function Login({ setIsAuthenticated }) {
                 size="lg"
                 onChange={(e) => setEmail(e.target.value)}
               />
-              
+
               <div style={{ position: "relative", width: "100%" }}>
                 <MDBInput //password input
                   wrapperClass="mb-4"
@@ -115,7 +117,9 @@ function Login({ setIsAuthenticated }) {
               </MDBBtn>
               <div className="d-flex justify-content-between mx-4 mb-4">
                 <div></div>
-                <div> {/* Link to sign up page */}
+                <div>
+                  {" "}
+                  {/* Link to sign up page */}
                   Don't have an account?&nbsp;<Link to="/signup"> Sign up</Link>
                 </div>
               </div>

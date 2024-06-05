@@ -11,6 +11,10 @@ const { on } = require("events");
 const { get } = require("http");
 const router = express.Router();
 
+function convertToCurrencyFormat(doubleValue) {
+  return doubleValue.toFixed(2);
+}
+
 let [
   totalSales,
   totalOnlineSales,
@@ -26,6 +30,8 @@ let [
   instoreItemCount,
   costOfReturnedProducts,
   costOfExpiredProducts,
+  onlineOrderCount,
+  instoreOrderCount,
 ] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 const getCategorySQL = "SELECT categoryID,categoryName from category";
 const getOnlineSalesSQL =
@@ -46,6 +52,10 @@ const returnSalesSQL =
   "SELECT SUM(totalReturnLoss) AS totalReturnLoss FROM ( SELECT SUM(pr.quantity * ip.unitBuyingPrice) AS totalReturnLoss FROM product_return pr JOIN inventory_purchase ip ON pr.productID = ip.productID WHERE pr.date BETWEEN ? AND ? GROUP BY pr.productID) AS subquery;";
 const expiringProductsSQL =
   "SELECT SUM(totalExpireLoss) AS totalExpireLoss FROM ( SELECT SUM(ep.quantity * ip.unitBuyingPrice) AS totalExpireLoss FROM expiredproducts ep JOIN inventory_purchase ip ON ep.productID = ip.productID WHERE ep.date BETWEEN ? AND ? GROUP BY ep.productID ) AS subquery;";
+const onlineOrderCountSQL =
+  "SELECT COUNT(cartID) AS onlineOrderCount FROM cart WHERE DATE(dateTime) BETWEEN ? AND ? AND paymentStatus=1;";
+const instoreOrderCountSQL =
+  "SELECT COUNT(transactionID) AS instoreOrderCount FROM transactions WHERE DATE(dateTime) BETWEEN ? AND ?;";
 
 const dbCategories = [];
 
@@ -192,6 +202,30 @@ function getTotalSales(startDate, endDate) {
     resolve(totalSales);
   });
 }
+function getOnlineOrderCount(startDate, endDate) {
+  return new Promise((resolve, reject) => {
+    db.query(onlineOrderCountSQL, [startDate, endDate], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        onlineOrderCount = result[0].onlineOrderCount;
+        resolve(onlineOrderCount);
+      }
+    });
+  });
+}
+function getInstoreOrderCount(startDate, endDate) {
+  return new Promise((resolve, reject) => {
+    db.query(instoreOrderCountSQL, [startDate, endDate], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        instoreOrderCount = result[0].instoreOrderCount;
+        resolve(instoreOrderCount);
+      }
+    });
+  });
+}
 
 router.post("/createSalesReport", validateOwnerToken, (req, res) => {
   const { startDate, endDate } = req.body;
@@ -207,13 +241,16 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                   getTotalSales(startDate, endDate).then(() => {
                     getCORP(startDate, endDate).then(() => {
                       getCOEP(startDate, endDate).then(() => {
-                        totalCostOfGoodsSold =
-                          onlineCostOfGoodsSold + instoreCostOfGoodsSold;
-                        totalProfit = totalSales - totalCostOfGoodsSold;
-                        onlineProfit = totalOnlineSales - onlineCostOfGoodsSold;
-                        instoreProfit =
-                          totalInstoreSales - instoreCostOfGoodsSold;
-                        htmlContent = `
+                        getOnlineOrderCount(startDate, endDate).then(() => {
+                          getInstoreOrderCount(startDate, endDate).then(() => {
+                            totalCostOfGoodsSold =
+                              onlineCostOfGoodsSold + instoreCostOfGoodsSold;
+                            totalProfit = totalSales - totalCostOfGoodsSold;
+                            onlineProfit =
+                              totalOnlineSales - onlineCostOfGoodsSold;
+                            instoreProfit =
+                              totalInstoreSales - instoreCostOfGoodsSold;
+                            htmlContent = `
                                         <!DOCTYPE html>
                                           <html lang="en">
                                           <head>
@@ -284,10 +321,10 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                               <table>
                                                 <tr>
                                                   <th>Total Sales Revenue:</th>
-                                                  <td>Rs. ${
+                                                  <td>Rs. ${convertToCurrencyFormat(
                                                     totalInstoreSales +
-                                                    totalOnlineSales
-                                                  }</td>
+                                                      totalOnlineSales
+                                                  )}</td>
                                                 </tr>
                                                 <tr>
                                                   <th>Total Units Sold:</th>
@@ -298,12 +335,12 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                                 </tr>
                                                 <tr class="total-row">
                                                   <th>Average Transaction Value:</th>
-                                                  <td>Rs. ${(
+                                                  <td>Rs. ${convertToCurrencyFormat(
                                                     (totalInstoreSales +
                                                       totalOnlineSales) /
-                                                    (onlineItemCount +
-                                                      instoreItemCount)
-                                                  ).toFixed(2)}</td>
+                                                      (onlineItemCount +
+                                                        instoreItemCount)
+                                                  )}</td>
                                                   </td>
                                                 </tr>
                                               </table>
@@ -316,18 +353,22 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                                 </tr>
                                                 <tr>
                                                   <td>Expired Products</td>
-                                                  <td>${costOfExpiredProducts}</td>
+                                                  <td>${convertToCurrencyFormat(
+                                                    costOfExpiredProducts
+                                                  )}</td>
                                                 </tr>
                                                 <tr>
                                                   <td>Product Returns</td>
-                                                  <td>${costOfReturnedProducts}</td>
+                                                  <td>${convertToCurrencyFormat(
+                                                    costOfReturnedProducts
+                                                  )}</td>
                                                 </tr>
                                                 <tr>
                                                   <td>Total Loss</td>
-                                                  <td>${
+                                                  <td>${convertToCurrencyFormat(
                                                     costOfExpiredProducts +
-                                                    costOfExpiredProducts
-                                                  }</td>
+                                                      costOfExpiredProducts
+                                                  )}</td>
                                                 </tr>
                                               </table>
 
@@ -341,15 +382,19 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                                 </tr>
                                                 <tr>
                                                   <td>Website</td>
-                                                  <td>Rs. ${totalOnlineSales}</td>
-                                                  <td>400</td>
-                                                  <td>$20</td>
+                                                  <td>Rs. ${convertToCurrencyFormat(
+                                                    totalOnlineSales
+                                                  )}</td>
+                                                  <td>${onlineOrderCount}</td>
+                                                  <td>${convertToCurrencyFormat(totalOnlineSales / onlineOrderCount)}</td>
                                                 </tr>
                                                 <tr>
                                                   <td>In-Store</td>
-                                                  <td>Rs. ${totalInstoreSales}</td>
-                                                  <td>100</td>
-                                                  <td>$20</td>
+                                                  <td>Rs. ${convertToCurrencyFormat(
+                                                    totalInstoreSales
+                                                  )}</td>
+                                                  <td>${instoreOrderCount}</td>
+                                                  <td>${convertToCurrencyFormat(totalInstoreSales / instoreOrderCount)}</td>
                                                 </tr>
                                               </table>
 
@@ -363,15 +408,27 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                                 </tr>
                                                 <tr>
                                                   <td>Website</td>
-                                                  <td>Rs. ${totalOnlineSales}</td>
-                                                  <td>Rs. ${onlineCostOfGoodsSold}</td>
-                                                  <td>RS. ${onlineProfit}</td>
+                                                  <td>Rs. ${convertToCurrencyFormat(
+                                                    totalOnlineSales
+                                                  )}</td>
+                                                  <td>Rs. ${convertToCurrencyFormat(
+                                                    onlineCostOfGoodsSold
+                                                  )}</td>
+                                                  <td>RS. ${convertToCurrencyFormat(
+                                                    onlineProfit
+                                                  )}</td>
                                                 </tr>
                                                 <tr>
                                                   <td>In-store</td>
-                                                  <td>Rs. ${totalInstoreSales}</td>
-                                                  <td>Rs. ${instoreCostOfGoodsSold}</td>
-                                                  <td>RS. ${instoreProfit}</td>
+                                                  <td>Rs. ${convertToCurrencyFormat(
+                                                    totalInstoreSales
+                                                  )}</td>
+                                                  <td>Rs. ${convertToCurrencyFormat(
+                                                    instoreCostOfGoodsSold
+                                                  )}</td>
+                                                  <td>RS. ${convertToCurrencyFormat(
+                                                    instoreProfit
+                                                  )}</td>
                                                 </tr>
                                               </table>
 
@@ -379,29 +436,38 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                               <table>
                                                 <tr>
                                                   <td>Total Sales Revenue:</td>
-                                                  <td class="finalValues">Rs: ${totalSales}</td>
+                                                  <td class="finalValues">Rs: ${convertToCurrencyFormat(
+                                                    totalSales
+                                                  )}</td>
                                                 </tr>
                                                 <tr>
                                                   <td>Total Cost of goods sold:</td>
-                                                  <td class="finalValues">Rs: ${totalCostOfGoodsSold}</td>
+                                                  <td class="finalValues">Rs: ${convertToCurrencyFormat(
+                                                    totalCostOfGoodsSold
+                                                  )}</td>
                                                 </tr>  
                                                 <tr>
                                                   <td>Expire & Returns:</td>
-                                                  <td class="finalValues">Rs: ${
+                                                  <td class="finalValues">Rs: ${convertToCurrencyFormat(
                                                     costOfExpiredProducts +
-                                                    costOfReturnedProducts
-                                                  }</td>
+                                                      costOfReturnedProducts
+                                                  )}</td>
                                                 </tr>
                                                 <tr>
                                                   <td>Discounts Allowed:</td>
-                                                  <td class="finalValues">Rs. ${totalDiscounts}</td>
+                                                  <td class="finalValues">Rs. ${convertToCurrencyFormat(
+                                                    totalDiscounts
+                                                  )}</td>
                                                 </tr>
                                                 <tr>
                                                   <td>Net Sales Profit:</td>
-                                                  <td class="finalValues" style="border: 2px solid;">Rs. ${
+                                                  <td class="finalValues" style="border: 2px solid;">Rs. ${convertToCurrencyFormat(
                                                     totalSales -
-                                                    (totalCostOfGoodsSold +totalDiscounts +costOfExpiredProducts +costOfReturnedProducts)
-                                                  }</td>
+                                                      (totalCostOfGoodsSold +
+                                                        totalDiscounts +
+                                                        costOfExpiredProducts +
+                                                        costOfReturnedProducts)
+                                                  )}</td>
                                                   </td>
                                               </table>
                                             </div>
@@ -415,17 +481,19 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                           </html>
 
                                         `;
-                        pdf
-                          .create(htmlContent)
-                          .toFile(pdfFilePath, (err, result) => {
-                            if (err) {
-                              res
-                                .status(500)
-                                .json({ message: "Server error occurred" });
-                            } else {
-                              res.status(200).download(pdfFilePath);
-                            }
+                            pdf
+                              .create(htmlContent)
+                              .toFile(pdfFilePath, (err, result) => {
+                                if (err) {
+                                  res
+                                    .status(500)
+                                    .json({ message: "Server error occurred" });
+                                } else {
+                                  res.status(200).download(pdfFilePath);
+                                }
+                              });
                           });
+                        });
                       });
                     });
                   });

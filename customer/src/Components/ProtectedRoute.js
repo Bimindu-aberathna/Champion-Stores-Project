@@ -1,9 +1,10 @@
 // components/ProtectedRoute.js
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, isAuthenticated }) => {
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  const location = useLocation();
+  return isAuthenticated ? children : <Navigate to="/login" state={{ from: location }} />;
 };
 
 export default ProtectedRoute;

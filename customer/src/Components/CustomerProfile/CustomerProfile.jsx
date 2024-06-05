@@ -11,6 +11,12 @@ import {
 import { FaCircleUser } from "react-icons/fa6";
 import TextField from "@mui/material/TextField";
 import {changeCustomerDetails,getCustomerDetails} from "../Services/userServices";
+import {
+  validateName,
+  validatePhoneNumber,
+  validateAddress,
+} from "../Validation";
+import Swal from "sweetalert2";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import './CustomerProfile.css';
@@ -51,6 +57,43 @@ function CustomerProfile({customerName="User", customerEmail=""}) {
   }
 
   function handleCustomerInfoChange() {//function to handle customer info change
+    const nameValidation = validateName(newDetails.firstName);//validate first name
+    const lastNameValidation = validateName(newDetails.lastName);//validate last name
+    const phoneValidation = validatePhoneNumber(newDetails.telephone);//validate phone number
+    const addressValidation = validateAddress(newDetails.address);//validate address
+    if(!nameValidation.isValid){//if the first name is not valid
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: nameValidation.errorMessage,
+        confirmButtonColor: "#000",
+      });
+      return;
+    }if(!lastNameValidation.isValid){//if the last name is not valid
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: lastNameValidation.errorMessage,
+        confirmButtonColor: "#000",
+      });
+      return;
+    }if(!phoneValidation.isValid){//if the phone number is not valid
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: phoneValidation.errorMessage,
+        confirmButtonColor: "#000",
+      });
+      return;
+    }if(!addressValidation.isValid){//if the address is not valid
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: addressValidation.errorMessage,
+        confirmButtonColor: "#000",
+      });
+      return;
+    }
     changeCustomerDetails(newDetails)
       .then((response) => {//if the details are changed
         fetchCustomerDetails();

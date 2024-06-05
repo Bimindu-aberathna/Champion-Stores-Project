@@ -1,8 +1,9 @@
 const e = require('express');
 const {sign, verify} = require('jsonwebtoken');
+require('dotenv').config();
 
 const createOwnerToken = (ownerID,role='owner') => {
-    const accessToken = sign({ownerID,role},"SUPER_SECRET_JWT_KEY_FOR_OWNER", {expiresIn: "10h"});
+    const accessToken = sign({ownerID,role},process.env.Owner_JWT_SECRET_KEY, {expiresIn: "10h"});
     return accessToken;	
 };
 
@@ -14,7 +15,7 @@ const validateOwnerToken = (req, res, next) => {
         return res.status(402).json({status:402,message: "User not authenticated"});
     }
     try {
-        const validToken = verify(accessToken,"SUPER_SECRET_JWT_KEY_FOR_OWNER")
+        const validToken = verify(accessToken,process.env.Owner_JWT_SECRET_KEY)
         if (validToken && validToken.role === "owner") {
             req.authenticated = true;
             req.ownerID = validToken.ownerID;
