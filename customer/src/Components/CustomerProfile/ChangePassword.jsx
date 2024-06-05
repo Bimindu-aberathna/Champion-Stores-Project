@@ -64,7 +64,10 @@ function handleChangePassword(){//function to change the password
     }
 
   }
-
+  const cancelChange = () => {//function to cancel the change
+    setVerified(!verified);
+    setCurrentPassword("");
+  };
 
   return (
     <MDBContainer fluid className="p-3 my-5">
@@ -127,7 +130,7 @@ function handleChangePassword(){//function to change the password
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   /><div className="ChangePassBtn">
-                    <MDBBtn color="outline-dark" type="button" onClick={()=>setVerified(!verified)}>Cancel</MDBBtn>
+                    <MDBBtn color="outline-dark" type="button" onClick={cancelChange}>Cancel</MDBBtn>
                     <MDBBtn color="dark" type="button" className="verifyBtn" onClick={handleChangePassword}>Change Password</MDBBtn>
                   </div>
                    </div>

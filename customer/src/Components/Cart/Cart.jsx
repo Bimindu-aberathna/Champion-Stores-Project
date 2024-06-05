@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import PaymentModal from "./PaymentModal";
 import TextField from "@mui/material/TextField";
 import CartContext from "../Services/CartContext";
+import Swal from "sweetalert2";
 import {
   validateName,
   validatePhoneNumber,
@@ -42,6 +43,7 @@ function Cart() {
   const [subTotal, setSubTotal] = useState(0);// To store subtotal of cart items
   const [deliveryCharge, setDeliveryCharge] = useState(0);// To store delivery charge
   const { updateCartSize } = useContext(CartContext);// To update cart size
+  const [changeBtnDisabled, setChangeBtnDisabled] = useState(false);
 
 
   useEffect(() => {// To fetch cart items
@@ -100,6 +102,9 @@ function Cart() {
 
   const handleQuantityChange = (id, change) => {// To handle quantity change of cart items
     setCart_Items((prevItems) => {
+      if(change ===1 && prevItems.find((item) => item.cart_itemID === id).quantity >= 5){
+        return prevItems;
+      }
       return prevItems.map((item) => {
         if (item.cart_itemID === id) {
           if (item.quantity <= 1 && change === -1) {
@@ -144,24 +149,34 @@ function Cart() {
   };
 
   const handleDeliveryDataChange = async () => {// To handle delivery data change
+    setChangeBtnDisabled(true);
+    setTimeout(() => {
+      setChangeBtnDisabled(false);
+    }, 2000);
     if (!validateName(receiverName).isValid) {// If receiver name is invalid
-      toast.error(validateName(receiverName).errorMessage, {
-        position: "top-right",
-        autoClose: 2500,
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: validateName(receiverName).errorMessage,
+        confirmButtonColor: "#000",
       });
       return;
     }
     if (!validatePhoneNumber(mobile).isValid) {// If mobile number is invalid
-      toast.error(validatePhoneNumber(mobile).errorMessage, {
-        position: "top-right",
-        autoClose: 2500,
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: validatePhoneNumber(mobile).errorMessage,
+        confirmButtonColor: "#000",
       });
       return;
     }
     if (!validateAddress(address).isValid) {// If address is invalid
-      toast.error(validateAddress(address).errorMessage, {
-        position: "top-right",
-        autoClose: 2500,
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: validateAddress(address).errorMessage,
+        confirmButtonColor: "#000",
       });
       return;
     }
@@ -171,21 +186,24 @@ function Cart() {
       setEditable(false);
       const response = await changeDeliveryInfo(receiverName, mobile, address);// Call to changeDeliveryInfo function
       if (response.status === 200) {
-        toast.success(response.message, {
-          position: "top-right",
-          autoClose: 3500,
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Delivery information updated successfully",
+          showConfirmButton: false,
+          timer: 1500
         });
       } else {
         toast.error(response.message, {
           position: "top-right",
-          autoClose: 3500,
+          autoClose: 1500,
         });
       }
     } catch (error) {
       console.error("Error updating delivery information:", error);
       toast.error("Error updating delivery information", {
         position: "top-right",
-        autoClose: 3500,
+        autoClose: 1500,
       });
     }
   };
@@ -281,7 +299,7 @@ function Cart() {
                   {!editable ? (
                     <MDBBtn onClick={(e) => setEditable(true)}>Edit</MDBBtn>
                   ) : (
-                    <MDBBtn onClick={handleDeliveryDataChange}>Change</MDBBtn>
+                    <MDBBtn disabled={changeBtnDisabled} onClick={handleDeliveryDataChange}>Change</MDBBtn>
                   )}
                 </div>
                 <div className="detailItem">
@@ -371,6 +389,7 @@ function Cart() {
                             subtotal={subTotal}
                             deliveryCharge={deliveryCharge}
                             getCartDetails={getCartDetails}
+                            updateCartSize={updateCartSize}
                           />
                         </div>
                       </MDBCol>

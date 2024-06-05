@@ -6,13 +6,13 @@ const db = require("../Server_Configuration");
 const e = require("express");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-//const session = require('express-session');
+require('dotenv').config();
 router.use(cookieParser());
 const { validateToken } = require("../JWT");
 const { verify } = require("crypto");
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const stripe = require('stripe')('sk_test_51PGG6EP2zpaVFzfpUO9yFsbLUJbLJliQ4HOBRDyxUd10r6u6i5h2ha9O8xAyiGaD3fX9NGfRQZM5SCg1WiqbzRr500XY1lxCbl');
+const stripe = require('stripe')(process.env.Stripe_Secret_Key);
 
 router.post("/addToCart", validateToken, (req, res) => {
   const customerID = req.customerID;

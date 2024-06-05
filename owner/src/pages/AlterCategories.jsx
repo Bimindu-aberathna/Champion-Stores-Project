@@ -54,12 +54,10 @@ function AlterCategories() {
 
   function addNewCategory() {
     const newCategory = document.getElementById("newCategoryName").value;
-    categories.map((category) => {
-      if (category.categoryName === newCategory) {
-        toast.error("Category name already exists");
-      }
+    if (categories.some(category => category.categoryName === newCategory)) {
+      toast.error("Category name already exists");
       return;
-    });
+    }
     if (nameValidation(newCategory)) {
       Swal.fire({
         title: "Are you sure you want to add this category?",
@@ -102,12 +100,11 @@ function AlterCategories() {
   }
   const renameCategory = () => {
     const newCategoryName = document.getElementById("categoryNewName").value;
-    categories.map((category) => {
-      if (category.categoryName === newCategoryName) {
-        toast.error("Category name already exists");
-      }
+    
+    if (categories.some(category => category.categoryName === newCategoryName)) {
+      toast.error("Category name already exists");
       return;
-    });
+    }
     if (!nameValidation(newCategoryName)) {
       toast.error("Invalid category name");
       return;
@@ -154,12 +151,10 @@ function AlterCategories() {
   const renameSubCategory = () => {
     const newSubCategoryName =
       document.getElementById("renameSubCategory").value;
-    subCategories.map((subCategory) => {
-      if (subCategory.subCategoryName === newSubCategoryName) {
+      if (subCategories.some(subcategory => subcategory.subCategoryName === newSubCategoryName)) {
         toast.error("Sub-Category name already exists");
+        return;
       }
-      return;
-    });
 
     if (!nameValidation(newSubCategoryName)) {
       toast.error("Invalid Sub-Category name");
@@ -205,12 +200,10 @@ function AlterCategories() {
   const addNewSubCategory = () => {
     const newSubCategoryName =
       document.getElementById("newSubCategoryName").value;
-    subCategories.map((subCategory) => {
-      if (subCategory.subCategoryName === newSubCategoryName) {
+    if (subCategories.some(subcategory => subcategory.subCategoryName === newSubCategoryName)) {
         toast.error("Sub-Category name already exists");
+        return;
       }
-      return;
-    });
     if (!nameValidation(newSubCategoryName)) {
       toast.error("Invalid Sub-Category name");
       return;

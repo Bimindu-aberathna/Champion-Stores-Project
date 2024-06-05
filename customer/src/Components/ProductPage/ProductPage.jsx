@@ -148,6 +148,7 @@ function ProductPage() {
                 <MDBInput
                   type="number"
                   value={quantity}
+                  disabled
                   onChange={(e) => setQuantity(e.target.value)}
                 />
               </div>
