@@ -15,8 +15,8 @@ import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
-import { MdVisibility } from "react-icons/md";
-import { MdVisibilityOff } from "react-icons/md";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
   getEmail,
   ChangeEmail,
@@ -344,9 +344,9 @@ function AccountSetings() {
                                   edge="end"
                                 >
                                   {showPassword ? (
-                                    <MdVisibilityOff />
+                                    <VisibilityOffIcon />
                                   ) : (
-                                    <MdVisibility />
+                                    <VisibilityIcon />
                                   )}
                                 </IconButton>
                               </InputAdornment>
@@ -390,9 +390,9 @@ function AccountSetings() {
                                   edge="end"
                                 >
                                   {showPassword ? (
-                                    <MdVisibilityOff />
+                                    <VisibilityOffIcon/>
                                   ) : (
-                                    <MdVisibility />
+                                    <VisibilityIcon/>
                                   )}
                                 </IconButton>
                               </InputAdornment>
@@ -420,9 +420,9 @@ function AccountSetings() {
                                   edge="end"
                                 >
                                   {showPassword ? (
-                                    <MdVisibilityOff />
+                                    <VisibilityOffIcon/>
                                   ) : (
-                                    <MdVisibility />
+                                    <VisibilityIcon/>
                                   )}
                                 </IconButton>
                               </InputAdornment>

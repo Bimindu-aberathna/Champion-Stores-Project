@@ -7,7 +7,8 @@ import { useRef } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { IoEye, IoEyeOff } from "react-icons/io5";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import "./Login.css";
 
 function Login() {
@@ -101,14 +102,14 @@ function Login() {
               placeholder="Password"
               ref={passwordInputRef}
             />
-            <IoEyeOff
+            <VisibilityOffIcon
               className="eye-styles"
               style={{
                 display: showPassword ? "none" : "block",
               }}
               onClick={() => setShowPassword(!showPassword)}
             />
-            <IoEye
+            <VisibilityIcon
               className="eye-styles"
               style={{
                 display: showPassword ? "block" : "none",
@@ -117,7 +118,7 @@ function Login() {
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="fogotPasswordLink">
-            <a href="#">Fogot password</a>
+            <a href="/forgotpassword">Fogot password</a>
           </Form.Group>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Button variant="dark" type="submit" style={{ width: "100%" }}>

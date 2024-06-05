@@ -20,15 +20,17 @@ import ProductReturn from './pages/ProductReturn';
 import Reports from './pages/Reports';
 import AccountSetings from './pages/AccountSettings';
 import TitleBar from './Components/TitleBar';
+import FogotPassword from './pages/FogotPassword';
 
 function MainContent(){
   const location = useLocation();
   return(
     <>
-    {(location.pathname !== '/') && <TitleBar/>}
+    {location.pathname !== "/" && location.pathname !== "/forgotpassword" && (<TitleBar/>)}
     <Routes>
       <Route path="/orders" element={<Orders />} />
       <Route path="/" element={<Login />} />
+      <Route path="/forgotpassword" element={<FogotPassword />} /> 
       <Route path="/transaction" element={<Transaction />} />
       <Route path="/inventory" element={<Inventory/>} />
       <Route path="/productlist" element={<Productlist/>} />

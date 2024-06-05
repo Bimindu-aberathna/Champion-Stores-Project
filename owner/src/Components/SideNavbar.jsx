@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { IoIosArrowDroprightCircle } from "react-icons/io";
+import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import { useNavigate } from "react-router-dom";
 import "./SideNavbar.css";
 
@@ -53,7 +53,7 @@ function SideNavbar({ selected }) {
             top: "5rem",
           }}
         >
-          <IoIosArrowDroprightCircle
+          <ArrowCircleRightOutlinedIcon
             style={{
               fontSize: "2rem",
               border: "1px solid black",

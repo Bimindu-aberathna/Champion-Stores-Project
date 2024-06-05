@@ -2,8 +2,10 @@ import React from "react";
 import SideNavbar from "../Components/SideNavbar";
 import { Form, Row, Col, Button, InputGroup, Card } from "react-bootstrap";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { FaRegTrashAlt, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
-import { LuPackageX } from "react-icons/lu";
+import DeleteIcon from '@mui/icons-material/Delete';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import Boot_Button from "react-bootstrap/Button";
 import Boot_Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
@@ -381,7 +383,7 @@ function Transaction() {
                           <p className="productPrice">
                             Rs. {product.price} &nbsp;
                             {product.quantity <= 0 && (
-                              <LuPackageX style={{ color: "red" }} />
+                              <CancelIcon style={{ color: "red" }} />
                             )}
                           </p>
                         </div>
@@ -471,7 +473,7 @@ function Transaction() {
                             onClick={() => changeQuantity(item.id, -1)}
                             style={{ marginRight: "0.2rem" }}
                           >
-                            <FaMinusCircle />
+                            <RemoveCircleIcon />
                           </Button>
                           <Button
                             variant="outline-dark"
@@ -479,7 +481,7 @@ function Transaction() {
                             onClick={() => changeQuantity(item.id, 1)}
                             style={{ marginRight: "0.2rem" }}
                           >
-                            <FaPlusCircle />
+                            <AddCircleIcon />
                           </Button>
                           <Button
                             variant="outline-dark"
@@ -487,7 +489,7 @@ function Transaction() {
                             onClick={() => removeItem(item.id)}
                             style={{ marginRight: "0.2rem" }}
                           >
-                            <FaRegTrashAlt />
+                            <DeleteIcon />
                           </Button>
                         </div>
                       </li>

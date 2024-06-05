@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import { IoSearch } from "react-icons/io5";
+import SearchIcon from '@mui/icons-material/Search';
 
 const SearchBar = ({ items, onItemSelect }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,7 +48,7 @@ const SearchBar = ({ items, onItemSelect }) => {
           style={{ borderTopLeftRadius: "25px", borderBottomLeftRadius: "25px" }}
         />
         <InputGroup.Text style={{ backgroundColor: "black",borderTopRightRadius: "25px", borderBottomRightRadius: "25px"  }}>
-          <IoSearch style={{ color: "snow" }} />
+          <SearchIcon style={{ color: "snow" }} />
         </InputGroup.Text>
       </InputGroup>
       <div ref={listRef}>

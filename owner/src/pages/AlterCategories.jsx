@@ -11,7 +11,6 @@ import {
   MDBRow,
   MDBCol,
 } from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
 import { nameValidation } from "../functionality/validation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
