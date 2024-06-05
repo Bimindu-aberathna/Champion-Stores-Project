@@ -400,10 +400,7 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                                   <td>Net Sales Profit:</td>
                                                   <td class="finalValues" style="border: 2px solid;">Rs. ${
                                                     totalSales -
-                                                    (totalCostOfGoodsSold +
-                                                      totalDiscounts -
-                                                      (costOfExpiredProducts +
-                                                        costOfReturnedProducts))
+                                                    (totalCostOfGoodsSold +totalDiscounts +costOfExpiredProducts +costOfReturnedProducts)
                                                   }</td>
                                                   </td>
                                               </table>

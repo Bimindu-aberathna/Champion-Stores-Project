@@ -156,24 +156,26 @@ function ListSuppliers() {
     <div>
       <InventoryNavBar selected="listsuppliers" />
       <SideNavbar selected="Inventory" />
+      <h1 className="mt-3" style={{marginLeft:"7%",marginTop:"1rem"}}>Supplier Details</h1>
       <Form>
-        <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
+        <MDBContainer fluid className="bg-white" style={{ height: "80vh" }}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol style={{ paddingRight: "1rem" }}>
               <MDBCard
                 className="my-4"
                 style={{
                   display: "flex",
-                  width: "91%",
+                  width: "80%",
                   marginLeft: "auto",
                   marginRight: "auto",
                   zIndex: "888",
+                  boxShadow: "0 0 10px 0 rgba(0,0,0,0.1)",
                 }}
               >
-                <MDBRow className="g-0">
+                <MDBRow className="g-0" style={{margin:'1rem'}}>
                   <MDBCol md="6">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-centertext-black d-flex flex-column justify-content-center align-items-center">
-                      <MDBCol md="6">
+                      <MDBCol md="6" style={{width:'80%'}}>
                         <Form.Label htmlFor="disabledSelect">
                           <h5>Select Supplier</h5>
                         </Form.Label>
@@ -205,9 +207,9 @@ function ListSuppliers() {
                           justifyContent: "space-between",
                         }}
                       >
-                        <h3 className="mb-5 text-uppercase fw-bold">
-                          Supplier Info
-                        </h3>
+                        <h4 className="mb-5 text-uppercase fw-bold">
+                          Selected Supplier Details
+                        </h4>
                         <Link to="/addSupplier">
                           <Button
                             as="input"
@@ -220,7 +222,7 @@ function ListSuppliers() {
                       </div>
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Supplier Name</Form.Label>
+                          <Form.Label style={styles.listSupplierFormLabel}>Supplier Name</Form.Label>
                           <Form.Control
                             id="supplierName"
                             type="text"
@@ -236,7 +238,7 @@ function ListSuppliers() {
                         </MDBCol>
 
                         <MDBCol md="6">
-                          <Form.Label>E-mail</Form.Label>
+                          <Form.Label style={styles.listSupplierFormLabel}>E-mail</Form.Label>
                           <Form.Control
                             id="supplierEmail"
                             type="text"
@@ -250,7 +252,7 @@ function ListSuppliers() {
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Phone 1</Form.Label>
+                          <Form.Label style={styles.listSupplierFormLabel}>Phone 1</Form.Label>
                           <Form.Control
                             id="phone1"
                             type="text"
@@ -263,7 +265,7 @@ function ListSuppliers() {
                         </MDBCol>
 
                         <MDBCol md="6">
-                          <Form.Label>Phone 2</Form.Label>
+                          <Form.Label style={styles.listSupplierFormLabel}>Phone 2</Form.Label>
                           <Form.Control
                             id="phone2"
                             type="text"
@@ -276,7 +278,7 @@ function ListSuppliers() {
                         </MDBCol>
                       </MDBRow>
 
-                      <Form.Label>Additional details</Form.Label>
+                      <Form.Label style={styles.listSupplierFormLabel}>Additional details</Form.Label>
                       <Form.Control
                         id="supplierDetails"
                         type="text"
@@ -334,4 +336,11 @@ function ListSuppliers() {
   );
 }
 
+const styles = {
+  listSupplierFormLabel: {
+    fontSize: "1.1rem",
+    fontWeight: "500",
+    color: "#000"
+  }
+};
 export default ListSuppliers;

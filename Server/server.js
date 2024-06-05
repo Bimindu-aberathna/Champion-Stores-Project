@@ -22,7 +22,7 @@ const {createToken, validateToken} = require("./JWT");
 const {createOwnerToken, validateOwnerToken} = require("./ownerJWT");
 
 
-const app = express();
+const app = express(); 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.json());
@@ -50,6 +50,17 @@ app.get("/isAuth", validateOwnerToken, (req, res) => {
     console.log("User is authenticated");
     console.log(req.role);
     return res.status(200).json({ message: "User is authenticated" });
+});
+
+process.on('SIGINT', function() {
+  db.end(function(err) {
+    if (err) {
+      console.error('Error while closing the database connection:', err);
+    } else {
+      console.log('Database connection closed');
+    }
+    process.exit(0);
+  });
 });
 
 app.listen(port, () => {

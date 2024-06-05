@@ -131,6 +131,9 @@
     ul li{
         color: white;
     }
+    .greeting{
+        margin-top: 1rem;
+    }
 }
 
 /* Styles for smaller devices */

@@ -1,5 +1,6 @@
 import { cartServiceEndpoint, addToCartEndpoint } from "../apiCalls";
 import axios from "axios";
+
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -39,33 +40,7 @@ async function getCart() {//get cart details, including products,if any
   <ToastContainer />;
 }
 
-/*
-export const changeCustomerDetails = async (newDetails) => {
-  try {
-    const accessToken = localStorage.getItem("accessToken");
-    const response = await axios.post(customerServicesEndpoint + "/updateCustomerDetails", newDetails, {
-      headers: {
-        "x-access-token": accessToken,
-      },
-    });
-    toast.success(response.data.message, {
-      position: "top-right",
-      autoClose: 3500,
-    }
-    );
 
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    toast.error(error.message, {
-      position: "top-right",
-      autoClose: 3500,
-    });
-    console.error("Error changing customer details:", error);
-    return error;
-  }
-};
-*/
 
 async function changeDeliveryInfo(receiverName, mobile, address) {//change delivery info of cart receiver
   const accessToken = localStorage.getItem("accessToken");
@@ -110,21 +85,15 @@ async function removeCartItem(cartItemId) {
       "x-access-token": accessToken,
     },
   });
-  console.log("hello world");
-  console.log(response.data);
   return response.data;
 }
 
-async function CompletePayment(cartID, cardNumber, expiryDate, cvc) {
+async function CompletePayment(deliveryCharge) {
   const accessToken = localStorage.getItem("accessToken");
-  console.log(cartID, cardNumber, expiryDate, cvc);
   const response = await axios.post(
     cartServiceEndpoint + "/checkout",
     {
-      cartID: cartID,
-      cardNumber: cardNumber,
-      expiryDate: expiryDate,
-      cvc: cvc,
+      deliveryCharge: deliveryCharge,
     },
     {
       headers: {

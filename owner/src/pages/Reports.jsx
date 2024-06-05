@@ -67,7 +67,7 @@ function Reports() {
         <Row style={{ width: "100%" }}>
           <Col style={{ zIndex: "800" }} sm={8}>
             <h1>Reports & Analytics</h1>
-            <Card>
+            <Card className="containerCard">
               <Card.Body>
                 <Card.Title className="cardTitle">Sales Projection</Card.Title>
                 <Card.Text>
@@ -81,7 +81,7 @@ function Reports() {
           <Col  sm={4}>
             <div className="reportGenerationDiv">
               <h3>Generate Reports</h3>
-              <Card style={{ width: "100%" }}>
+              <Card style={{ width: "100%" }} className="inventoryReportCard">
                 <Card.Body>
                   <Card.Title>Inventory Report</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted">
@@ -103,7 +103,7 @@ function Reports() {
                   </div>
                 </Card.Body>
               </Card>
-              <Card style={{ width: "100%" }}>
+              <Card style={{ width: "100%" }} className="salesReportCard">
                 <Card.Body>
                   <Card.Title>Sales Report</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted">

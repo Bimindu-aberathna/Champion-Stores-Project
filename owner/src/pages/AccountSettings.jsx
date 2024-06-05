@@ -15,8 +15,8 @@ import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
-import { MdVisibility } from "react-icons/md";
-import { MdVisibilityOff } from "react-icons/md";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
   getEmail,
   ChangeEmail,
@@ -247,7 +247,8 @@ function AccountSetings() {
           <Card
             style={{
               width: "55%",
-              Index: "888"
+              Index: "888",
+              boxShadow: "0 0 15px 0 rgba(0,0,0,0.15)",
             }}
           >
             <Card.Body className="d-flex justify-content-center align-items-center">
@@ -343,9 +344,9 @@ function AccountSetings() {
                                   edge="end"
                                 >
                                   {showPassword ? (
-                                    <MdVisibilityOff />
+                                    <VisibilityOffIcon />
                                   ) : (
-                                    <MdVisibility />
+                                    <VisibilityIcon />
                                   )}
                                 </IconButton>
                               </InputAdornment>
@@ -389,9 +390,9 @@ function AccountSetings() {
                                   edge="end"
                                 >
                                   {showPassword ? (
-                                    <MdVisibilityOff />
+                                    <VisibilityOffIcon/>
                                   ) : (
-                                    <MdVisibility />
+                                    <VisibilityIcon/>
                                   )}
                                 </IconButton>
                               </InputAdornment>
@@ -419,9 +420,9 @@ function AccountSetings() {
                                   edge="end"
                                 >
                                   {showPassword ? (
-                                    <MdVisibilityOff />
+                                    <VisibilityOffIcon/>
                                   ) : (
-                                    <MdVisibility />
+                                    <VisibilityIcon/>
                                   )}
                                 </IconButton>
                               </InputAdornment>

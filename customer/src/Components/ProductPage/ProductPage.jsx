@@ -14,7 +14,7 @@ import {
 import { useParams } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getProductDetails } from "../Services/productServices";
 import {
   IoIosAddCircleOutline,
@@ -24,10 +24,14 @@ import { addProductToCart } from "../Services/cartServices";
 import {transformPrice} from "../Validation"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import CartContext from "../Services/CartContext";
 import "./ProductPage.css";
+
 function ProductPage() {
   const productID = useParams().id;
   const [product, setProduct] = useState([]);
+  const { updateCartSize } = useContext(CartContext); // Use cartSize from context
   const [quantity, setQuantity] = useState(1);
   const [loggedIn, setLoggedIn] = useState(
     localStorage.getItem("logged") || false
@@ -54,6 +58,7 @@ function ProductPage() {
               position: "top-right",
               autoClose: 3500,
             });
+            updateCartSize();
           }
         })
         .catch((error) => {

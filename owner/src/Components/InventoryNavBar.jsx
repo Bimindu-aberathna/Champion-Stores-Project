@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { IoIosArrowDropleftCircle } from "react-icons/io";
-import { BsFillCaretRightFill } from "react-icons/bs";
-import { BiSolidCategoryAlt } from "react-icons/bi";
-import { CiSquarePlus } from "react-icons/ci";
-import { LiaUserCircle } from "react-icons/lia";
-import { CiSquareRemove } from "react-icons/ci";
-import { VscHistory } from "react-icons/vsc";
-import { PiTreeStructureLight } from "react-icons/pi";
+import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import RestoreIcon from '@mui/icons-material/Restore';
+import SchemaIcon from '@mui/icons-material/Schema';
 import { Link } from "react-router-dom";
 import "./InventoryNavBar.css";
 
@@ -42,7 +40,7 @@ function SideNavbar({ selected }) {
             marginLeft: open ? "15px" : "-15px",
           }}
         >
-          <IoIosArrowDropleftCircle
+          <ArrowCircleLeftOutlinedIcon
             style={{
               fontSize: "2rem",
               border: "1px solid black",
@@ -72,7 +70,7 @@ function SideNavbar({ selected }) {
                   selected === "altercategories" ? "#474747" : "",
               }}
             >
-              <PiTreeStructureLight
+              <SchemaIcon
                 className="w-12 h-12"
                 style={{ fontSize: "36px" }}
               />
@@ -96,7 +94,7 @@ function SideNavbar({ selected }) {
                 backgroundColor: selected === "addProduct" ? "#474747" : "",
               }}
             >
-              <CiSquarePlus
+              <AddBoxIcon
                 className="w-12 h-12"
                 style={{ fontSize: "36px" }}
               />
@@ -121,7 +119,8 @@ function SideNavbar({ selected }) {
                   selected === "purchasehistory" ? "#474747" : "",
               }}
             >
-              <VscHistory className="w-12 h-12" style={{ fontSize: "36px" }} />
+              <RestoreIcon
+               className="w-12 h-12" style={{ fontSize: "36px" }} />
               &nbsp;&nbsp;
               {open && (
                 <span>
@@ -142,7 +141,7 @@ function SideNavbar({ selected }) {
                 backgroundColor: selected === "listsuppliers" ? "#474747" : "",
               }}
             >
-              <LiaUserCircle
+              <AssignmentIndIcon
                 className="w-12 h-12"
                 style={{ fontSize: "36px" }}
               />
@@ -161,7 +160,7 @@ function SideNavbar({ selected }) {
                   selected === "handleexpiredproducts" ? "#474747" : "",
               }}
             >
-              <CiSquareRemove
+              <RestoreFromTrashIcon
                 className="w-12 h-12"
                 style={{ fontSize: "36px" }}
               />

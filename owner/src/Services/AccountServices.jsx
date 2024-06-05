@@ -83,19 +83,57 @@ const changePassword = async (password) => {
 };
 
 
-// const getWeeklyInstoreSales = async () => {
-//   try {
-//     const res = await axios.get('http://localhost:5000/ownerReportServices/getInstoreSales');
-//     console.log(res.data);
-//     return res.data;
-//   } catch (err) {
-//     toast.error("Error fetching sales data", {
-//       position: "top-right",
-//       autoClose: 3500,
-//     });
-//     console.log(err);
-//     throw err; // Rethrow the error to handle it in the caller function
-//   }
-// };
+const checkEmail = async(email) => {
+    try {
+        const res = await axios({
+            method: "post",
+            url: "http://localhost:5000/api/owner/accountServices/checkEmail",
+            data: { email },
+        });
+        return res.data;
+    } catch (err) {
+        console.log(err);
+        toast.error(err.response.data.message, {
+            position: "top-right",
+            autoClose: 2500,
+        }); 
+        throw err;
+    }
+};
+const sendUserOTP = async(email,OTP) => {
+    try {
+        const res = await axios({
+            method: "post",
+            url: "http://localhost:5000/api/owner/accountServices/sendOTP",
+            data: { email,OTP },
+        });
+        return res.data;
+    } catch (err) {
+        console.log(err);
+        toast.error(err.response.data.message, {
+            position: "top-right",
+            autoClose: 2500,
+        }); 
+        throw err;
+    }
+};
 
-export { getEmail, ChangeEmail, verifyPassword, changePassword};
+const resetPassword = async(email,password,OTP) => {
+    try {
+        const res = await axios({
+            method: "post",
+            url: "http://localhost:5000/api/owner/accountServices/resetPassword",
+            data: { email,password,OTP },
+        });
+        return res.data;
+    } catch (err) {
+        console.log(err);
+        toast.error(err.response.data.message, {
+            position: "top-right",
+            autoClose: 2500,
+        }); 
+        throw err;
+    }
+};
+
+export { getEmail, ChangeEmail, verifyPassword, changePassword, checkEmail, sendUserOTP, resetPassword};

@@ -8,12 +8,13 @@ import {
   MDBBtn,
 } from "mdb-react-ui-kit";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { CiTrash } from "react-icons/ci";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PaymentModal from "./PaymentModal";
 import TextField from "@mui/material/TextField";
+import CartContext from "../Services/CartContext";
 import {
   validateName,
   validatePhoneNumber,
@@ -40,6 +41,7 @@ function Cart() {
   const [cart_Items, setCart_Items] = useState([]);// To store cart items
   const [subTotal, setSubTotal] = useState(0);// To store subtotal of cart items
   const [deliveryCharge, setDeliveryCharge] = useState(0);// To store delivery charge
+  const { updateCartSize } = useContext(CartContext);// To update cart size
 
 
   useEffect(() => {// To fetch cart items
@@ -118,7 +120,9 @@ function Cart() {
         if (response.status === 200) {
           setCart_Items((prevItems) => {
             console.log("Item removed from cart");
+            updateCartSize();
             return prevItems.filter((item) => item.cart_itemID !== id);
+
           });
         } else {
           alert("Error removing item");
@@ -353,7 +357,7 @@ function Cart() {
                         <h4 style={{ display: "flex" }}>
                           Rs.{" "}
                           <h1 style={{ fontWeight: "bold" }}>
-                            {subTotal + 250}
+                            {subTotal + deliveryCharge}
                           </h1>
                           .00
                         </h4>
@@ -366,6 +370,7 @@ function Cart() {
                             cartID={cartID}
                             subtotal={subTotal}
                             deliveryCharge={deliveryCharge}
+                            getCartDetails={getCartDetails}
                           />
                         </div>
                       </MDBCol>

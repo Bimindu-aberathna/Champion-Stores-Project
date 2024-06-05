@@ -1,3 +1,5 @@
+import SignUp from "./Login & SignUp/Sign-Up";
+
 export function validateName(name) {
   // Check if the name is not empty
   if (!name) {
@@ -76,6 +78,18 @@ export function validateAddress(address) {
 
   // If all checks pass, return isValid true (indicating no errors)
   return { isValid: true, errorMessage: "" };
+}
+
+export function validateSingnupPassword(password) {
+  // Check if the password is not empty
+  const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{7,}$/;
+  if(passwordRegex.test(password)){
+    return { isValid: true, errorMessage: "" };
+  }else if(password.length < 7){
+    return { isValid: false, errorMessage: "Password must be at least 7 characters long" };
+  }else{
+    return { isValid: false, errorMessage: "Password must contain at least one number, one special character and one alphabet" };
+  }
 }
 
 export function validatePassword(password) {

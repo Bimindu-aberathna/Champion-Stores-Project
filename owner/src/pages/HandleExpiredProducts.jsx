@@ -15,6 +15,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import './commonStyles.css';
 
 function HandleExpiredProducts() {
   const [categories, setCategories] = useState([]);
@@ -129,6 +130,7 @@ function HandleExpiredProducts() {
             .then((res) => {
               console.log(res.data);
               toast.success("Expired products removed successfully");
+              setQuantity(0);
             })
             .catch((err) => {
               console.log(err);
@@ -145,34 +147,35 @@ function HandleExpiredProducts() {
   };
 
   return (
-    <div>
+    <div style={{height:'100vh'}}>
       <InventoryNavBar selected="handleexpiredproducts"/>
       <SideNavbar selected="Inventory" />
-      <Form onSubmit={handleSubmit}>
-        <MDBContainer fluid className="bg-white" style={{ height: "100vh" }}>
+      <h1 className="mt-3" style={{marginLeft:"7%",marginTop:"1rem"}}>Handle Expired Products</h1>
+      <Form onSubmit={handleSubmit} style={{height:'80%'}}>
+        <MDBContainer fluid className="bg-white" style={{marginTop:'auto',marginBottom:'auto',height:'100%'}}>
           <MDBRow className="d-flex justify-content-center align-items-center h-100">
             <MDBCol style={{ paddingRight: "1rem" }}>
               <MDBCard
                 className="my-4"
                 style={{
                   display: "flex",
-                  width: "91%",
+                  width: "60%",
                   marginLeft: "auto",
                   marginRight: "auto",
                   zIndex: "800",
+                  padding: "1rem",
+                  borderRadius: "12px",
+                  boxShadow: "0 0 15px rgba(0, 0, 0, 0.15)",
                 }}
               >
                 <MDBRow className="g-0 justify-content-center">
                   {" "}
-                  <MDBCol md="6">
+                  <MDBCol md="9">
                     <MDBCardBody className="text-black d-flex flex-column justify-content-center">
-                      <h3 className="mb-5 text-uppercase fw-bold">
-                        Expired products
-                      </h3>
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
-                          <Form.Label>Select category</Form.Label>
+                          <Form.Label className="expProductFormLabel">Select category</Form.Label>
                           <Form.Select
                             id="categorySelect"
                             onChange={(e) => {
@@ -198,7 +201,7 @@ function HandleExpiredProducts() {
                         </MDBCol>
 
                         <MDBCol md="6">
-                          <Form.Label>Select sub-category</Form.Label>
+                          <Form.Label className="expProductFormLabel">Select sub-category</Form.Label>
                           {subCategories.length > 0 ? (
                             <Form.Select
                               id="subCategorySelect"
@@ -232,7 +235,7 @@ function HandleExpiredProducts() {
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         {/* <MDBCol md="6"> */}
-                        <Form.Label>Select product</Form.Label>
+                        <Form.Label className="expProductFormLabel">Select product</Form.Label>
                         {products.length > 0 && subCategories.length !== 0 ? (
                           <Form.Select
                             id="productSelect"
@@ -264,7 +267,7 @@ function HandleExpiredProducts() {
                         {/* </MDBCol> */}
                       </MDBRow>
 
-                      <Form.Label>Quantity</Form.Label>
+                      <Form.Label className="expProductFormLabel">Quantity</Form.Label>
                       <Form.Control
                         id="productQuantity"
                         type="number"

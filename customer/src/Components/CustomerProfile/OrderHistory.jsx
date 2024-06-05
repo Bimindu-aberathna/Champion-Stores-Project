@@ -31,7 +31,7 @@ function OrderHistory({customerName, customerEmail}) {
   const fetchOrderHistory = async () => { //function to fetch order history
     try {
       const response = await getOrderHistory(); //get order history
-      setOrderHistory(response.data);
+      setOrderHistory(response.data.reverse());
     } catch (error) {
       console.error("Error fetching order history:", error);
     }

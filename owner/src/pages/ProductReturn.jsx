@@ -43,11 +43,26 @@ function ProductReturn() {
     if (selectedItem === null) {
       toast.error("Please select a product to return.", {
         position: "top-right",
-        autoClose: 3500,
+        autoClose: 2500,
       });
       return;
     }
-    setShowConfirmation(true);
+    else if (!validateIntegers(quantity)||quantity===0) {
+      toast.error("Invalid quantity", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+      return;
+    }else if(quantity>selectedItem.currentStock){
+      toast.error("Quantity exceeds the available quantity", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+      return;
+    }else{
+      setShowConfirmation(true);
+    
+    }
   };
 
   // Close the confirmation modal
@@ -152,6 +167,7 @@ function ProductReturn() {
               width: "55%",
               paddingTop: "2.5rem",
               paddingBottom: "2.5rem",
+              boxShadow: "0 0 15px 0 rgba(0,0,0,0.15)",
             }}
           >
             <Card.Body className="d-flex justify-content-center align-items-center">

@@ -73,7 +73,7 @@ export default function ProductGrid({ searchTerm, minPrice, maxPrice }) {
                     <Link to={`/product/${product.productID}`}>
                       <Button variant="contained">View</Button>
                     </Link>
-                    {product.currentStock >= 10 ? (
+                    {product.currentStock >= 15 ? (
                       <p style={{ color: "green" }}>Available</p>
                     ) : (
                       <p style={{ color: "red" }}>

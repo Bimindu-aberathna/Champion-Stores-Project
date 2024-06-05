@@ -22,7 +22,7 @@ function PurchaseHistory() {
     axios
       .get("http://localhost:5000/api/owner/productServices/purchaseHistory")
       .then((res) => {
-        setItems(res.data);
+        setItems(res.data.reverse());
       })
       .catch((err) => {
         toast.error("Failed to fetch purchase history", {

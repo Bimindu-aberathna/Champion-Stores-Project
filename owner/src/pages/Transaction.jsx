@@ -2,8 +2,10 @@ import React from "react";
 import SideNavbar from "../Components/SideNavbar";
 import { Form, Row, Col, Button, InputGroup, Card } from "react-bootstrap";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { FaRegTrashAlt, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
-import { LuPackageX } from "react-icons/lu";
+import DeleteIcon from '@mui/icons-material/Delete';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import Boot_Button from "react-bootstrap/Button";
 import Boot_Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
@@ -16,25 +18,27 @@ import Receipt from "../Components/Receipt";
 import axios from "axios";
 
 function Transaction() {
-  const [items, setItems] = useState([]);//State to store the items in the list
-  const [total, setTotal] = useState(0);//State to store the total amount of the products
-  const listRef = useRef(null);//Reference to the list of products
+  const [items, setItems] = useState([]); //State to store the items in the list
+  const [total, setTotal] = useState(0); //State to store the total amount of the products
+  const listRef = useRef(null); //Reference to the list of products
   const [listHeight, setListHeight] = useState(0);
-  const [showConfirmation, setShowConfirmation] = useState(false);//State to show the confirmation of the transaction
-  const [productData, setProductData] = useState([]);//State to store the data of the products
-  const [filteredData, setFilteredData] = useState([]);//State to store the filtered data of the products
-  const [searchTerm, setSearchTerm] = useState("");//State to store the search term
-  const [discount, setDiscount] = useState(0);//State to store the discount default value is 0
-  const [isScanning, setIsScanning] = useState(false);//State to store the scanning status
-  const [barcode, setBarcode] = useState("");//State to store the barcode
-  const [scannedCode, setScannedCode] = useState("");//State to store the scanned code
-  const [showReceipt, setShowReceipt] = useState(false);//State to show the receipt
-  const [distinctSubCategories, setDistinctSubCategories] = useState([]);//State to store the distinct subcategories for the search
+  const [showConfirmation, setShowConfirmation] = useState(false); //State to show the confirmation of the transaction
+  const [productData, setProductData] = useState([]); //State to store the data of the products
+  const [filteredData, setFilteredData] = useState([]); //State to store the filtered data of the products
+  const [searchTerm, setSearchTerm] = useState(""); //State to store the search term
+  const [discount, setDiscount] = useState(0); //State to store the discount default value is 0
+  const [isScanning, setIsScanning] = useState(false); //State to store the scanning status
+  const [barcode, setBarcode] = useState(""); //State to store the barcode
+  const [scannedCode, setScannedCode] = useState(""); //State to store the scanned code
+  const [showReceipt, setShowReceipt] = useState(false); //State to show the receipt
+  const [distinctSubCategories, setDistinctSubCategories] = useState([]); //State to store the distinct subcategories for the search
 
-  useEffect(() => {//Fetch the data of the products
+  useEffect(() => {
+    //Fetch the data of the products
     axios
       .get("http://localhost:5000/api/owner/productServices/listProducts")
-      .then((res) => {//Set the data of the products
+      .then((res) => {
+        //Set the data of the products
         const mappedData = mapProductData(res.data);
         setProductData(mappedData);
         setFilteredData(mappedData);
@@ -43,7 +47,8 @@ function Transaction() {
         ];
         setDistinctSubCategories(subCategoryNames);
       })
-      .catch((err) => {//Show the error message
+      .catch((err) => {
+        //Show the error message
         console.log(err);
         toast.error("Error occurred while fetching products", {
           position: "top-right",
@@ -52,8 +57,10 @@ function Transaction() {
       });
   }, []);
 
-  useEffect(() => {//Filter the data of the products
-    const filtered = productData.filter(//Filter the data of the products based on the search term
+  useEffect(() => {
+    //Filter the data of the products
+    const filtered = productData.filter(
+      //Filter the data of the products based on the search term
       (product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,7 +69,8 @@ function Transaction() {
     setFilteredData(filtered);
   }, [searchTerm, productData]);
 
-  const handleSearch = (event) => {//Handle the search
+  const handleSearch = (event) => {
+    //Handle the search
     setSearchTerm(event.target.value);
   };
 
@@ -79,21 +87,25 @@ function Transaction() {
     setListHeight(listRef.current.offsetHeight);
   }, [items]);
 
-  const changeQuantity = (itemId, change) => {//Change the quantity of the product
+  const changeQuantity = (itemId, change) => {
+    //Change the quantity of the product
     const itansQuantity = items.find((item) => item.id === itemId).quantity;
     const productQuantity = productData.find(
       (product) => product.id === itemId
     ).quantity;
-    if (itansQuantity + change > productQuantity) {//Check if the quantity is greater than the product quantity
+    if (itansQuantity + change > productQuantity) {
+      //Check if the quantity is greater than the product quantity
       toast.error("Out of stock", {
         position: "top-right",
         autoClose: 2000,
       });
       return;
     }
-    setItems((prevItems) => {//Set the items
+    setItems((prevItems) => {
+      //Set the items
       return prevItems.map((item) => {
-        if (item.id === itemId) {//Check if the item id is equal to the item id
+        if (item.id === itemId) {
+          //Check if the item id is equal to the item id
           const newQuantity = Math.max(1, item.quantity + change);
           return { ...item, quantity: newQuantity };
         }
@@ -102,11 +114,13 @@ function Transaction() {
     });
   };
 
-  const removeItem = (itemId) => {//Remove the item from the list
+  const removeItem = (itemId) => {
+    //Remove the item from the list
     setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
   };
 
-  const clearList = () => {//Clear the list and new transaction
+  const clearList = () => {
+    //Clear the list and new transaction
     const result = window.confirm(
       "New Transaction!!\nAre you sure you want to proceed?"
     );
@@ -115,7 +129,8 @@ function Transaction() {
     }
   };
 
-  const handleProceed = () => {//Handle the proceed of the transaction
+  const handleProceed = () => {
+    //Handle the proceed of the transaction
     if (items.length === 0) {
       toast.error("No items in the list", {
         position: "top-right",
@@ -127,40 +142,48 @@ function Transaction() {
     setShowConfirmation(true);
   };
 
-  const handleCloseConfirmation = () => {//Handle the close of the confirmation
+  const handleCloseConfirmation = () => {
+    //Handle the close of the confirmation
     setShowConfirmation(false);
   };
 
-  const handleCloseReceipt = () => {//Handle the close of the receipt
+  const handleCloseReceipt = () => {
+    //Handle the close of the receipt
     setShowReceipt(false);
     setItems([]);
   };
 
-  const cancelTransaction = () => {//Cancel the transaction
+  const cancelTransaction = () => {
+    //Cancel the transaction
     setItems([]);
   };
 
-  const handleMouseOver = (event) => {//Handle the mouse over product tiles
+  const handleMouseOver = (event) => {
+    //Handle the mouse over product tiles
     event.target.closest(".box").style.filter = "blur(0px)";
     event.target.closest(".box").querySelector(".popup").style.display =
       "block";
   };
 
-  const handleMouseOut = (event) => {//Handle the mouse out of the product tiles
+  const handleMouseOut = (event) => {
+    //Handle the mouse out of the product tiles
     event.target.closest(".box").style.filter = "none";
     event.target.closest(".box").querySelector(".popup").style.display = "none";
   };
 
-  const addItem = (product) => {//Add the item to the list
+  const addItem = (product) => {
+    //Add the item to the list
     const existingItem = items.find((item) => item.name === product.name);
-    if (product.quantity <= 0) {//Check if the product quantity is less than or equal to 0
+    if (product.quantity <= 0) {
+      //Check if the product quantity is less than or equal to 0
       toast.error("Out of stock", {
         position: "top-right",
         autoClose: 2000,
       });
       return;
     }
-    if (existingItem) {//Check if the item already exists
+    if (existingItem) {
+      //Check if the item already exists
       if (existingItem.quantity >= product.quantity) {
         toast.error("Out of stock", {
           position: "top-right",
@@ -168,16 +191,19 @@ function Transaction() {
         });
         return;
       }
-      setItems((prevItems) => {//Set the items
+      setItems((prevItems) => {
+        //Set the items
         return prevItems.map((item) => {
-          if (item.id === existingItem.id) {//If the item id is equal to the existing item id then return the updated item
+          if (item.id === existingItem.id) {
+            //If the item id is equal to the existing item id then return the updated item
             return { ...item, quantity: item.quantity + 1 };
           }
           return item;
         });
       });
     } else {
-      setItems((prevItems) => [//add the item to the list
+      setItems((prevItems) => [
+        //add the item to the list
         ...prevItems,
         {
           id: product.id,
@@ -196,7 +222,7 @@ function Transaction() {
       discount: discount,
       items: items,
     };
-    const accessToken = localStorage.getItem("accessToken") || "";//Get the access token from the local storage
+    const accessToken = localStorage.getItem("accessToken") || ""; //Get the access token from the local storage
 
     // Make an HTTP POST request to your backend API
     axios
@@ -205,11 +231,12 @@ function Transaction() {
         transactionData,
         {
           headers: {
-            "x-access-token": accessToken,//Set the access token
+            "x-access-token": accessToken, //Set the access token
           },
         }
       )
-      .then((response) => {//if the transaction is successful
+      .then((response) => {
+        //if the transaction is successful
         console.log("Transaction successful:", response.data);
         setShowConfirmation(false);
         setShowReceipt(true);
@@ -219,7 +246,8 @@ function Transaction() {
           autoClose: 1500,
         });
       })
-      .catch((error) => {//if the transaction is unsuccessful
+      .catch((error) => {
+        //if the transaction is unsuccessful
         toast.error(error.response.data.message, {
           position: "top-right",
           autoClose: 3500,
@@ -229,14 +257,16 @@ function Transaction() {
       });
   };
 
-  const handleKeyPress = useCallback(//listen for the barcode scanner
+  const handleKeyPress = useCallback(
+    //listen for the barcode scanner
     (event) => {
       if (event.key === "Enter") {
         if (barcode) {
           setScannedCode(barcode);
           isScanning && event.preventDefault();
           const product = productData.find((item) => item.barcode === barcode);
-          if (product) {//if the product exists then add the product to the list
+          if (product) {
+            //if the product exists then add the product to the list
             addItem(product);
           }
           setBarcode("");
@@ -248,11 +278,13 @@ function Transaction() {
     [barcode]
   );
 
-  const barcodeReader = () => {//Handle the barcode reader
+  const barcodeReader = () => {
+    //Handle the barcode reader
     setIsScanning((prevState) => !prevState);
   };
 
-  useEffect(() => {//Listen for the key press
+  useEffect(() => {
+    //Listen for the key press
     if (isScanning) {
       window.addEventListener("keypress", handleKeyPress);
     } else {
@@ -282,17 +314,21 @@ function Transaction() {
                 >
                   All
                 </Button>
-                {distinctSubCategories.map((item) => (//Map the distinct subcategories
-                  <Button
-                    key={item}
-                    variant="outline-dark"
-                    size="sm"
-                    style={{ marginLeft: "0.3rem", zIndex: "905" }}
-                    onClick={() => setSearchTerm(item)}
-                  >
-                    {item}
-                  </Button>
-                ))}
+                {distinctSubCategories.map(
+                  (
+                    item //Map the distinct subcategories
+                  ) => (
+                    <Button
+                      key={item}
+                      variant="outline-dark"
+                      size="sm"
+                      style={{ marginLeft: "0.3rem", zIndex: "905" }}
+                      onClick={() => setSearchTerm(item)}
+                    >
+                      {item}
+                    </Button>
+                  )
+                )}
               </div>
             </div>
             {/* search bar */}
@@ -318,9 +354,10 @@ function Transaction() {
                 </Form>
               </div>
             </div>
-                {/* product list */}
+            {/* product list */}
             <div className="container">
-              {filteredData.map((product, index) => {//Map the filtered data
+              {filteredData.map((product, index) => {
+                //Map the filtered data
                 return (
                   <div
                     className="box"
@@ -346,7 +383,7 @@ function Transaction() {
                           <p className="productPrice">
                             Rs. {product.price} &nbsp;
                             {product.quantity <= 0 && (
-                              <LuPackageX style={{ color: "red" }} />
+                              <CancelIcon style={{ color: "red" }} />
                             )}
                           </p>
                         </div>
@@ -399,61 +436,65 @@ function Transaction() {
                     marginTop: 0,
                   }}
                 >
-                  {items.map((item) => (//Map the items
-                    <li
-                      className="list-group-item"
-                      key={item.id}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span>{item.name}</span>
-                      <div
+                  {items.map(
+                    (
+                      item //Map the items
+                    ) => (
+                      <li
+                        className="list-group-item"
+                        key={item.id}
                         style={{
                           display: "flex",
+                          justifyContent: "space-between",
                           alignItems: "center",
-                          marginLeft: "auto",
                         }}
                       >
-                        <span
+                        <span>{item.name}</span>
+                        <div
                           style={{
-                            marginRight: "1rem",
-                            fontSize: "14px",
-                            fontWeight: "bold",
+                            display: "flex",
+                            alignItems: "center",
+                            marginLeft: "auto",
                           }}
                         >
-                          x{item.quantity}
-                        </span>
+                          <span
+                            style={{
+                              marginRight: "1rem",
+                              fontSize: "14px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            x{item.quantity}
+                          </span>
 
-                        <Button
-                          variant="outline-dark"
-                          size="sm"
-                          onClick={() => changeQuantity(item.id, -1)}
-                          style={{ marginRight: "0.2rem" }}
-                        >
-                          <FaMinusCircle />
-                        </Button>
-                        <Button
-                          variant="outline-dark"
-                          size="sm"
-                          onClick={() => changeQuantity(item.id, 1)}
-                          style={{ marginRight: "0.2rem" }}
-                        >
-                          <FaPlusCircle />
-                        </Button>
-                        <Button
-                          variant="outline-dark"
-                          size="sm"
-                          onClick={() => removeItem(item.id)}
-                          style={{ marginRight: "0.2rem" }}
-                        >
-                          <FaRegTrashAlt />
-                        </Button>
-                      </div>
-                    </li>
-                  ))}
+                          <Button
+                            variant="outline-dark"
+                            size="sm"
+                            onClick={() => changeQuantity(item.id, -1)}
+                            style={{ marginRight: "0.2rem" }}
+                          >
+                            <RemoveCircleIcon />
+                          </Button>
+                          <Button
+                            variant="outline-dark"
+                            size="sm"
+                            onClick={() => changeQuantity(item.id, 1)}
+                            style={{ marginRight: "0.2rem" }}
+                          >
+                            <AddCircleIcon />
+                          </Button>
+                          <Button
+                            variant="outline-dark"
+                            size="sm"
+                            onClick={() => removeItem(item.id)}
+                            style={{ marginRight: "0.2rem" }}
+                          >
+                            <DeleteIcon />
+                          </Button>
+                        </div>
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             </div>
@@ -562,8 +603,8 @@ function Transaction() {
           </div>
         </Modal.Footer>
       </Modal>
-        
-        {/*Modal for receipt*/}
+
+      {/*Modal for receipt*/}
       <Modal show={showReceipt} onHide={handleCloseReceipt}>
         <Modal.Header closeButton>
           <Modal.Title>Receipt</Modal.Title>
