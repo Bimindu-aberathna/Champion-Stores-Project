@@ -15,8 +15,8 @@ import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
   getEmail,
   ChangeEmail,
@@ -30,25 +30,22 @@ import Swal from "sweetalert2";
 import "./AccountSettings.css";
 
 function AccountSetings() {
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [items, setItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [isNotExchanging, setIsNotExchanging] = useState(false);
-  const [showMailChange, setShowMailChange] = useState(false);
-  const [currentMail, setCurrentMail] = useState("");
-  const [newMail, setNewMail] = useState("");
-  const [verified, setVerified] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [modalMessage, setModalMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false); //State for showing the confirmation modal
+  const [showMailChange, setShowMailChange] = useState(false); //State for showing the email change form
+  const [currentMail, setCurrentMail] = useState(""); //State for the current email
+  const [newMail, setNewMail] = useState(""); //State for the new email
+  const [verified, setVerified] = useState(false); //State for verifying the password
+  const [currentPassword, setCurrentPassword] = useState(""); //State for the current password
+  const [newPassword, setNewPassword] = useState(""); //State for the new password
+  const [confirmPassword, setConfirmPassword] = useState(""); //State for the confirm password
+  const [showPassword, setShowPassword] = useState(false); //State for showing the password
 
   useEffect(() => {
+    //Use effect to fetch the email of the user when the component mounts
     const fetchEmail = async () => {
+      //Function to fetch the email of the user
       try {
-        const email = await getEmail();
+        const email = await getEmail(); //Get the email of the user
         if (email) {
           console.log(email);
           setCurrentMail(email); // Only setting the email string to the state
@@ -64,29 +61,35 @@ function AccountSetings() {
   }, []);
 
   const handleCloseConfirmation = () => {
+    //Function to close the confirmation modal
     setShowConfirmation(false);
   };
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowPassword = () => setShowPassword((show) => !show); //Function to handle the visibility of the password
 
   const handleMouseDownPassword = (event) => {
+    //Function to handle the mouse down event on the password
     event.preventDefault();
   };
 
   const handleEmailChange = () => {
+    //Function to handle the email change
     if (newMail === "") {
+      //If the new email is empty
       toast.error("Please enter a valid email address", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
     } else if (!validateEmail(newMail)) {
+      //If the email is not valid
       toast.error("Please enter a valid email address", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
     } else if (newMail === currentMail) {
+      //If the new email is the same as the current email
       toast.error("Please enter a different email address", {
         position: "top-right",
         autoClose: 3500,
@@ -103,14 +106,15 @@ function AccountSetings() {
         confirmButtonText: "Yes, change it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          ChangeEmail(newMail)
+          ChangeEmail(newMail) //Change the email
             .then((res) => {
               if (res.status === 200) {
+                //If the success status is 200
                 toast.success("Email Updated", {
                   position: "top-right",
                   autoClose: 3500,
                 });
-                setCurrentMail(newMail);
+                setCurrentMail(newMail); //Set the current email to the new email
                 setNewMail("");
                 setShowMailChange(false);
               } else {
@@ -131,16 +135,20 @@ function AccountSetings() {
     }
   };
   const verifyCurrentPassword = () => {
+    //Function to verify the current password
     if (currentPassword === "") {
+      //If the current password is empty
       toast.error("Please enter your password", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
     } else {
-      verifyPassword(currentPassword)
+      //Verify the password
+      verifyPassword(currentPassword) //Verify the password
         .then((res) => {
           if (res.status === 200) {
+            //If the status is 200
             toast.success("Password Verified", {
               position: "top-right",
               autoClose: 3500,
@@ -161,19 +169,23 @@ function AccountSetings() {
   };
 
   const changeOwnerPassword = () => {
+    //Function to change the password
     if (newPassword === "" || confirmPassword === "") {
+      //If the new password or confirm password is empty
       toast.error("Please enter your new password", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
     } else if (newPassword !== confirmPassword) {
+      //If the new password and confirm password do not match
       toast.error("Passwords do not match", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
     } else if (!validatePassword(newPassword)) {
+      //If the new password does not meet the password requirements
       toast.error(
         "Password must contain at least 7 characters, including 1 letter, 1 number and 1 Symbol",
         {
@@ -193,13 +205,15 @@ function AccountSetings() {
         confirmButtonText: "Yes, change it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          changePassword(newPassword)
+          //If the result is confirmed
+          changePassword(newPassword) //Call the change password function
             .then((res) => {
               if (res.status === 200) {
                 toast.success("Password Changed Successfully!", {
                   position: "top-right",
                   autoClose: 3500,
                 });
+                //set Default values
                 setCurrentPassword("");
                 setNewPassword("");
                 setConfirmPassword("");
@@ -259,8 +273,10 @@ function AccountSetings() {
                 <div
                   style={{ display: "flex", justifyContent: "center" }}
                 ></div>
-                <Form style={{}}>
+                {/* Login Form */}
+                <Form>
                   <Form.Group className="mb-3">
+                    {/* // Email Change */}
                     <div className="currentMail">
                       {" "}
                       Current E-mail : &nbsp;&nbsp;
@@ -297,6 +313,7 @@ function AccountSetings() {
                         noValidate
                         autoComplete="off"
                       >
+                        {/* Input for the new email */}
                         <TextField
                           id="filled-basic"
                           label="New E-mail"
@@ -318,13 +335,15 @@ function AccountSetings() {
                     </div>
                   </Form.Group>
                 </Form>
-                <Form style={{}}>
+                {/* Change Password */}
+                <Form>
                   <Form.Group className="mb-3">
                     <div className="currentPassword">
                       {" "}
                       <h5>Change Password</h5>
                       <div style={{ display: verified ? "none" : "" }}>
                         <p>Please verify your current password to change it.</p>
+                        {/* Input for the current password */}
                         <FormControl
                           sx={{ m: 1, width: "60%" }}
                           variant="filled"
@@ -355,6 +374,7 @@ function AccountSetings() {
                             onChange={(e) => setCurrentPassword(e.target.value)}
                           />
                         </FormControl>
+                        {/* Button to verify the password */}
                         <div className="verifyBTN">
                           <Button
                             style={{ width: "6rem", marginLeft: "0.75rem" }}
@@ -367,6 +387,7 @@ function AccountSetings() {
                         </div>
                       </div>
                       {/* -----------------------------------------------------------------------     */}
+                      {/* Change Password */}
                       <div
                         className="changePassword"
                         style={{ display: !verified ? "none" : "" }}
@@ -375,6 +396,7 @@ function AccountSetings() {
                           sx={{ m: 1, width: "60%" }}
                           variant="filled"
                         >
+                          {/* Input for the new password */}
                           <InputLabel htmlFor="filled-adornment-password">
                             New Password
                           </InputLabel>
@@ -390,9 +412,9 @@ function AccountSetings() {
                                   edge="end"
                                 >
                                   {showPassword ? (
-                                    <VisibilityOffIcon/>
+                                    <VisibilityOffIcon />
                                   ) : (
-                                    <VisibilityIcon/>
+                                    <VisibilityIcon />
                                   )}
                                 </IconButton>
                               </InputAdornment>
@@ -405,6 +427,7 @@ function AccountSetings() {
                           sx={{ m: 1, width: "60%" }}
                           variant="filled"
                         >
+                          {/* Input for the confirm password */}
                           <InputLabel htmlFor="filled-adornment-password">
                             Confirm Password
                           </InputLabel>
@@ -420,9 +443,9 @@ function AccountSetings() {
                                   edge="end"
                                 >
                                   {showPassword ? (
-                                    <VisibilityOffIcon/>
+                                    <VisibilityOffIcon />
                                   ) : (
-                                    <VisibilityIcon/>
+                                    <VisibilityIcon />
                                   )}
                                 </IconButton>
                               </InputAdornment>
@@ -431,6 +454,7 @@ function AccountSetings() {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                           />
                         </FormControl>
+                        {/* Button to change the password */}
                         <div className="changePwdBtn">
                           <Button
                             style={{ width: "6rem", marginLeft: "0.75rem" }}
@@ -450,8 +474,8 @@ function AccountSetings() {
           </Card>
         </div>
       </div>
-
-      {/* Rest of your component */}
+      
+      {/* Confirmation Modal */}
       <Modal show={showConfirmation} onHide={handleCloseConfirmation}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm</Modal.Title>

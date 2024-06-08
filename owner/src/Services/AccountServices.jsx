@@ -1,8 +1,8 @@
 import axios from "axios";
-import { useState,useEffect } from 'react';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Function to get the email of the owner
 const getEmail = async () => {
     const accessToken = localStorage.getItem("accessToken");
     try {
@@ -22,6 +22,7 @@ const getEmail = async () => {
     }
 };
 
+// Function to change the email of the owner
 const ChangeEmail = async (email) => {
     const accessToken = localStorage.getItem("accessToken");
     try {
@@ -42,6 +43,7 @@ const ChangeEmail = async (email) => {
     }
 };
 
+// Function to verify the password of the owner
 const verifyPassword = async (password) => {
     const accessToken = localStorage.getItem("accessToken");
     try {
@@ -62,6 +64,7 @@ const verifyPassword = async (password) => {
     }
 };
 
+// Function to change the password of the owner
 const changePassword = async (password) => {
     const accessToken = localStorage.getItem("accessToken");
     try {
@@ -83,6 +86,7 @@ const changePassword = async (password) => {
 };
 
 
+// Function to check the email of the owner
 const checkEmail = async(email) => {
     try {
         const res = await axios({
@@ -100,6 +104,8 @@ const checkEmail = async(email) => {
         throw err;
     }
 };
+
+// Function to send the OTP to the owner
 const sendUserOTP = async(email,OTP) => {
     try {
         const res = await axios({
@@ -118,6 +124,7 @@ const sendUserOTP = async(email,OTP) => {
     }
 };
 
+// Function to reset the password of the owner
 const resetPassword = async(email,password,OTP) => {
     try {
         const res = await axios({

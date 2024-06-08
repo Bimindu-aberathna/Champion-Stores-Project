@@ -18,19 +18,18 @@ import Swal from "sweetalert2";
 import './commonStyles.css';
 
 function HandleExpiredProducts() {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [subCategories, setSubCategories] = useState([]);
-  const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState("");
-  const [quantity, setQuantity] = useState(0);
+  const [categories, setCategories] = useState([]); // State variable to store the categories
+  const [selectedCategory, setSelectedCategory] = useState(""); // State variable to store the selected category 
+  const [subCategories, setSubCategories] = useState([]); // State variable to store the sub-categories
+  const [selectedSubCategory, setSelectedSubCategory] = useState(""); // State variable to store the selected sub-category
+  const [products, setProducts] = useState([]); // State variable to store the products
+  const [selectedProduct, setSelectedProduct] = useState(""); // State variable to store the selected product
+  const [quantity, setQuantity] = useState(0); // State variable to store the quantity
 
-  useEffect(() => {
+  useEffect(() => { // Function to fetch the categories
     axios
       .get("http://localhost:5000/api/owner/productServices/getCategories")
       .then((res) => {
-        console.log(res.data);
         setCategories(res.data);
         setSelectedCategory(res.data[0]);
       })
@@ -43,8 +42,8 @@ function HandleExpiredProducts() {
       });
   }, []);
 
-  useEffect(() => {
-    if (selectedCategory !== "") {
+  useEffect(() => { // Function to fetch the sub-categories
+    if (selectedCategory !== "") { // If a category is selected
       axios
         .get(
           `http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategory.categoryID}`
@@ -68,7 +67,7 @@ function HandleExpiredProducts() {
   }, [selectedCategory]);
 
   useEffect(() => {
-    if (selectedSubCategory !== "") {
+    if (selectedSubCategory !== "") { // Function to fetch the products
       axios
         .get(
           `http://localhost:5000/api/owner/productServices/getProductsBySubCategory/${selectedSubCategory.subCategoryID}`
@@ -89,16 +88,16 @@ function HandleExpiredProducts() {
     }
   }, [selectedSubCategory]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e) => { // Function to handle the form submission to remove expired products
     e.preventDefault();
     const productID = selectedProduct.productID;
-    if (!validateIntegers(quantity)) {
+    if (!validateIntegers(quantity)) { // Validate the quantity
       toast.error("Quantity should be an integer");
       return;
-    } else if (quantity <= 0) {
+    } else if (quantity <= 0) { // Validate the quantity
       toast.error("Quantity should be greater than 0");
       return;
-    } else if (quantity > selectedProduct.currentStock) {
+    } else if (quantity > selectedProduct.currentStock) { // Validate the quantity
       toast.error("Quantity should be less than or equal to current stock");
       return;
     } else {
@@ -175,6 +174,7 @@ function HandleExpiredProducts() {
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
+                          {/* Selector for category select */}
                           <Form.Label className="expProductFormLabel">Select category</Form.Label>
                           <Form.Select
                             id="categorySelect"
@@ -201,6 +201,7 @@ function HandleExpiredProducts() {
                         </MDBCol>
 
                         <MDBCol md="6">
+                          {/* Selector for sub-category select */}
                           <Form.Label className="expProductFormLabel">Select sub-category</Form.Label>
                           {subCategories.length > 0 ? (
                             <Form.Select
@@ -234,7 +235,7 @@ function HandleExpiredProducts() {
                         </MDBCol>
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
-                        {/* <MDBCol md="6"> */}
+                        {/* selector for product select */}
                         <Form.Label className="expProductFormLabel">Select product</Form.Label>
                         {products.length > 0 && subCategories.length !== 0 ? (
                           <Form.Select
@@ -264,9 +265,8 @@ function HandleExpiredProducts() {
                             <option>No products available</option>
                           </Form.Select>
                         )}
-                        {/* </MDBCol> */}
                       </MDBRow>
-
+                        {/* Quantity input */}
                       <Form.Label className="expProductFormLabel">Quantity</Form.Label>
                       <Form.Control
                         id="productQuantity"
@@ -283,6 +283,7 @@ function HandleExpiredProducts() {
                           Clear all
                         </Button>
                         &nbsp;
+                        {/* Remove expired products button */}
                         <Button
                           as="input"
                           variant="dark"

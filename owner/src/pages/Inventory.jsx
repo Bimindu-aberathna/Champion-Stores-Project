@@ -21,15 +21,15 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Inventory.css";
 
 function Inventory() {
-  const [items, setItems] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [popperOpen, setPopperOpen] = useState(false);
-  const [popperContent, setPopperContent] = useState("");
-  const [distinctSubCategories, setDistinctSubCategories] = useState([]);
+  const [items, setItems] = useState([]); // State variable to store the items
+  const [searchTerm, setSearchTerm] = useState(""); // State variable to store the search term 
+  const [searchResults, setSearchResults] = useState([]); // State variable to store the search results
+  const [anchorEl, setAnchorEl] = useState(null); // State variable to store the anchor element 
+  const [popperOpen, setPopperOpen] = useState(false);  // State variable to store the popper open status
+  const [popperContent, setPopperContent] = useState(""); // State variable to store the popper content
+  const [distinctSubCategories, setDistinctSubCategories] = useState([]); // State variable to store the distinct sub categories
 
-  useEffect(() => {
+  useEffect(() => { // Function to get the product list
     axios
       .get("http://localhost:5000/api/owner/productServices/listProducts")
       .then((res) => {
@@ -49,7 +49,7 @@ function Inventory() {
       });
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { // Function to filter the products based on the search term
     const results = items.filter(
       (item) =>
         item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -59,42 +59,26 @@ function Inventory() {
     setSearchResults(results);
   }, [searchTerm, items]);
 
-  const handleSearch = (event) => {
+  const handleSearch = (event) => { // Function to handle the search
     setSearchTerm(event.target.value);
   };
 
-  const handleMouseOver = (event) => {
-    event.target.closest(".box").style.filter = "blur(0px)";
 
-    // Show the popup banner
-    event.target.closest(".box").querySelector(".popup").style.display =
-      "block";
-  };
-
-  const handleMouseOut = (event) => {
-    // Remove blur effect when mouse leaves the tile
-    event.target.closest(".box").style.filter = "none";
-
-    // Hide the popup banner
-    event.target.closest(".box").querySelector(".popup").style.display = "none";
-  };
-  const handlePopoverOpen = (event, productName) => {
-    setAnchorEl(event.currentTarget);
+  const handlePopoverOpen = (event, productName) => { // Function to handle the popover open
+    setAnchorEl(event.currentTarget); 
     setPopperContent(productName);
     setPopperOpen(true);
   };
 
-  const handlePopoverClose = () => {
+  const handlePopoverClose = () => { // Function to handle the popover close
     setAnchorEl(null);
     setPopperOpen(false);
   };
 
-  const quicksearch = ["Soap", "Face Cream", "Face Wash", "Lipstick", "Toys"];
-
   return (
     <div>
-      <InventoryNavBar />
-      <SideNavbar selected="Inventory" />
+      <InventoryNavBar /> {/* InventoryNavBar component */}
+      <SideNavbar selected="Inventory" /> {/* SideNavbar component */}
 
       <div
         style={{
@@ -112,6 +96,7 @@ function Inventory() {
             justifyContent: "center",
           }}
         >
+          {/* Display the buttons for the distinct sub categories */}
           <Button
             variant="outline-dark"
             size="sm"
@@ -142,6 +127,7 @@ function Inventory() {
           className="searchDiv"
           style={{ marginLeft: "", marginTop: "-5.9rem", zIndex: "905" }}
         >
+          {/* Search bar */}
           <Form inline style={{ zIndex: "777" }}>
             <Row>
               <Col xs="auto">

@@ -1,0 +1,16 @@
+
+.MuiChartsLegend-mark{
+    display: none;
+}
+.top-sellers-chart{
+    width: 100%;
+}
+.css-1lbgfbl-MuiResponsiveChart-container{
+    width: 100%!important;
+}
+.periodSelector{
+    display: flex;
+    justify-content: right;
+    margin-right: 50px;
+    margin-top: 20px;
+}

@@ -1,35 +1,39 @@
 import Button from "react-bootstrap/Button";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
-// import bcrypt from 'bcryptjs';
 import { useRef } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { Link } from "react-router-dom";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import "./Login.css";
 
-function Login() {
-  const emailInputRef = useRef();
-  const passwordInputRef = useRef();
-  const location = useLocation();
-  const [showPassword, setShowPassword] = useState(false);
+function Login({setIsAuthenticated}) {// Login page for the owner
+  const emailInputRef = useRef();// Reference to the email input field
+  const passwordInputRef = useRef();// Reference to the password input field
+  const location = useLocation();// Location object to get the current location
+  const navigate = useNavigate();// Navigation hook for redirecting to another page
+  const [showPassword, setShowPassword] = useState(false);// State variable to toggle password visibility
 
-  useEffect(() => {
+  useEffect(() => {// Prevent the user from going back to the previous page
     window.history.pushState(null, document.title, window.location.href);
     window.addEventListener("popstate", function (event) {
       window.history.pushState(null, document.title, window.location.href);
     });
   }, [location]);
 
-  function handleLoginForm(event) {
+  useEffect(() => {// Set the isAuthenticated state to false when the component mounts
+    setIsAuthenticated(false);
+  }, []); 
+
+  function handleLoginForm(event) {// Function to handle the login form submission
     event.preventDefault(); // Prevent the default form submission behavior
 
-    const email = emailInputRef.current.value;
-    const password = passwordInputRef.current.value;
+    const email = emailInputRef.current.value;// Get the email value from the email input field
+    const password = passwordInputRef.current.value;// Get the password value from the password input field
 
+    //call the login api to authenticate the user
     axios
       .post("http://localhost:5000/api/owner/accountServices/login", {
         email,
@@ -39,8 +43,10 @@ function Login() {
         console.log(res.data);
         console.log("Login Successful!");
         if (res.status === 200) {
-          localStorage.setItem("accessToken", res.data.accessToken);
-          window.location.href = "/transaction";
+          localStorage.setItem("accessToken", res.data.accessToken);// Store the access token in the local storage
+          setIsAuthenticated(true);// Set the isAuthenticated state to true
+          let { from } = location.state || { from: { pathname: "/transaction" } };
+          navigate(from);// Redirect the user to the transaction page
         } else {
           toast.error(res.data.message, {
             position: "top-right",
@@ -58,7 +64,7 @@ function Login() {
   }
 
   return (
-    <div
+    <div // Login page layout
       style={{
         display: "flex",
         justifyContent: "center",
@@ -82,6 +88,7 @@ function Login() {
             Account
           </h1>
           <Form.Group className="mb-3" controlId="formBasicEmail">
+            {/* Email input field */}
             <Form.Label>Email address</Form.Label>
             <Form.Control
               type="email"
@@ -96,6 +103,7 @@ function Login() {
             controlId="formBasicPassword"
             style={{ position: "relative" }}
           >
+            {/* Password input field */}
             <Form.Label>Password</Form.Label>
             <Form.Control
               type={showPassword ? "text" : "password"}
@@ -106,6 +114,8 @@ function Login() {
               className="eye-styles"
               style={{
                 display: showPassword ? "none" : "block",
+                marginTop: "-3px",
+                transform: "scale(0.9)"
               }}
               onClick={() => setShowPassword(!showPassword)}
             />
@@ -113,6 +123,8 @@ function Login() {
               className="eye-styles"
               style={{
                 display: showPassword ? "block" : "none",
+                marginTop: "-3px",
+                transform: "scale(0.9)"
               }}
               onClick={() => setShowPassword(!showPassword)}
             />
@@ -121,6 +133,7 @@ function Login() {
             <a href="/forgotpassword">Fogot password</a>
           </Form.Group>
           <div style={{ display: "flex", justifyContent: "center" }}>
+            {/* Login button */}
             <Button variant="dark" type="submit" style={{ width: "100%" }}>
               Login
             </Button>
@@ -134,7 +147,7 @@ function Login() {
         <img
           src={require("../assets/store.png")}
           alt="owner"
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%"}}
         />
         <div
           className="image-overlay"

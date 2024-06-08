@@ -5,16 +5,16 @@ import { useNavigate } from "react-router-dom";
 import "./SideNavbar.css";
 
 function SideNavbar({ selected }) {
-  const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);//State for opening and closing the side navbar
+  const navigate = useNavigate();//Navigation hook for redirecting to another page
 
-  const handleLogout = () => {
+  const handleLogout = () => {//Function to handle the logout
     try {
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("accessToken");//Remove the access token from local storage
     } catch (error) {
       console.log(error);
     }
-    navigate("/", { replace: true });
+    navigate("/", { replace: true });//Redirect to the login page
   };
 
   return (
@@ -43,7 +43,7 @@ function SideNavbar({ selected }) {
       >
         
         <div style={{ height: "15%" }}></div>
-
+        {/*Icon for opening and closing the side navbar*/}
         <div
           style={{
             position: "absolute",
@@ -82,6 +82,8 @@ function SideNavbar({ selected }) {
             paddingLeft: 0,
           }}
         >
+          {/*All the options in the side navbar*/}
+          {/*Transaction Option*/}
           <Link to="/transaction" className="text-decoration-none text-white">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
@@ -98,6 +100,7 @@ function SideNavbar({ selected }) {
               {open && <span className="iconDescription">Transaction</span>}
             </li>
           </Link>
+          {/*Orders Option*/}
           <Link to="/orders" className="text-decoration-none text-white">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
@@ -114,6 +117,7 @@ function SideNavbar({ selected }) {
               {open && <span className="iconDescription">Orders</span>}
             </li>
           </Link>
+          {/*Inventory Option*/}
           <Link to="/inventory" className="text-decoration-none text-white">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
@@ -130,6 +134,7 @@ function SideNavbar({ selected }) {
               {open && <span className="iconDescription">Inventory</span>}
             </li>
           </Link>
+          {/*Low Stocks Option*/}
           <Link to="/lowstock" className="text-decoration-none text-white">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
@@ -146,6 +151,7 @@ function SideNavbar({ selected }) {
               {open && <span className="iconDescription">Low Stocks</span>}
             </li>
           </Link>
+          {/*Reports Option*/}
           <Link to="/reports" className="text-decoration-none text-white">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
@@ -162,6 +168,7 @@ function SideNavbar({ selected }) {
               {open && <span className="iconDescription">Reports</span>}
             </li>
           </Link>
+          {/*Product Returns Option*/}
           <Link to="/productreturn" className="text-decoration-none text-white">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
@@ -182,7 +189,7 @@ function SideNavbar({ selected }) {
           <li></li>
           <li></li>
           <li></li>
-
+          {/*Logout Option*/}    
           <li
             className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2  rounded-md mt-2"
             style={{ backgroundColor: "#474747",borderRadius:"10px",margin:'5px',cursor:'pointer'  }}
@@ -196,6 +203,7 @@ function SideNavbar({ selected }) {
             />
             {open && <span className="iconDescription">Log Out</span>}
           </li>
+          {/*Account Settings Option*/}
           <Link
             to="/accountsettings"
             className="text-decoration-none text-white"

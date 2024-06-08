@@ -36,40 +36,39 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 
-const regex = /^(0|[1-9]\d*)$/;
 
 function EditProduct() {
-  const navigate = useNavigate();
-  const { productId } = useParams();
-  const [productName, setProductName] = useState("");
-  const [brand, setBrand] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [selectedCategoryID, setSelectedCategoryID] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [subCategories, setSubCategories] = useState([]);
-  const [selectedSubcategory, setSelectedSubcategory] = useState("");
-  const [selectedSubcategoryID, setSelectedSubcategoryID] = useState("");
-  const [index, setIndex] = useState(0);
-  const [suppliers, setSuppliers] = useState([]);
-  const [selectedSupplierID, setSelectedSupplierID] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [openingStock, setOpeningStock] = useState("");
-  const [reorderLevel, setReorderLevel] = useState("");
-  const [unitPrice, setUnitPrice] = useState("");
-  const [unitWeight, setUnitWeight] = useState(0);
-  const [productDescription, setProductDescription] = useState("");
-  const [img1, setImg1] = useState("");
-  const [img2, setImg2] = useState("");
-  const [img3, setImg3] = useState("");
-  const [uploadIMG1, setUploadIMG1] = useState(null);
-  const [uploadIMG2, setUploadIMG2] = useState(null);
-  const [uploadIMG3, setUploadIMG3] = useState(null);
-  const [image1, setImage1] = useState("");
-  const [image2, setImage2] = useState("");
-  const [image3, setImage3] = useState("");
-  const [dataSending, setDataSending] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [item, setItem] = useState([]);
+  const navigate = useNavigate(); // Navigation hook for redirecting to another page
+  const { productId } = useParams(); // Get the product ID from the URL
+  const [productName, setProductName] = useState(""); // State variable to store the product name
+  const [brand, setBrand] = useState(""); // State variable to store the product brand
+  const [categories, setCategories] = useState([]); // State variable to store the categories
+  const [selectedCategoryID, setSelectedCategoryID] = useState(""); // State variable to store the selected category ID
+  const [selectedCategory, setSelectedCategory] = useState(""); // State variable to store the selected category
+  const [subCategories, setSubCategories] = useState([]); // State variable to store the subcategories
+  const [selectedSubcategory, setSelectedSubcategory] = useState(""); // State variable to store the selected subcategory
+  const [selectedSubcategoryID, setSelectedSubcategoryID] = useState(""); // State variable to store the selected subcategory ID
+  const [index, setIndex] = useState(0); // State variable to store the index of the carousel
+  const [suppliers, setSuppliers] = useState([]); // State variable to store the suppliers
+  const [selectedSupplierID, setSelectedSupplierID] = useState(""); // State variable to store the selected supplier ID
+  const [supplier, setSupplier] = useState(""); // State variable to store the selected supplier
+  const [openingStock, setOpeningStock] = useState(""); // State variable to store the opening stock
+  const [reorderLevel, setReorderLevel] = useState(""); // State variable to store the reorder level
+  const [unitPrice, setUnitPrice] = useState(""); // State variable to store the unit price
+  const [unitWeight, setUnitWeight] = useState(0); // State variable to store the unit weight
+  const [productDescription, setProductDescription] = useState(""); // State variable to store the product description
+  const [img1, setImg1] = useState(""); //to display image1 in the carousel if user has not uploaded a new image
+  const [img2, setImg2] = useState("");  //to display image2 in the carousel if user has not uploaded a new image
+  const [img3, setImg3] = useState("");   //to display image3 in the carousel if user has not uploaded a new image
+  const [uploadIMG1, setUploadIMG1] = useState(null); //to store image1 which needs to be uploaded to firebase
+  const [uploadIMG2, setUploadIMG2] = useState(null); //to store image2 which needs to be uploaded to firebase
+  const [uploadIMG3, setUploadIMG3] = useState(null); //to store image3 which needs to be uploaded to firebase
+  const [image1, setImage1] = useState(""); //to display image1 in the carousel if user has uploaded a new image
+  const [image2, setImage2] = useState(""); //to display image2 in the carousel if user has uploaded a new image
+  const [image3, setImage3] = useState(""); //to display image3 in the carousel if user has uploaded a new image
+  const [dataSending, setDataSending] = useState(false); // State variable to store the data sending status
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // State variable to store the delete modal status
+  const [item, setItem] = useState([]); // State variable to store the product data
 
   useEffect(() => {
     // Fetch product data from backend using product ID
@@ -77,7 +76,7 @@ function EditProduct() {
       .get(
         `http://localhost:5000/api/owner/productServices/getProductData/${productId}`
       )
-      .then((res) => {
+      .then((res) => { // Set the fetched data to the state variables
         setItem(res.data[0]);
         setProductName(res.data[0].productName);
         setBrand(res.data[0].brandName);
@@ -102,7 +101,7 @@ function EditProduct() {
       });
   }, [productId]);
 
-  useEffect(() => {
+  useEffect(() => { // Fetch suppliers from the backend
     axios
       .get("http://localhost:5000/api/owner/supplierServices/getSuppliers")
       .then((res) => {
@@ -113,34 +112,34 @@ function EditProduct() {
       });
   }, []);
 
-  const handleCategoryChange = (event) => {
+  const handleCategoryChange = (event) => { // Handle category change
     setSelectedCategoryID(event.target.value);
     console.log(selectedCategoryID);
   };
 
-  const handleSupplierChange = (event) => {
+  const handleSupplierChange = (event) => { // Handle supplier change
     setSelectedSupplierID(event.target.value);
     console.log(selectedSupplierID);
   };
 
-  useEffect(() => {
+  useEffect(() => { // Fetch categories from the backend
     axios
       .get("http://localhost:5000/api/owner/productServices/getCategories")
       .then((res) => {
-        setCategories(res.data);
+        setCategories(res.data); // Set the fetched categories to the state variable
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { // Fetch subcategories from the backend
     axios
       .get(
         `http://localhost:5000/api/owner/productServices/getSubCategories/${selectedCategoryID}`
       )
       .then((res) => {
-        setSubCategories(res.data);
+        setSubCategories(res.data); // Set the fetched subcategories to the state variable
       })
       .catch((err) => {
         console.log(err);
@@ -150,23 +149,22 @@ function EditProduct() {
   // Handle subcategory change
   const handleSubcategoryChange = (e) => {
     const selectedSubcategoryId = e.target.value;
-    setSelectedSubcategoryID(selectedSubcategoryId);
-    console.log(selectedSubcategoryId);
+    setSelectedSubcategoryID(selectedSubcategoryId); // Set the selected subcategory ID to the state variable
   };
 
-  const handleSelect = (selectedIndex) => {
+  const handleSelect = (selectedIndex) => { // Handle carousel index change
     setIndex(selectedIndex);
   };
 
-  function handleChange(e, image) {
+  function handleChange(e, image) { // Handle image change
     console.log(e.target.files);
-    if (image === 1) {
+    if (image === 1) { // Set the image to the state variable based on the image number
       setImage1(URL.createObjectURL(e.target.files[0]));
       setUploadIMG1(e.target.files[0]);
-    } else if (image === 2) {
+    } else if (image === 2) { // Set the image to the state variable based on the image number
       setImage2(URL.createObjectURL(e.target.files[0]));
       setUploadIMG2(e.target.files[0]);
-    } else if (image === 3) {
+    } else if (image === 3) { // Set the image to the state variable based on the image number
       setImage3(URL.createObjectURL(e.target.files[0]));
       setUploadIMG3(e.target.files[0]);
     } else {
@@ -174,10 +172,10 @@ function EditProduct() {
     }
   }
 
-  function validateForm(event) {
-    event.preventDefault();
+  function validateForm(event) { // Function to validate the form
+    event.preventDefault(); 
     {
-      if (
+      if (// Validate the form fields
         productName === "" ||
         brand === "" ||
         openingStock === "" ||
@@ -186,16 +184,16 @@ function EditProduct() {
       ) {
         toast.error("All fields are required");
         return;
-      } else if (
+      } else if (// Validate opening stock and reorder level
         !validateIntegers(openingStock) ||
         !validateIntegers(reorderLevel)
       ) {
         toast.error("Invalid input for stock and reorder level");
         return;
-      } else if (!validatePrice(unitPrice)) {
+      } else if (!validatePrice(unitPrice)) { // Validate unit price
         toast.error("Invalid input for unit price");
         return;
-      }else if (!validateWeight(unitWeight)) {
+      }else if (!validateWeight(unitWeight)) { // Validate unit weight
         toast.error("Invalid input for unit weight");
         return;
       }else {
@@ -209,7 +207,7 @@ function EditProduct() {
           confirmButtonText: "Yes, Edit item!",
           focusCancel: true,
         }).then((result) => {
-          if (result.isConfirmed) {
+          if (result.isConfirmed) { // Call the image upload function
             imageUpload();
           }
         });
@@ -217,10 +215,10 @@ function EditProduct() {
     }
   }
 
-  const imageUpload = async () => {
+  const imageUpload = async () => { // Function to upload images
     setDataSending(true);
     const formData = new FormData();
-    if (image1 !== "") {
+    if (image1 !== "") {// Upload image 1 if it is not empty
       const storageRef = ref(imgStorage, uploadIMG1.name);
       await uploadBytesResumable(storageRef, uploadIMG1)
         .then(async (snapshot) => {
@@ -237,7 +235,7 @@ function EditProduct() {
     } else {
       formData.append("img1", img1);
     }
-    if (image2 !== "") {
+    if (image2 !== "") { // Upload image 2 if it is not empty
       const storageRef = ref(imgStorage, uploadIMG2.name);
       await uploadBytesResumable(storageRef, uploadIMG2)
         .then(async (snapshot) => {
@@ -252,7 +250,7 @@ function EditProduct() {
     } else {
       formData.append("img2", img2);
     }
-    if (image3 !== "") {
+    if (image3 !== "") { // Upload image 3 if it is not empty
       const storageRef = ref(imgStorage, uploadIMG3.name);
       await uploadBytesResumable(storageRef, uploadIMG3)
         .then(async (snapshot) => {
@@ -267,7 +265,7 @@ function EditProduct() {
     } else {
       formData.append("img3", img3);
     }
-
+    // Append the form data
     formData.append("productId", productId);
     formData.append("productName", productName);
     formData.append("brandName", brand);
@@ -278,8 +276,8 @@ function EditProduct() {
     formData.append("productDetails", productDescription);
     formData.append("supplierID", selectedSupplierID);
     formData.append("unitWeight", unitWeight);
-    console.log("Calling database");
     const accessToken = localStorage.getItem("accessToken");
+    // Send POST request to the backend API
     axios
       .post(
         "http://localhost:5000/api/owner/productServices/updateProductInfo",
@@ -304,7 +302,7 @@ function EditProduct() {
   };
 
   // Function to handle opening the delete confirmation modal
-  const handleShowDeleteModal = () => {
+  const handleShowDeleteModal = () => { 
     setShowDeleteModal(true);
   };
 
@@ -359,8 +357,7 @@ function EditProduct() {
                     className="d-none d-md-block "
                     style={{ marginTop: "1rem" }}
                   >
-                    {/* ----------------------------------------------------------------------------------------- */}
-
+                    {/* Carousel to display the images */}
                     <Carousel
                       interval={5000}
                       activeIndex={index}
@@ -421,7 +418,7 @@ function EditProduct() {
                         </Carousel.Caption>
                       </Carousel.Item>
                     </Carousel>
-
+                    {/* Image upload form */}
                     <div style={{ margin: "1rem" }}>
                       <Form.Label>Select image 1</Form.Label>
                       <Form.Control
@@ -452,6 +449,7 @@ function EditProduct() {
                         <h3 className="mb-5 text-uppercase fw-bold">
                           Change product info
                         </h3>
+                        {/* Add inventory button to navigate to the add inventory page */}
                         <Link
                           to={`/newinventory/${productId}`}
                           key={productId}
@@ -474,6 +472,7 @@ function EditProduct() {
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
+                          {/* Product Name */}
                           <Form.Label>Product Name</Form.Label>
                           <Form.Control
                             id="inputProductName"
@@ -486,6 +485,7 @@ function EditProduct() {
                         </MDBCol>
 
                         <MDBCol md="6">
+                          {/* Brand Name */}
                           <Form.Label>Brand</Form.Label>
                           <Form.Control
                             id="inputBrandName"
@@ -500,6 +500,7 @@ function EditProduct() {
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
+                          {/* Category  of the product */}
                           <Form.Label htmlFor="disabledSelect">
                             Category
                           </Form.Label>

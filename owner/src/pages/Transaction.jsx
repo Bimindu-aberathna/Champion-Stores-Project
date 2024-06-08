@@ -216,6 +216,7 @@ function Transaction() {
   };
 
   const proceedTransaction = () => {
+    
     // Prepare the data to be sent to the backend
     const transactionData = {
       total: total,
@@ -529,7 +530,7 @@ function Transaction() {
                           display: "flex",
                         }}
                       >
-                        Rs. &nbsp;&nbsp;&nbsp;<h4>{total}</h4>
+                        Rs. &nbsp;&nbsp;&nbsp;<h4>{(total).toFixed(2)}</h4>
                       </div>
                     </div>
                   </Boot_Card.Text>
@@ -562,7 +563,7 @@ function Transaction() {
           <Modal.Title>Confirmation</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Total:&nbsp;&nbsp; <b>Rs. {total}</b>
+          Total:&nbsp;&nbsp; <b>Rs. {(total).toFixed(2)}</b>
           <br />
           <InputGroup className="mb-3">
             <InputGroup.Text>add discount</InputGroup.Text>
@@ -580,7 +581,7 @@ function Transaction() {
             />
           </InputGroup>
           <p style={{ display: "flex" }}>
-            Sub-Total:&nbsp;&nbsp; <h4>Rs. {total - discount}</h4>
+            Amount Due:&nbsp;&nbsp; <h4>Rs. {isNaN(total - discount)?total: (total - discount).toFixed(2)}</h4>
           </p>
           Are you sure you want to proceed?
         </Modal.Body>

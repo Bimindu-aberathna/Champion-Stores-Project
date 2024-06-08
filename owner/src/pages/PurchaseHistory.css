@@ -6,3 +6,7 @@ h1{
     display: flex;
     justify-content: center;
 }
+
+.modalBtn{
+    width: 5rem;
+}

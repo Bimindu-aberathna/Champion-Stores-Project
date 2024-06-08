@@ -6,9 +6,9 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 function FogotPassword() {
-  const [email, setEmail] = useState("");
-  const [OTP, setOTP] = useState("");
-  const navigate = useNavigate();
+  const [email, setEmail] = useState(""); // State variable to store the email
+  const [OTP, setOTP] = useState(""); // State variable to store the OTP
+  const navigate = useNavigate(); // Navigation hook for redirecting to another page
   return (
     <div
       style={{
@@ -28,6 +28,7 @@ function FogotPassword() {
         }}
       >
         <div style={{ width: "50%" }}>
+          {/*if OTP is empty, display the SendOTP component, else display the ChangePassword component*/}
           {OTP === "" ? (
             <SendOTP email={email} setEmail={setEmail} setOTP={setOTP} />
           ) : (

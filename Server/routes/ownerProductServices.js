@@ -6,7 +6,6 @@ const multer = require("multer");
 const upload = multer();
 const { validateOwnerToken } = require("../ownerJWT");
 
-
 router.get("/listProducts", (req, res) => {
   const sql = "CALL GetOwnerProductData()";
   db.query(sql, (err, result) => {
@@ -35,7 +34,8 @@ router.get("/getProductData/:productId", (req, res) => {
 });
 
 router.get("/listLowStockProducts", (req, res) => {
-  const sql = "SELECT * from product WHERE preorderLevel>=currentStock AND status = 1;";
+  const sql =
+    "SELECT * from product WHERE preorderLevel>=currentStock AND status = 1;";
   db.query(sql, (err, result) => {
     if (err) res.json({ message: "Server error occurred" });
     res.json(result);
@@ -103,28 +103,6 @@ router.post("/removeExpiredProducts", (req, res) => {
       }
     }
   });
-  // const sql1 =
-  //   "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
-  // const values = [quantity, productID];
-
-  // db.query(sql1, values, (err, result) => {
-  //   if (err) {
-  //     res.status(500).json({ message: "Server error occurred" });
-  //   } else {
-  //     const sql2 =
-  //       "INSERT INTO expiredproducts (productID, date, quantity) VALUES (?, CURDATE(), ?);";
-  //     const values2 = [productID, quantity];
-  //     db.query(sql2, values2, (err2, result2) => {
-  //       if (err2) {
-  //         res.status(500).json({ message: "Server error occurred" });
-  //       } else {
-  //         res
-  //           .status(200)
-  //           .json({ message: "Expired products removed successfully" });
-  //       }
-  //     });
-  //   }
-  // });
 });
 
 router.post("/addProduct", upload.none(), (req, res) => {
@@ -198,7 +176,13 @@ router.post("/addProduct", upload.none(), (req, res) => {
 
       const sql2 =
         "INSERT INTO `inventory_purchase` (`productID`, `date`, `unitBuyingPrice`, `itemCount`, `supplierID`) VALUES (?, ?, ?,?,?);";
-      const values2 = [result.insertId, formattedDate, buyingPrice, openingStock, supplierID];
+      const values2 = [
+        result.insertId,
+        formattedDate,
+        buyingPrice,
+        openingStock,
+        supplierID,
+      ];
       db.query(sql2, values2, (err, result) => {
         if (err) {
           console.error("Error adding product", err);
@@ -276,7 +260,7 @@ router.delete("/deleteProduct/:productId", (req, res) => {
   res.status(200).json({ message: "Product deleted successfully" });
 });
 
-router.post("/transaction",validateOwnerToken, (req, res) => {
+router.post("/transaction", validateOwnerToken, (req, res) => {
   const { total, discount, subtotal, items } = req.body;
   const transactionItems = items;
   const sub_total = total - discount;
@@ -386,8 +370,13 @@ router.post("/newInventory", (req, res) => {
 });
 
 router.get("/purchaseHistory", (req, res) => {
-  const sql =
-    "SELECT i.*,p.productName,p.brandName,CASE WHEN DATEDIFF(CURRENT_DATE(), i.date) <= 5 THEN true ELSE false END AS ableToCancel,s.name FROM inventory_purchase i INNER JOIN product p ON i.productID = p.productID INNER JOIN supplier s on p.supplierID = s.supplierID;";
+  const sql = `SELECT i.*,p.productName,p.brandName,
+CASE WHEN DATEDIFF(CURRENT_DATE(), i.date) <= 5 THEN true ELSE false END AS ableToCancel,
+s.name 
+FROM inventory_purchase i 
+INNER JOIN product p ON i.productID = p.productID 
+INNER JOIN supplier s on p.supplierID = s.supplierID
+ORDER BY i.date DESC;`;
   db.query(sql, (err, result) => {
     if (err) res.json({ message: "Server error occurred" });
     res.json(result);
@@ -396,40 +385,88 @@ router.get("/purchaseHistory", (req, res) => {
 
 router.post("/cancelPurchase", (req, res) => {
   const purchaseID = req.body.purchaseID;
-
-  // Query to select productID from inventory_purchase table
-  const sql =
-    "SELECT productID,itemCount FROM inventory_purchase WHERE purchaseID = ?;";
-  db.query(sql, [purchaseID], (err, result) => {
+  // Query to select productID and itemCount from inventory_purchase table
+  const selectPurchaseSql =
+    "SELECT productID, itemCount FROM inventory_purchase WHERE purchaseID = ?;";
+  db.query(selectPurchaseSql, [purchaseID], (err, purchaseResult) => {
     if (err) {
-      res.status(500).json({ message: "Server error occurred" });
-    } else {
-      if (result.length === 0) {
-        res.status(404).json({ message: "Purchase not found" });
-      } else {
-        const productID = result[0].productID;
-        const itemCount = result[0].itemCount;
-        const sql2 =
+      return res.status(500).json({ message: "Server error occurred" });
+    }
+    if (purchaseResult.length === 0) {
+      return res.status(404).json({ message: "Purchase not found" });
+    }
+
+    const { productID, itemCount } = purchaseResult[0];
+
+    db.beginTransaction((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Server error occurred" });
+      }
+
+      // Check current stock
+      const selectStockSql =
+        "SELECT currentStock FROM product WHERE productID = ?;";
+      db.query(selectStockSql, [productID], (err, stockResult) => {
+        if (err) {
+          return db.rollback(() => {
+            return res.status(500).json({ message: "Server error occurred" });
+          });
+        }
+
+        const currentStock = stockResult[0].currentStock;
+        if (currentStock < itemCount) {
+          return db.rollback(() => {
+            return res
+              .status(400)
+              .json({ message: "Quantity exceeds current stock" });
+          });
+        }
+
+        // Update stock
+        const updateStockSql =
           "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?";
-        const values = [itemCount, productID];
-        db.query(sql2, values, (err2, result2) => {
-          if (err2) {
-            res.status(500).json({ message: "Server error occurred" });
-          } else {
-            const sql3 = "DELETE FROM inventory_purchase WHERE purchaseID = ?";
-            db.query(sql3, [purchaseID], (err3, result3) => {
-              if (err3) {
-                res.status(500).json({ message: "Server error occurred" });
-              } else {
-                res
+        db.query(
+          updateStockSql,
+          [itemCount, productID],
+          (err, updateResult) => {
+            if (err) {
+              return db.rollback(() => {
+                return res
+                  .status(500)
+                  .json({ message: "Server error occurred" });
+              });
+            }
+
+            // Delete purchase
+            const deletePurchaseSql =
+              "DELETE FROM inventory_purchase WHERE purchaseID = ?";
+            db.query(deletePurchaseSql, [purchaseID], (err, deleteResult) => {
+              if (err) {
+                return db.rollback(() => {
+                  return res
+                    .status(500)
+                    .json({ message: "Server error occurred" });
+                });
+              }
+
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    return res
+                      .status(500)
+                      .json({ message: "Server error occurred" });
+                  });
+                }
+
+                return res
                   .status(200)
                   .json({ message: "Purchase cancelled successfully" });
-              }
+              });
             });
           }
-        });
-      }
-    }
+        );
+      });
+    });
   });
 });
 
@@ -497,22 +534,23 @@ router.post("/returnProduct", (req, res) => {
   const { productID, quantity, supplierID, notExchanging } = req.body;
   const sql1 =
     "INSERT INTO product_return (productID, quantity,date, supplierID, notExchanging) VALUES (?,?, CURDATE(), ?, ?);";
-    const values1 = [productID, quantity, supplierID, notExchanging];
-    db.query(sql1, values1, (err, result) => {
-      if (err) {
-        res.status(500).json({ message: "Server error occurred" });
+  const values1 = [productID, quantity, supplierID, notExchanging];
+  db.query(sql1, values1, (err, result) => {
+    if (err) {
+      res.status(500).json({ message: "Server error occurred" });
+    } else {
+      if (!notExchanging) {
+        const sql2 =
+          "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
+        const values2 = [quantity, productID];
+        db.query(sql2, values2, (err2, result2) => {
+          if (err2) {
+            res.status(500).json({ message: "Server error occurred" });
+          } else {
+            res.status(200).json({ message: "success" });
+          }
+        });
       } else {
-        if(!notExchanging){
-          const sql2 = "UPDATE product SET currentStock = currentStock - ? WHERE productID = ?;";
-          const values2 = [quantity, productID];
-          db.query(sql2, values2, (err2, result2) => {
-            if (err2) {
-              res.status(500).json({ message: "Server error occurred" });
-            } else {
-              res.status(200).json({ message: "success" });
-            }
-          });	
-      }else{
         res.status(200).json({ message: "success" });
       }
     }
@@ -520,7 +558,8 @@ router.post("/returnProduct", (req, res) => {
 });
 
 router.get("/getBarcodes", (req, res) => {
-  const sql = "SELECT barcode FROM product WHERE barcode IS NOT NULL AND barcode <> 'null'AND status=1;";
+  const sql =
+    "SELECT barcode FROM product WHERE barcode IS NOT NULL AND barcode <> 'null'AND status=1;";
   db.query(sql, (err, result) => {
     if (err) {
       res.status(500).json({ message: "Server error occurred" });
@@ -530,6 +569,5 @@ router.get("/getBarcodes", (req, res) => {
     }
   });
 });
-
 
 module.exports = router;

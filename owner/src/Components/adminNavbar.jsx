@@ -3,11 +3,12 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import './adminNavbar.css';
 
-import 'primeicons/primeicons.css';
+import 'primeicons/primeicons.css';//icons
 
 function AdminNavbar() {
   return (
     <Navbar expand="lg" className="custom-navbar" id='navbar' style={{ height:'3.5rem',zIndex:'999'}}>
+      {/* Business Logo */}
       <img src={require('../assets/logo.png')} alt="Logo" style={{ width: '6rem', height: 'auto', marginLeft:'20px'}} />
       <Container>
         <Navbar.Brand href="#home"> </Navbar.Brand>

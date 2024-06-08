@@ -5,31 +5,31 @@ import InputGroup from "react-bootstrap/InputGroup";
 import SearchIcon from '@mui/icons-material/Search';
 
 const SearchBar = ({ items, onItemSelect }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const listRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState("");//State for search term
+  const [searchResults, setSearchResults] = useState([]);//State for search results
+  const listRef = useRef(null);//Reference for the list of search results
 
-  const handleChange = (event) => {
+  const handleChange = (event) => {//Function to handle the change in the search bar
     setSearchTerm(event.target.value);
     // Filter items based on search term
     const results = items.filter((item) =>
       item.productName.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setSearchResults(results);
+    setSearchResults(results);//Set the search results
   };
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = (event) => {//Function to handle the click outside the search results
     if (listRef.current && !listRef.current.contains(event.target)) {
       setSearchResults([]); // Clear search results when clicked outside the list
     }
   };
 
-  const handleItemSelect = (item) => {
+  const handleItemSelect = (item) => {//Function to handle the selection of an item
     onItemSelect(item); // Pass the selected item to the parent component
     setSearchResults([]); // Clear search results after selecting an item
   };
 
-  useEffect(() => {
+  useEffect(() => {//Use effect to add an event listener for click outside the search results
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -38,6 +38,7 @@ const SearchBar = ({ items, onItemSelect }) => {
 
   return (
     <div style={{ position: "absolute",width:'50%'}}>
+      {/* Search bar */}
       <InputGroup className="mb-3">
         <Form.Control
           aria-label="Amount (to the nearest dollar)"
@@ -51,6 +52,7 @@ const SearchBar = ({ items, onItemSelect }) => {
           <SearchIcon style={{ color: "snow" }} />
         </InputGroup.Text>
       </InputGroup>
+      {/* Search results */}
       <div ref={listRef}>
         <ul style={{ listStyleType: "none", backgroundColor: "white" }}>
           {searchResults.map((item) => (

@@ -1,16 +1,15 @@
 import Button from "react-bootstrap/Button";
 import React, { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "../pages/Login.css";
 import { checkEmail,sendUserOTP } from "../Services/AccountServices";
 
 function SendOTP({ email, setEmail, setOTP }) {
-  const [btnDisabled, setBtnDisabled] = useState(false);
+  const [btnDisabled, setBtnDisabled] = useState(false);//State for disabling the button
 
-  function handlesendOTP() {
-    if (email === "") {
+  function handlesendOTP() {//Function to handle the sending of OTP
+    if (email === "") {//If the email is empty
       toast.error("Please enter your email", {
         position: "top-right",
         autoClose: 2500,
@@ -18,10 +17,10 @@ function SendOTP({ email, setEmail, setOTP }) {
       return;
     }
     setBtnDisabled(true);
-    checkEmail(email)
+    checkEmail(email)//Check if the email exists
       .then((res) => {
-        const generateRandomNumber = Math.floor(1000 + Math.random() * 9000);
-        sendUserOTP(email, generateRandomNumber)
+        const generateRandomNumber = Math.floor(1000 + Math.random() * 9000);//Generate a random number for OTP
+        sendUserOTP(email, generateRandomNumber)//Send the OTP to the user's email
           .then((res) => {
             console.log(res);
             setOTP(generateRandomNumber);
@@ -45,6 +44,7 @@ function SendOTP({ email, setEmail, setOTP }) {
           <br />
           Password
         </h1>
+        {/* Email input */}
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -53,9 +53,10 @@ function SendOTP({ email, setEmail, setOTP }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          
+       {/**Link to go back to login page */}   
       <a href="/">Back to login</a>
         </Form.Group>
+        {/* Send OTP button */}
         <Button
           variant="dark"
           type="button"

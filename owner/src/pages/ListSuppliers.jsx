@@ -21,25 +21,24 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
 function ListSuppliers() {
-  const [suppliers, setSuppliers] = useState([]);
-  const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [editable, setEditable] = useState(false);
-  const [email, setEmail] = useState("");
-  const [phone1, setPhone1] = useState("");
-  const [phone2, setPhone2] = useState("");
-  const [details, setDetails] = useState("");
+  const [suppliers, setSuppliers] = useState([]); // State variable to store the suppliers
+  const [selectedSupplier, setSelectedSupplier] = useState(""); // State variable to store the selected supplier
+  const [editable, setEditable] = useState(false);  // State variable to store the editable status
+  const [email, setEmail] = useState(""); // State variable to store the email
+  const [phone1, setPhone1] = useState(""); // State variable to store the phone number
+  const [phone2, setPhone2] = useState(""); // State variable to store the phone number
+  const [details, setDetails] = useState(""); // State variable to store the details
 
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/owner/supplierServices/getSuppliers") // Assuming this endpoint fetches suppliers
-      .then((res) => {
+      .then((res) => { //Set the suppliers state variable with the response data
         setSuppliers(res.data);
         setSelectedSupplier(res.data[0]);
         setEmail(res.data[0].email);
         setPhone1(res.data[0].phone1);
         setPhone2(res.data[0].phone2);
         setDetails(res.data[0].details);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -50,14 +49,15 @@ function ListSuppliers() {
       });
   }, []);
 
-  const handleSupplierChange = (event) => {
+  const handleSupplierChange = (event) => { // Function to handle the supplier change from the dropdown
     const selectedSupplierID = parseInt(event.target.value);
-    const foundSupplier = suppliers.find(
+    const foundSupplier = suppliers.find( // Find the selected supplier from the suppliers list
       (supplier) => supplier.supplierID === selectedSupplierID
     );
     setSelectedSupplier(foundSupplier);
     setEditable(false);
-    if (foundSupplier.email === null) {
+    // Set the email, phone1, phone2 and details state variables with the selected supplier details
+    if (foundSupplier.email === null) { 
       setEmail("");
     } else {
       setEmail(foundSupplier.email);
@@ -75,7 +75,7 @@ function ListSuppliers() {
     }
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = () => { // Function to handle the cancel edit
     setEmail(selectedSupplier.email);
     setPhone1(selectedSupplier.phone1);
     setPhone2(selectedSupplier.phone2);
@@ -83,16 +83,15 @@ function ListSuppliers() {
     setEditable(false);
   };
 
-  function handleEditSupplier() {
+  function handleEditSupplier() { // Function to handle the edit supplier
     
-    console.log("Edit supplier with ID: " + selectedSupplier.supplierID);
-    if (!validateEmail(email)) {
+    if (!validateEmail(email)) { // Validate the email
       toast.error("Invalid email");
       return;
-    } else if (!validatePhoneNumber(phone1)) {
+    } else if (!validatePhoneNumber(phone1)) { // Validate the phone number
       toast.error("Invalid phone number");
       return;
-    } else if (phone2 !== "" && !validatePhoneNumber(phone2)) {
+    } else if (phone2 !== "" && !validatePhoneNumber(phone2)) { // Validate the phone number
       toast.error("Invalid phone number");
       return;
     } else {

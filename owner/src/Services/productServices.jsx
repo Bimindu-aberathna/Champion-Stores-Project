@@ -2,6 +2,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Function to get the barcodes
 const getBarcodes = async () => {
     try {
         const res = await axios({

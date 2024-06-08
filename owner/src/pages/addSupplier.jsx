@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import Spinner from "react-bootstrap/Spinner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SideNavbar from "../Components/SideNavbar";
 import InventoryNavBar from "../Components/InventoryNavBar";
 import {
-  MDBBtn,
   MDBContainer,
   MDBCard,
   MDBCardBody,
-  MDBCardImage,
   MDBRow,
   MDBCol,
-  MDBInput,
-  MDBRadio,
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
@@ -24,15 +18,15 @@ import './commonStyles.css';
 
 
 function AddSupplier() {
-  const [supplierName, setSupplierName] = useState("");
-  const [supplierEmail, setSupplierEmail] = useState("");
-  const [phone1, setPhone1] = useState("");
-  const [phone2, setPhone2] = useState("");
-  const [supplierDetails, setSupplierDetails] = useState("");
+  const [supplierName, setSupplierName] = useState(""); // State variable to store the supplier name
+  const [supplierEmail, setSupplierEmail] = useState(""); // State variable to store the supplier email
+  const [phone1, setPhone1] = useState(""); // State variable to store the supplier phone number
+  const [phone2, setPhone2] = useState(""); // State variable to store the supplier phone number
+  const [supplierDetails, setSupplierDetails] = useState(""); // State variable to store the supplier details
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Navigation hook for redirecting to another page
 
-  const validateData = (e) => {
+  const validateData = (e) => {// Function to validate the supplier details
     e.preventDefault();
 
     // Validate Supplier Name
@@ -40,26 +34,26 @@ function AddSupplier() {
       toast.error("Invalid supplier name");
       return;
     } else {
-      if (!validateEmail(supplierEmail)) {
+      if (!validateEmail(supplierEmail)) {// Validate Supplier Email
         toast.error("Invalid email");
         return;
       } else {
-        if (!validateMobile(phone1)) {
+        if (!validateMobile(phone1)) { //validate phone number1
           toast.error("Invalid mobile number");
           return;
         } else {
-          if (phone2 !== "" && !validateMobile(phone2)) {
+          if (phone2 !== "" && !validateMobile(phone2)) { //validate phone number2
             toast.error("Invalid mobile number");
             return;
           } else {
-            addSupplierToDB();
+            addSupplierToDB();//Call the addSupplierToDB function
           }
         }
       }
     }
   };
 
-  function addSupplierToDB() {
+  function addSupplierToDB() {// Function to add the supplier to the database
     const data = {
       supplierDetails: supplierDetails,
       supplierName: supplierName,
@@ -93,8 +87,8 @@ function AddSupplier() {
       });
   }
 
-  function validateMobile(number) {
-    const regex = /^0\d{9}$/;
+  function validateMobile(number) { // Function to validate the mobile number
+    const regex = /^(?:\+94|0)\d{9}$/;
 
     if (regex.test(number)) {
       return true;
@@ -103,7 +97,7 @@ function AddSupplier() {
     }
   }
 
-  function validateEmail(email) {
+  function validateEmail(email) { // Function to validate the email
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
     if (regex.test(email)) {
@@ -113,7 +107,7 @@ function AddSupplier() {
     }
   }
 
-  function validateName(name) {
+  function validateName(name) { // Function to validate the name of the supplier
     const regex = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/;
 
     return regex.test(name);
@@ -141,6 +135,7 @@ function AddSupplier() {
 
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
+                          {/* Supplier Name */}
                           <Form.Label className="addSupplierFormLabel">Supplier Name</Form.Label>
                           <Form.Control
                             id="supplierName"
@@ -155,6 +150,7 @@ function AddSupplier() {
                         </MDBCol>
 
                         <MDBCol md="6">
+                          {/* Supplier Email */}
                           <Form.Label className="addSupplierFormLabel">E-mail</Form.Label>
                           <Form.Control
                             id="supplierEmail"
@@ -170,6 +166,7 @@ function AddSupplier() {
                       </MDBRow>
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
+                          {/* Supplier Phone Number */}
                           <Form.Label className="addSupplierFormLabel">Phone 1</Form.Label>
                           <Form.Control
                             id="phone1"
@@ -184,6 +181,7 @@ function AddSupplier() {
                         </MDBCol>
 
                         <MDBCol md="6">
+                          {/* Supplier Phone Number */}
                           <Form.Label className="addSupplierFormLabel">Phone 2</Form.Label>
                           <Form.Control
                             id="phone2"
@@ -197,7 +195,7 @@ function AddSupplier() {
                           <Form.Text className="text-muted"></Form.Text>
                         </MDBCol>
                       </MDBRow>
-
+                            {/* Additional details about the supplier */}
                       <Form.Label className="addSupplierFormLabel">Additional details</Form.Label>
                       <Form.Control
                         id="supplierDetails"
@@ -216,6 +214,7 @@ function AddSupplier() {
                           Clear all
                         </Button>
                         &nbsp;
+                        {/* Add supplier button */}
                         <Button
                           as="input"
                           variant="dark"

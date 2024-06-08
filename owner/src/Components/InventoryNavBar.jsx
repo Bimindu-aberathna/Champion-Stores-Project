@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import "./InventoryNavBar.css";
 
 function SideNavbar({ selected }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);//State for opening and closing the side navbar
 
   return (
     <div
@@ -32,6 +32,7 @@ function SideNavbar({ selected }) {
           transition: "transform 0.5s",
         }}
       >
+        {/*ICon for opening and closing the side navbar*/}
         <div
           style={{
             color: "white",
@@ -59,6 +60,7 @@ function SideNavbar({ selected }) {
           className="d-flex flex-column justify-content-center"
           id="optionList"
         >
+          {/*All the options in the side navbar*/}
           <Link to="/altercategories">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
@@ -84,6 +86,7 @@ function SideNavbar({ selected }) {
               )}
             </li>
           </Link>
+          {/*Add Product option*/}
           <Link to="/addProduct">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
@@ -108,6 +111,7 @@ function SideNavbar({ selected }) {
               )}
             </li>
           </Link>
+          {/*Purchase History option*/}
           <Link to="/purchasehistory">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
@@ -131,6 +135,7 @@ function SideNavbar({ selected }) {
               )}
             </li>
           </Link>
+          {/*Suppliers option*/}
           <Link to="/listsuppliers">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
@@ -149,6 +154,7 @@ function SideNavbar({ selected }) {
               {open && <span>Suppliers</span>}
             </li>
           </Link>
+          {/*Expired Products option*/}
           <Link to="/handleexpiredproducts">
             <li
               className="text-white text-sm d-flex align-items-center gap-2 cursor-pointer p-2 hover-bg-light rounded-md mt-2 "
