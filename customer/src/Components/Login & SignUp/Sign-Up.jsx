@@ -141,7 +141,7 @@ function SignUp() {
       console.error('Error during signup:', error.message);
       if(error.message === "Request failed with status code 409"){
         toast.error("User already exists!", {
-          position: "top-left",
+          position: "top-right",
           autoClose: 5000,
         });
     }

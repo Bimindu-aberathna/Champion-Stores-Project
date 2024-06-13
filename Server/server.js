@@ -14,12 +14,9 @@ const ownerSupplierServicesRouter = require("./routes/ownerSupplierServices");
 const ownerAccountServicesRouter = require("./routes/ownerAccountServices");
 const owner_ECOM_servicesRouter = require("./routes/owner_ECOM_services");
 const Report_AnalyticsRouter = require("./routes/OwnerReport&Analytics");
-const { pseudoRandomBytes } = require("crypto");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
 const upload = multer();
-const {createToken, validateToken} = require("./JWT");
-const {createOwnerToken, validateOwnerToken} = require("./ownerJWT");
 
 
 const app = express(); 
@@ -44,13 +41,9 @@ app.use("/api/owner/supplierServices", ownerSupplierServicesRouter);
 app.use("/api/owner/accountServices", ownerAccountServicesRouter);
 app.use("/api/cartServices", cartServicesRouter);
 app.use("/api/owner/ECOM_services", owner_ECOM_servicesRouter);
-app.use("/ownerReportServices", Report_AnalyticsRouter);
+app.use("/ownerReportServices", Report_AnalyticsRouter); 
 
-app.get("/isAuth", validateOwnerToken, (req, res) => {
-    console.log("User is authenticated");
-    console.log(req.role);
-    return res.status(200).json({ message: "User is authenticated" });
-});
+
 
 process.on('SIGINT', function() {
   db.end(function(err) {

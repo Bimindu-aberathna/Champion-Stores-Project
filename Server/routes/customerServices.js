@@ -117,16 +117,6 @@ router.post("/getCustomerDetails", validateToken, (req, res) => {
   });
 });
 
-// router.get("/getOrderHistory", validateToken, (req, res) => {
-//   const customerID = req.customerID;
-//   const sql = `SELECT * FROM cart WHERE paymentStatus = true AND customerID = ?`;
-//   db.query(sql, customerID, (err, result) => {
-//     if (err) {
-//       return res.status(500).json({ message: "Internal server error" });
-//     }
-//     return res.status(200).json({ status: 200, data: result });
-//   });
-// });
 
 router.get("/getOrderHistory", validateToken, (req, res) => {
   const customerID = req.customerID;

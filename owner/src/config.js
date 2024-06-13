@@ -1,6 +1,7 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
+// Import the functions need from the SDKs need
+//Firebase App (the core Firebase SDK) is always required and must be listed first
+import { initializeApp } from "firebase/app";// Add the Firebase products that need to use
+import { getStorage } from "firebase/storage"; //Application's Firebase configuration
 
 const firebaseConfig = {
   apiKey: "AIzaSyD_hzvfGc94xx5ChZXkPoHb7kn7GnOD3-I",
@@ -13,5 +14,5 @@ const firebaseConfig = {
 };
 
 
-const app = initializeApp(firebaseConfig);
-export const imgStorage = getStorage(app);
+const app = initializeApp(firebaseConfig); // Initialize Firebase
+export const imgStorage = getStorage(app); // Get the storage service for the default app

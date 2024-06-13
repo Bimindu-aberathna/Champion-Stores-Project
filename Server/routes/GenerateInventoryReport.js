@@ -9,48 +9,50 @@ const { validateOwnerToken } = require("../ownerJWT");
 const express = require("express");
 const router = express.Router();
 
-const getCategorySQL = "SELECT categoryID,categoryName from category";
+const getCategorySQL = "SELECT categoryID,categoryName from category";//SQL query to get categories
+
+//SQL query to get product data
 const getProductSQL =
   "SELECT product.productID,product.subCategoryID,product.productName,product.unitPrice,product.preorderLevel,product.currentStock,sub_category.categoryID,sub_category.subCategoryName from product INNER JOIN sub_category on sub_category.subCategoryID = product.subCategoryID WHERE product.status = 1;";
-const productData = [];
-const dbCategories = [];
-const transformedDbCategories = [];
-const transformedProductData = [];
-var totalValue = 0;
-var htmlContent = ``;
+const productData = [];//Array to store product data
+const dbCategories = [];//Array to store categories
+const transformedDbCategories = [];//Array to store transformed categories data
+const transformedProductData = [];//Array to store transformed product data
+var totalValue = 0; //Variable to store total value of inventory
+var htmlContent = ``; //Variable to store HTML content of the report
 
-function getCategories() {
+function getCategories() { //Function to get categories from the database
   return new Promise((resolve, reject) => {
     db.query(getCategorySQL, (err, result) => {
       if (err) {
         reject(err);
       } else {
-        dbCategories.push(result);
+        dbCategories.push(result);//Push the result to dbCategories array
         resolve(dbCategories);
       }
     });
   });
 }
 
-function getProducts() {
+function getProducts() { //Function to get product data from the database
   return new Promise((resolve, reject) => {
     db.query(getProductSQL, (err, result) => {
       if (err) {
         console.log("Failed to get Product Data.", err);
         reject(err);
       } else {
-        productData.push(result);
+        productData.push(result); //Push the result to productData array
         resolve(productData);
       }
     });
   });
 }
 
-router.post("/createInventoryReport",validateOwnerToken, (req, res) => {
-  //res.send('Inventory report created');
-  const pdfFilePath = path.join(__dirname, "InventoryReport.pdf");
-  getCategories()
-    .then(() => {
+//Inventory report generation endpoint
+router.post("/createInventoryReport",validateOwnerToken, (req, res) => { 
+  const pdfFilePath = path.join(__dirname, "InventoryReport.pdf"); //Path to store the generated PDF
+  getCategories() //Get categories from the database
+    .then(() => { 
       transformedDbCategories.push(
         dbCategories[0].map((rowDataPacket) => {
           return {
@@ -59,6 +61,7 @@ router.post("/createInventoryReport",validateOwnerToken, (req, res) => {
           };
         })
       );
+      //Once categories are fetched, get product data
       getProducts().then(() => {
         transformedProductData.push(
           productData[0].map((rowDataPacket) => {
@@ -209,14 +212,14 @@ document.getElementById("currentDate").innerHTML = "As at "+datetime;
     </html>
     `;
 
-        // Generate PDF
+        // Generate PDF from HTML content and send it as a response
         pdf.create(htmlContent, {}).toFile(pdfFilePath, (err) => {
           if (err) {
             res.status(500).send("Error generating PDF");
           } else {
             totalValue = 0;
-            res.download(pdfFilePath, () => {
-              fs.unlinkSync(pdfFilePath);
+            res.download(pdfFilePath, () => { //Download the generated PDF
+              fs.unlinkSync(pdfFilePath); 
             });
           }
         });

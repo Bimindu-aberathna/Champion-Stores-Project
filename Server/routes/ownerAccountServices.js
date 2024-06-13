@@ -5,20 +5,22 @@ const { createOwnerToken, validateOwnerToken } = require("../ownerJWT");
 const bcrypt = require("bcrypt");
 const { stat } = require("fs/promises");
 const nodemailer = require("nodemailer");
+require('dotenv').config();
 
+// endpoint to owner login
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const sql = "SELECT * FROM owner WHERE email = ?";
+  const sql = "SELECT * FROM owner WHERE email = ?";//Check if the email exists in the database
 
   db.query(sql, [email], (err, result) => {
     if (err) {
       res.status(500).json({ message: "Server error occurred" });
     } else {
-      if (result.length > 0) {
+      if (result.length > 0) { //If the email exists
         const user = result[0];
-        bcrypt.compare(password, user.password).then((match) => {
+        bcrypt.compare(password, user.password).then((match) => {//Compare the password with the hashed password in the database
           if (match) {
-            const accessToken = createOwnerToken(user.id);
+            const accessToken = createOwnerToken(user.id); //Create a JWT token and send it as the response
             res.status(200).json({ message: "Logged in", accessToken });
           } else {
             res.status(401).json({ message: "Invalid Credentials !" });
@@ -31,17 +33,18 @@ router.post("/login", (req, res) => {
   });
 });
 
+// Endpoint to verify the owner's current password
 router.post("/verifyPassword", validateOwnerToken, (req, res) => {
   const { password } = req.body;
   const ownerID = req.ownerID;
-  const sql = "SELECT password FROM owner WHERE id = ?";
+  const sql = "SELECT password FROM owner WHERE id = ?";//Get the hashed password from the database
   db.query(sql, [ownerID], (err, result) => {
     if (err) {
       res.status(500).json({ status: 500, message: "Server error occurred" });
     } else {
       if (result.length > 0) {
         const user = result[0];
-        bcrypt.compare(password, user.password).then((match) => {
+        bcrypt.compare(password, user.password).then((match) => {//Compare the password with the hashed password in the database
           if (match) {
             res
               .status(200)
@@ -59,10 +62,11 @@ router.post("/verifyPassword", validateOwnerToken, (req, res) => {
   });
 });
 
+// Endpoint to update the owner's email
 router.post("/changeEmail", validateOwnerToken, (req, res) => {
   const { email } = req.body;
   const ownerID = req.ownerID;
-  const sql = "UPDATE owner SET email = ? WHERE id = ?";
+  const sql = "UPDATE owner SET email = ? WHERE id = ?"; //SQL query to update the email
   db.query(sql, [email, ownerID], (err, result) => {
     if (err) {
       res.status(500).json({ status: 500, message: "Server error occurred" });
@@ -72,14 +76,15 @@ router.post("/changeEmail", validateOwnerToken, (req, res) => {
   });
 });
 
+// Endpoint to get the owner's email
 router.get("/getEmail", validateOwnerToken, (req, res) => {
   const ownerID = req.ownerID;
-  const sql = "SELECT email FROM owner WHERE id = ?";
+  const sql = "SELECT email FROM owner WHERE id = ?";//Get the email from the database
   db.query(sql, [ownerID], (err, result) => {
     if (err) {
       res.status(500).json({ status: 500, message: "Server error occurred" });
     } else {
-      if (result.length > 0) {
+      if (result.length > 0) {//If the email exists
         res.status(200).json({ status: 200, email: result[0].email });
       } else {
         res.status(404).json({ status: 404, message: "Invalid Owner !" });
@@ -88,13 +93,14 @@ router.get("/getEmail", validateOwnerToken, (req, res) => {
   });
 });
 
+// Endpoint to update the owner's password
 router.post("/changePassword", validateOwnerToken, (req, res) => {
   const { password } = req.body;
   const ownerID = req.ownerID;
-  const sql = "UPDATE owner SET password = ? WHERE id = ?";
+  const sql = "UPDATE owner SET password = ? WHERE id = ?";//SQL query to update the password
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
+    .then((hash) => {//Hash the password
       db.query(sql, [hash, ownerID], (err, result) => {
         if (err) {
           res
@@ -110,6 +116,7 @@ router.post("/changePassword", validateOwnerToken, (req, res) => {
     });
 });
 
+// Endpoint to check if the email exists
 router.post("/checkEmail", (req, res) => {
   const { email } = req.body;
   const sql = "SELECT * FROM owner WHERE email = ?";
@@ -126,6 +133,7 @@ router.post("/checkEmail", (req, res) => {
   });
 });
 
+// Endpoint to send OTP to reset the password
 router.post("/sendOTP", (req, res) => {
   const { email, OTP } = req.body;
   const sql = "INSERT INTO passwordreset(userEmail,OTP) VALUES(?,?)";
@@ -133,15 +141,15 @@ router.post("/sendOTP", (req, res) => {
     if (err) {
       res.status(500).json({ status: 500, message: "Server error occurred" });
     } else {
-      var nodemailer = require("nodemailer");
+      var nodemailer = require("nodemailer");//Import nodemailer which is used to send emails
 
       var transporter = nodemailer.createTransport({
         service: "yahoo",
         auth: {
           user: "biminduonline@yahoo.com",
-          pass: "pzndyyizykujlhvv",
+          pass: process.env.yahoo_mail_password,
         },
-      });
+      });//Create a transporter object with the email service and credentials
 
       var mailOptions = {
         from: "biminduonline@yahoo.com",
