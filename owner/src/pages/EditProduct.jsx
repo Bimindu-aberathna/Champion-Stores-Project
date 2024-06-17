@@ -10,7 +10,7 @@ import "./AddProducts.css";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
-import { imgStorage } from "../config";
+import { imgStorage } from "../firebase_config";
 import InventoryNavBar from "../Components/InventoryNavBar";
 import SideNavbar from "../Components/SideNavbar";
 import {

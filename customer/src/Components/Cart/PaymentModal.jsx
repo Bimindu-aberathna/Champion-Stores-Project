@@ -31,7 +31,7 @@ import {
 import Swal from 'sweetalert2'
 
 const stripePromise = loadStripe(
-  "pk_test_51PGG6EP2zpaVFzfp9y3yd5MNQ5BPFe7b5E2SuV2juQpqGb7YwwZS6sAESe3lTi9BgiQi9eZMdas8arBpeE4UNxjz00FmLqJEUu"
+  process.env.REACT_APP_STRIPE_PUBLIC_KEY
 );
 
 const CARD_ELEMENT_OPTIONS = {

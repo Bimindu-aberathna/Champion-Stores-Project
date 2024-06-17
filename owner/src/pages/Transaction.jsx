@@ -2,6 +2,7 @@ import React from "react";
 import SideNavbar from "../Components/SideNavbar";
 import { Form, Row, Col, Button, InputGroup, Card } from "react-bootstrap";
 import { useState, useRef, useEffect, useCallback } from "react";
+import {validatePrice} from "../functionality/validation";
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -216,6 +217,14 @@ function Transaction() {
   };
 
   const proceedTransaction = () => {
+    if(!validatePrice(discount) || discount> total){
+      toast.error("Invalid discount amount", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+      return;
+    }
+
     
     // Prepare the data to be sent to the backend
     const transactionData = {

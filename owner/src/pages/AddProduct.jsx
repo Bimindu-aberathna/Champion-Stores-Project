@@ -8,7 +8,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Spinner from "react-bootstrap/Spinner";
 import SideNavbar from "../Components/SideNavbar";
 import InventoryNavBar from "../Components/InventoryNavBar";
-import { imgStorage } from "../config";
+import { imgStorage } from "../firebase_config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getBarcodes } from "../Services/productServices";
