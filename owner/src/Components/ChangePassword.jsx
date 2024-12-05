@@ -11,11 +11,11 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function ChangePassword({ OTP, setOTP, email }) {
-  const [userOTP, setUserOTP] = useState("");
-  const [show, setShow] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const navigate = useNavigate();
+  const [userOTP, setUserOTP] = useState("");//State for user entered OTP
+  const [show, setShow] = useState(false);//State for showing the modal for password reset
+  const [newPassword, setNewPassword] = useState("");//State for new password
+  const [confirmPassword, setConfirmPassword] = useState("");//State for confirm password
+  const navigate = useNavigate();//Navigation hook for redirecting to another page
 
   //10 minutes timer
   useEffect(() => {
@@ -27,15 +27,15 @@ function ChangePassword({ OTP, setOTP, email }) {
     return () => clearTimeout(timer);
   }, []);
 
-  function compareOTP() {
-    if (userOTP === "") {
+  function compareOTP() {//Function to compare the OTP entered by the user
+    if (userOTP === "") {//
       toast.error("Please enter your OTP", {
         position: "top-right",
         autoClose: 2500,
       });
       return;
     }
-    if (String(OTP).trim() === String(userOTP).trim()) {
+    if (String(OTP).trim() === String(userOTP).trim()) {//If the OTP entered by the user matches the OTP sent to the user's email
       setShow(true);
     } else {
       toast.error("OTP does not match", {
@@ -45,27 +45,27 @@ function ChangePassword({ OTP, setOTP, email }) {
       return;
     }
   }
-  const handleClose = () => {
+  const handleClose = () => {//Function to close the modal for password reset
     setShow(false);
     window.location.href = "/forgotPassword";
   };
   const handleShow = () => setShow(true);
-  function handlePassswordReset() {
-    if (newPassword === "" || confirmPassword === "") {
+  function handlePassswordReset() {//Function to reset the password
+    if (newPassword === "" || confirmPassword === "") {//If the new password or confirm password is empty
       toast.error("Please enter your new password", {
         position: "top-right",
         autoClose: 2500,
       });
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (newPassword !== confirmPassword) {//If the new password and confirm password do not match
       toast.error("Passwords do not match", {
         position: "top-right",
         autoClose: 2500,
       });
       return;
     }
-    if (!validatePassword(newPassword)) {
+    if (!validatePassword(newPassword)) {//If the new password does not meet the password requirements
       toast.error(
         "Password must contain at least one number, one special character and one alphabet. Minimum length is 7",
         {
@@ -75,7 +75,7 @@ function ChangePassword({ OTP, setOTP, email }) {
       );
       return;
     }
-    resetPassword(email, newPassword, userOTP)
+    resetPassword(email, newPassword, userOTP)//Reset the password
       .then((res) => {
         Swal.fire({
           title: "Good job!",
@@ -83,7 +83,7 @@ function ChangePassword({ OTP, setOTP, email }) {
           icon: "success",
           confirmButtonColor: "#000000",
         }).then((result) => {
-          if (result.isConfirmed) {
+          if (result.isConfirmed) {//If the user confirms the alert then redirect to the login page
             navigate("/");
           }
         });
@@ -95,6 +95,7 @@ function ChangePassword({ OTP, setOTP, email }) {
 
   return (
     <div>
+      {/* Reset Password Form */}
       <Form style={{ width: "100%" }}>
         <h1>
           Reset
@@ -104,6 +105,7 @@ function ChangePassword({ OTP, setOTP, email }) {
         <br />
         <h2>Check your email for OTP</h2>
         <Form.Group className="mb-3" controlId="formBasicEmail">
+          {/*Input for getting the OTP from the user*/}
           <Form.Label>One Time Password</Form.Label>
           <Form.Control
             type="text"
@@ -114,6 +116,7 @@ function ChangePassword({ OTP, setOTP, email }) {
 
           <a href="/">Back to login</a>
         </Form.Group>
+        {/*Button to verify the OTP entered by the user*/}
         <Button
           variant="dark"
           type="button"
@@ -124,6 +127,7 @@ function ChangePassword({ OTP, setOTP, email }) {
         </Button>
       </Form>
       <ToastContainer />
+      {/*Modal for password reset*/}
       <Modal
         show={show}
         onHide={handleClose}
@@ -137,6 +141,7 @@ function ChangePassword({ OTP, setOTP, email }) {
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3" controlId="formBasicEmail">
+              {/*Input for new password*/}
               <Form.Label>New Password</Form.Label>
               <Form.Control
                 type="password"
@@ -147,6 +152,7 @@ function ChangePassword({ OTP, setOTP, email }) {
               <Form.Text className="text-muted"></Form.Text>
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicEmail">
+              {/*Input for confirm password*/}
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
                 type="password"
@@ -159,6 +165,7 @@ function ChangePassword({ OTP, setOTP, email }) {
           </Form>
         </Modal.Body>
         <Modal.Footer>
+          {/*Buttons for closing the modal and resetting the password*/}
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>

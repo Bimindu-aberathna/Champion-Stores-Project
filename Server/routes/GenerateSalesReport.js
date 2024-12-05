@@ -11,10 +11,11 @@ const { on } = require("events");
 const { get } = require("http");
 const router = express.Router();
 
-function convertToCurrencyFormat(doubleValue) {
+function convertToCurrencyFormat(doubleValue) { //Function to convert double value to currency format
   return doubleValue.toFixed(2);
 }
 
+//Variables to store sales data retrieved from the database
 let [
   totalSales,
   totalOnlineSales,
@@ -33,40 +34,52 @@ let [
   onlineOrderCount,
   instoreOrderCount,
 ] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-const getCategorySQL = "SELECT categoryID,categoryName from category";
+const getCategorySQL = "SELECT categoryID,categoryName from category"; //SQL query to get categories
+
+//SQL queries to get sales data of the Webstore
 const getOnlineSalesSQL =
   "SELECT SUM(ci.quantity * ci.unitPrice) AS totalOnlineSales FROM cart c JOIN cart_item ci ON c.cartID = ci.cartID WHERE DATE(c.dateTime) BETWEEN ? AND ?; ";
-const getInstoreSalesSQL =
+//SQL queries to get sales data of the In-store
+  const getInstoreSalesSQL =
   "SELECT SUM(total) AS totalInstoreSales FROM transactions WHERE DATE(dateTime) BETWEEN ? AND ?;";
-const getdiscountsSQL =
+//SQL queries to get total discounts
+  const getdiscountsSQL =
   "SELECT SUM(discount) AS totalDiscounts FROM transactions WHERE DATE(dateTime) BETWEEN ? AND ?;";
-const getOnlineCOGSSQL =
+//SQL queries to get cost of goods sold of the Webstore
+  const getOnlineCOGSSQL =
   "SELECT SUM(ci.quantity * ip.avgUnitBuyingPrice) AS onlineCostOfGoodsSold FROM cart_item ci JOIN (SELECT productID, AVG(unitBuyingPrice) AS avgUnitBuyingPrice FROM inventory_purchase WHERE DATE(date) BETWEEN ? AND ? GROUP BY productID) ip ON ci.productID = ip.productID JOIN cart c ON ci.cartID = c.cartID WHERE DATE(c.dateTime) BETWEEN ? AND ?; ";
+//SQL queries to get cost of goods sold of the In-store
 const getInstoreCOGSSQL =
   "SELECT SUM(iti.quantity * ip.avgUnitBuyingPrice) AS instoreCostOfGoodsSold FROM transaction_items iti JOIN ( SELECT productID, AVG(unitBuyingPrice) AS avgUnitBuyingPrice FROM inventory_purchase WHERE DATE(date) BETWEEN ? AND ? GROUP BY productID ) ip ON iti.productID = ip.productID JOIN transactions ist ON iti.transactionID = ist.transactionID WHERE DATE(ist.dateTime) BETWEEN ? AND ?;";
-const onlineItemCountSQL =
-  "SELECT SUM(cart_item.quantity) as itemCount FROM cart_item INNER JOIN cart ON cart.cartID = cart_item.cartID WHERE cart.dateTime BETWEEN ? AND ?;";
-const instoreItemCountSQL =
+//SQL queries to get total number of items sold in the Webstore
+  const onlineItemCountSQL =
+  "SELECT SUM(cart_item.quantity) AS itemCount FROM cart_item INNER JOIN cart ON cart.cartID = cart_item.cartID WHERE cart.dateTime BETWEEN ? AND ? AND cart.paymentStatus=1;";
+//SQL queries to get total number of items sold in the In-store
+  const instoreItemCountSQL =
   "SELECT SUM(transaction_items.quantity) itemCount FROM transaction_items INNER JOIN transactions ON transactions.transactionID = transaction_items.transactionID WHERE transactions.dateTime BETWEEN ? AND ?;";
-const returnSalesSQL =
+//SQL queries to get total cost of returned products
+  const returnSalesSQL =
   "SELECT SUM(totalReturnLoss) AS totalReturnLoss FROM ( SELECT SUM(pr.quantity * ip.unitBuyingPrice) AS totalReturnLoss FROM product_return pr JOIN inventory_purchase ip ON pr.productID = ip.productID WHERE pr.date BETWEEN ? AND ? GROUP BY pr.productID) AS subquery;";
-const expiringProductsSQL =
+//SQL queries to get total cost of expired products
+  const expiringProductsSQL =
   "SELECT SUM(totalExpireLoss) AS totalExpireLoss FROM ( SELECT SUM(ep.quantity * ip.unitBuyingPrice) AS totalExpireLoss FROM expiredproducts ep JOIN inventory_purchase ip ON ep.productID = ip.productID WHERE ep.date BETWEEN ? AND ? GROUP BY ep.productID ) AS subquery;";
-const onlineOrderCountSQL =
+//SQL queries to get total number of online orders
+  const onlineOrderCountSQL =
   "SELECT COUNT(cartID) AS onlineOrderCount FROM cart WHERE DATE(dateTime) BETWEEN ? AND ? AND paymentStatus=1;";
-const instoreOrderCountSQL =
+//SQL queries to get total number of in-store orders
+  const instoreOrderCountSQL =
   "SELECT COUNT(transactionID) AS instoreOrderCount FROM transactions WHERE DATE(dateTime) BETWEEN ? AND ?;";
 
-const dbCategories = [];
+const dbCategories = []; //Array to store categories retrieved from the database
 
 var htmlContent = ``;
-function getCategories() {
+function getCategories() { //Function to get categories from the database
   return new Promise((resolve, reject) => {
     db.query(getCategorySQL, (err, result) => {
       if (err) {
         reject(err);
       } else {
-        dbCategories.push(
+        dbCategories.push(//Push the result to dbCategories array
           result.map((rowDataPacket) => {
             return {
               categoryID: rowDataPacket.categoryID,
@@ -79,68 +92,68 @@ function getCategories() {
     });
   });
 }
-function getOnlineSales(startDate, endDate) {
+function getOnlineSales(startDate, endDate) {//Function to get total online sales
   return new Promise((resolve, reject) => {
     db.query(getOnlineSalesSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        totalOnlineSales = result[0].totalOnlineSales;
+        totalOnlineSales = result[0].totalOnlineSales;//Store the total online sales
         resolve(totalOnlineSales);
       }
     });
   });
 }
-function getInstoreSales(startDate, endDate) {
+function getInstoreSales(startDate, endDate) {//Function to get total in-store sales
   return new Promise((resolve, reject) => {
     db.query(getInstoreSalesSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        totalInstoreSales = result[0].totalInstoreSales;
+        totalInstoreSales = result[0].totalInstoreSales;//Store the total in-store sales
         resolve(totalInstoreSales);
       }
     });
   });
 }
-function getDiscounts(startDate, endDate) {
+function getDiscounts(startDate, endDate) { //Function to get total discounts
   return new Promise((resolve, reject) => {
     db.query(getdiscountsSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        totalDiscounts = result[0].totalDiscounts;
+        totalDiscounts = result[0].totalDiscounts; //Store the total discounts
         resolve(totalDiscounts);
       }
     });
   });
 }
-function getCORP(startDate, endDate) {
+function getCORP(startDate, endDate) { //Function to get total cost of returned products
   return new Promise((resolve, reject) => {
     db.query(returnSalesSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        costOfReturnedProducts = result[0].totalReturnLoss;
+        costOfReturnedProducts = result[0].totalReturnLoss; //Store the total cost of returned products
         resolve(costOfReturnedProducts);
       }
     });
   });
 }
-function getCOEP(startDate, endDate) {
+function getCOEP(startDate, endDate) { //Function to get total cost of expired products
   return new Promise((resolve, reject) => {
     db.query(expiringProductsSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        costOfExpiredProducts = result[0].totalExpireLoss;
+        costOfExpiredProducts = result[0].totalExpireLoss; //Store the total cost of expired products
         resolve(costOfExpiredProducts);
       }
     });
   });
 }
 
-function getOnlineCOGS(startDate, endDate) {
+function getOnlineCOGS(startDate, endDate) {//Function to get cost of goods sold of the Webstore
   return new Promise((resolve, reject) => {
     db.query(
       getOnlineCOGSSQL,
@@ -149,14 +162,14 @@ function getOnlineCOGS(startDate, endDate) {
         if (err) {
           reject(err);
         } else {
-          onlineCostOfGoodsSold = result[0].onlineCostOfGoodsSold;
+          onlineCostOfGoodsSold = result[0].onlineCostOfGoodsSold;//Store the cost of goods sold of the Webstore
           resolve(onlineCostOfGoodsSold);
         }
       }
     );
   });
 }
-function getInstoreCOGS(startDate, endDate) {
+function getInstoreCOGS(startDate, endDate) {//Function to get cost of goods sold of the In-store
   return new Promise((resolve, reject) => {
     db.query(
       getInstoreCOGSSQL,
@@ -165,71 +178,72 @@ function getInstoreCOGS(startDate, endDate) {
         if (err) {
           reject(err);
         } else {
-          instoreCostOfGoodsSold = result[0].instoreCostOfGoodsSold;
+          instoreCostOfGoodsSold = result[0].instoreCostOfGoodsSold;//Store the cost of goods sold of the In-store
           resolve(instoreCostOfGoodsSold);
         }
       }
     );
   });
 }
-function getOnlineItemCount(startDate, endDate) {
+function getOnlineItemCount(startDate, endDate) {//Function to get total number of items sold in the Webstore
   return new Promise((resolve, reject) => {
     db.query(onlineItemCountSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        onlineItemCount = result[0].itemCount;
+        onlineItemCount = result[0].itemCount;//Store the total number of items sold in the Webstore
         resolve(onlineItemCount);
       }
     });
   });
 }
-function getInstoreItemCount(startDate, endDate) {
+function getInstoreItemCount(startDate, endDate) {//Function to get total number of items sold in the In-store
   return new Promise((resolve, reject) => {
     db.query(instoreItemCountSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        instoreItemCount = result[0].itemCount;
+        instoreItemCount = result[0].itemCount;//Store the total number of items sold in the In-store
         resolve(instoreItemCount);
       }
     });
   });
 }
-function getTotalSales(startDate, endDate) {
+function getTotalSales(startDate, endDate) {//Function to get total sales
   return new Promise((resolve, reject) => {
-    totalSales = totalInstoreSales + totalOnlineSales;
+    totalSales = totalInstoreSales + totalOnlineSales;//Calculate the total sales
     resolve(totalSales);
   });
 }
-function getOnlineOrderCount(startDate, endDate) {
+function getOnlineOrderCount(startDate, endDate) {//Function to get total number of online orders
   return new Promise((resolve, reject) => {
     db.query(onlineOrderCountSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        onlineOrderCount = result[0].onlineOrderCount;
+        onlineOrderCount = result[0].onlineOrderCount;//Store the total number of online orders
         resolve(onlineOrderCount);
       }
     });
   });
 }
-function getInstoreOrderCount(startDate, endDate) {
+function getInstoreOrderCount(startDate, endDate) {//Function to get total number of in-store orders
   return new Promise((resolve, reject) => {
     db.query(instoreOrderCountSQL, [startDate, endDate], (err, result) => {
       if (err) {
         reject(err);
       } else {
-        instoreOrderCount = result[0].instoreOrderCount;
+        instoreOrderCount = result[0].instoreOrderCount;//Store the total number of in-store orders
         resolve(instoreOrderCount);
       }
     });
   });
 }
 
+//Sales report generation endpoint
 router.post("/createSalesReport", validateOwnerToken, (req, res) => {
   const { startDate, endDate } = req.body;
-  const pdfFilePath = path.join(__dirname, "SalesReport.pdf");
+  const pdfFilePath = path.join(__dirname, "SalesReport.pdf"); //Path to store the generated PDF
   getCategories().then(() => {
     getOnlineSales(startDate, endDate).then(() => {
       getInstoreSales(startDate, endDate).then(() => {
@@ -334,7 +348,7 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                                   } units</td>
                                                 </tr>
                                                 <tr class="total-row">
-                                                  <th>Average Transaction Value:</th>
+                                                  <th>Average Selling Price:</th>
                                                   <td>Rs. ${convertToCurrencyFormat(
                                                     (totalInstoreSales +
                                                       totalOnlineSales) /
@@ -483,7 +497,7 @@ router.post("/createSalesReport", validateOwnerToken, (req, res) => {
                                         `;
                             pdf
                               .create(htmlContent)
-                              .toFile(pdfFilePath, (err, result) => {
+                              .toFile(pdfFilePath, (err, result) => {//Generate PDF from HTML content
                                 if (err) {
                                   res
                                     .status(500)

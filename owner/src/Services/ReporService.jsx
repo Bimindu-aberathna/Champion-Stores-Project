@@ -4,6 +4,7 @@ import { saveAs } from "file-saver";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Function to generate the inventory report
 const generateInventoryReport = async () => {
   const accessToken = localStorage.getItem("accessToken");
 
@@ -35,6 +36,7 @@ const generateInventoryReport = async () => {
     });
 };
 
+// Function to generate the sales report
 const generateSalesReport = async (fromDate, toDate) => {
   const accessToken = localStorage.getItem("accessToken");
   if (!accessToken) {
@@ -80,6 +82,7 @@ const generateSalesReport = async (fromDate, toDate) => {
   <ToastContainer />;
 };
 
+// Function to get the weekly online sales
 const getWeeklyOnlineSales = async () => {
     try {
       const res = await axios.get('http://localhost:5000/ownerReportServices/getOnlineSales');
@@ -93,6 +96,8 @@ const getWeeklyOnlineSales = async () => {
       throw err; // Rethrow the error to handle it in the caller function
     }
 };
+
+// Function to get the weekly instore sales
 const getWeeklyInstoreSales = async () => {
   try {
     const res = await axios.get('http://localhost:5000/ownerReportServices/getInstoreSales');
@@ -108,4 +113,22 @@ const getWeeklyInstoreSales = async () => {
   }
 };
 
-export { generateInventoryReport, generateSalesReport, getWeeklyOnlineSales, getWeeklyInstoreSales};
+// Function to get the top sellers
+const getTopSellers = async (period) => {
+  const accessToken = localStorage.getItem("accessToken");
+  try {
+    const res = await axios.get('http://localhost:5000/ownerReportServices/getBestSellingItems', {
+      params: { period },
+      headers: {
+        "x-access-token": accessToken,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    throw err; // Rethrow the error to handle it in the caller function
+  }
+};
+
+
+export { generateInventoryReport, generateSalesReport, getWeeklyOnlineSales, getWeeklyInstoreSales, getTopSellers};

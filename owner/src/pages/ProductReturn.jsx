@@ -8,17 +8,16 @@ import SideNavbar from "../Components/SideNavbar";
 import { validateIntegers } from "../functionality/validation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from "sweetalert2";
 
 function ProductReturn() {
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [items, setItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [isNotExchanging, setIsNotExchanging] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false); // State variable to store the confirmation status
+  const [items, setItems] = useState([]); // State variable to store the items
+  const [selectedItem, setSelectedItem] = useState(null); // State variable to store the selected item
+  const [quantity, setQuantity] = useState(1);  // State variable to store the quantity
+  const [isNotExchanging, setIsNotExchanging] = useState(false); // State variable to store the exchange status
 
   // Fetch the list of products
-  useEffect(() => {// Fetch the list of products
+  useEffect(() => {
     axios
       .get("http://localhost:5000/listProducts")
       .then((res) => {
@@ -40,20 +39,20 @@ function ProductReturn() {
 
   // Handle the confirmation modal
   const handleProceed = () => {
-    if (selectedItem === null) {
+    if (selectedItem === null) { // Check if an item is selected
       toast.error("Please select a product to return.", {
         position: "top-right",
         autoClose: 2500,
       });
       return;
     }
-    else if (!validateIntegers(quantity)||quantity===0) {
+    else if (!validateIntegers(quantity)||quantity===0) { // Validate the quantity
       toast.error("Invalid quantity", {
         position: "top-right",
         autoClose: 2500,
       });
       return;
-    }else if(quantity>selectedItem.currentStock){
+    }else if(quantity>selectedItem.currentStock){ // Check if the quantity exceeds the available quantity
       toast.error("Quantity exceeds the available quantity", {
         position: "top-right",
         autoClose: 2500,
@@ -82,7 +81,7 @@ function ProductReturn() {
 
   // Handle the return process
   const handleReturn = () => {
-    if (selectedItem === null) {
+    if (selectedItem === null) {  // Check if an item is selected
       toast.error("Please select a product to return.", {
         position: "top-right",
         autoClose: 3500,
@@ -90,13 +89,14 @@ function ProductReturn() {
       return;
     }
     const productID = selectedItem.productID;
-    if (!validateIntegers(quantity)||quantity===0) {
+    if (!validateIntegers(quantity)||quantity===0) { // Validate the quantity
       toast.error("Invalid quantity", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
     }
+    // Call the returnProduct API to return the product
     const supplierID = selectedItem.supplierID;
     const notExchanging = isNotExchanging;
     const accessToken = localStorage.getItem("accessToken");
@@ -173,9 +173,11 @@ function ProductReturn() {
             <Card.Body className="d-flex justify-content-center align-items-center">
               <div style={{ width: "85%" }}>
                 <div style={{ display: "flex", justifyContent: "center" }}>
+                  {/* Search bar component to search for products */}
                   <SearchBar items={items} onItemSelect={handleItemSelect} />
                 </div>
                 <Form style={{ marginTop: "6rem" }}>
+                  {/*To display the selected product name*/}
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Selected product name</Form.Label>
                     <Form.Control
@@ -184,7 +186,7 @@ function ProductReturn() {
                       value={selectedItem ? selectedItem.productName : ""}
                     />
                   </Form.Group>
-
+                  {/*To get the selected product quantity*/}
                   <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>Quantity</Form.Label>
                     <Form.Control
@@ -194,6 +196,7 @@ function ProductReturn() {
                       onChange={(e) => setQuantity(e.target.value)}
                     />
                   </Form.Group>
+                  {/*To get the exchange status*/}
                   <Form.Group className="mb-3" controlId="formBasicCheckbox">
                     <Form.Check
                       type="checkbox"
@@ -211,6 +214,7 @@ function ProductReturn() {
                     >
                       Clear
                     </Button>
+                    {/* Proceed button */}
                     <Button
                       style={{ width: "6rem", marginLeft: "0.75rem" }}
                       variant="dark"

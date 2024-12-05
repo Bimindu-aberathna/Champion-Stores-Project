@@ -9,9 +9,7 @@ const createOwnerToken = (ownerID,role='owner') => {
 
 const validateOwnerToken = (req, res, next) => {
     const accessToken = req.headers["x-access-token"]
-    console.log(accessToken);
     if (!accessToken) {
-        console.log("User not authenticated");
         return res.status(402).json({status:402,message: "User not authenticated"});
     }
     try {
@@ -20,10 +18,8 @@ const validateOwnerToken = (req, res, next) => {
             req.authenticated = true;
             req.ownerID = validToken.ownerID;
             req.role = validToken.role;
-            console.log("User authenticated");
             return next();
         }else{
-            console.log("User not authenticated");
             return res.status(402).json({status:402,message: "User not authenticated"});
         }
     }catch(err) {

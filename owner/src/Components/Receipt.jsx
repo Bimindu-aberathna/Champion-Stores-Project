@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const MyDocument = ({ items, subtotal, discount, total }) => (
+const MyDocument = ({ items, subtotal, discount, total }) => (//PDF document for the receipt
     <Document>
       <Page size={
         {width: 300}
@@ -97,12 +97,14 @@ const MyDocument = ({ items, subtotal, discount, total }) => (
           </View>
           <Text>-------------------------------------</Text>
           <View style={styles.section}>
+            {/*Table headers*/}
           <View style={styles.tblHeaderItem}><Text>Item</Text></View>
           <View style={styles.tblHeader}><Text>Qty</Text></View>  
            <View style={styles.tblHeader}> <Text>Units</Text></View>
            <View style={styles.tblHeader}><Text>Total</Text></View>
             </View>
             <View style={styles.itemContent}>
+              {/**Table content */}
             {items.map((item, index) => (
               <View key={index} style={styles.productData}>
                 <View style={styles.itemName}><Text>{item.name}</Text></View>
@@ -112,7 +114,7 @@ const MyDocument = ({ items, subtotal, discount, total }) => (
               </View>
             ))}
           </View>
-          
+          {/* //Footer of the receipt */}
           <View style={styles.totals}>
             <Text>Subtotal: Rs.{subtotal.toFixed(2)}</Text>
             <Text>Discount: Rs.{discount}</Text>
@@ -128,7 +130,7 @@ const MyDocument = ({ items, subtotal, discount, total }) => (
     </Document>
   );
 
-  function calculateTotal(items) {
+  function calculateTotal(items) {//Calculate the total of the receipt
     let total = 0;
     items.forEach((item) => {
       total += item.quantity * item.price;
@@ -137,7 +139,7 @@ const MyDocument = ({ items, subtotal, discount, total }) => (
   }
 
 function Receipt({ items,discount}) {
-  const subtotal = calculateTotal(items);
+  const subtotal = calculateTotal(items);//Calculate the subtotal of the receipt
   return (
     <div>
       <PDFViewer style={{width:"100%",minHeight:'50vh'}}>
