@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# Environment variable files
+.env
+
+# Build directories
+dist/
+build/
+public/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Debugger files
+*.pid
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+*.old
+
+# Test coverage reports
+coverage/
+
+# Database files
+*.sqlite
+
+# React-specific
+/.eslintcache
+
+# Others
+*.cache
