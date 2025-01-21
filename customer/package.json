@@ -15,6 +15,7 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "credit-card-type": "^10.0.0",
+    "customer": "file:",
     "mdb-react-ui-kit": "^8.0.0",
     "react": "^18.2.0",
     "react-confetti": "^6.1.0",
