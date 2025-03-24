@@ -3,20 +3,15 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import SideNavbar from "../Components/SideNavbar";
 import InventoryNavBar from "../Components/InventoryNavBar";
 import {
-  MDBBtn,
   MDBContainer,
   MDBCard,
   MDBCardBody,
-  MDBCardImage,
   MDBRow,
   MDBCol,
-  MDBInput,
-  MDBRadio,
 } from "mdb-react-ui-kit";
 import { validatePrice, validateIntegers } from "../functionality/validation";
 import { ToastContainer, toast } from "react-toastify";
@@ -24,43 +19,39 @@ import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 
 function NewInventory() {
-  const { productId } = useParams();
-  const [product, setProduct] = useState({});
-  const [buyingPrice, setBuyingPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  console.log(productId);
-  const navigate = useNavigate();
+  const { productId } = useParams(); // Get the product id from the URL
+  const [product, setProduct] = useState({}); // State variable to store the product details
+  const [buyingPrice, setBuyingPrice] = useState(""); // State variable to store the buying price
+  const [stock, setStock] = useState(""); // State variable to store the stock
+  const navigate = useNavigate(); // Navigation hook for redirecting to another page
 
-  useEffect(() => {
+  useEffect(() => { // Function to get the details of the product
     axios
       .get(
         `http://localhost:5000/api/owner/productServices/getProductData/${productId}`
       )
       .then((res) => {
-        console.log(res.data);
         setProduct(res.data[0]);
-        console.log(product);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [productId]);
 
-  const handleSubmit = () => {
-    if (!validateIntegers(stock) || stock === 0) {
+  const handleSubmit = () => { // Function to handle the form submission
+    if (!validateIntegers(stock) || stock === 0) { // Validate the stock
       toast.error("Invalid stock", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
-    } else if (!validatePrice(buyingPrice) || buyingPrice === 0) {
+    } else if (!validatePrice(buyingPrice) || buyingPrice === 0) { // Validate the buying price
       toast.error("Invalid buying price", {
         position: "top-right",
         autoClose: 3500,
       });
       return;
-    } else {
+    } else {  // Call the newInventory API to add new supplies
       const accessToken = localStorage.getItem("accessToken");
       axios
         .post(
@@ -78,7 +69,6 @@ function NewInventory() {
           }
         )
         .then((res) => {
-          console.log(res);
           if (res.status === 200) {
             Swal.fire({
               icon: "success",
@@ -136,6 +126,7 @@ function NewInventory() {
                         </h4>
                       </div>
 
+                      {/* Display the product details */}
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
                           <Form.Label>Product Name</Form.Label>
@@ -204,6 +195,7 @@ function NewInventory() {
                         </MDBCol>
                       </MDBRow>
 
+                      {/* Get the stock and buying price from the user */}
                       <MDBRow style={{ marginBottom: "1rem" }}>
                         <MDBCol md="6">
                           <Form.Label>Stock</Form.Label>
@@ -216,6 +208,7 @@ function NewInventory() {
                           />
                         </MDBCol>
 
+                        {/* Get the buying price from the user */}  
                         <MDBCol md="6">
                           <Form.Label>Buying price</Form.Label>
                           <Form.Control
@@ -237,6 +230,7 @@ function NewInventory() {
                           Clear
                         </Button>
                         &nbsp;
+                        {/* Button to submit the form */}
                         <Button
                           type="button"
                           variant="dark"

@@ -10,7 +10,6 @@ const createToken = (userID) => {
 const validateToken = (req, res, next) => {
     const accessToken = req.headers["x-access-token"]
     if (!accessToken) {
-        console.log("User not authenticated");
         return res.status(402).json({status:402,message: "User not authenticated"}); 
     }
     try {
@@ -20,7 +19,6 @@ const validateToken = (req, res, next) => {
             req.customerID = validToken.userID.customerID;
             return next();
         }else{
-            console.log("User not authenticated");
             return res.status(402).json({status:402,message: "User not authenticated"});
         }
     }catch(err) {

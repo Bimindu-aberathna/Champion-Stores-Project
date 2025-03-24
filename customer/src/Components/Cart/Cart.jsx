@@ -201,9 +201,11 @@ function Cart() {
       }
     } catch (error) {
       console.error("Error updating delivery information:", error);
-      toast.error("Error updating delivery information", {
-        position: "top-right",
-        autoClose: 1500,
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.response.data.message,
+        confirmButtonColor: "#000",
       });
     }
   };
